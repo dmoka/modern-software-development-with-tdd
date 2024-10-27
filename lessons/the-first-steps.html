@@ -23,10 +23,15 @@
 
       /* Customize slide content */
       .remark-slide-content {
-        font-size: 24px;
+        font-size: 28px;
         background-color: black;
         color: white;
       }
+
+      .green-bg {
+        background-color: green;
+      }
+
     </style>
   </head>
   <body>
@@ -41,7 +46,7 @@ class: center, middle
 
 ---
 
-# Agenda Day 1
+## Agenda Day 1
 TODO: 
 - Getting started with TDD
 - Killing features of  TDD
@@ -49,14 +54,14 @@ TODO:
 
 ---
 
-# Agenda Day 2
+## Agenda Day 2
 TODO: 
 - ...
 - 
 
 ---
 
-# About me
+## About me
 - Software Craftsman 🇭🇺
 - 10+ years experience in testing and TDD
 - 100,000+ followers
@@ -69,7 +74,7 @@ class: center, middle
 # Why we do TDD?
 
 ---
-Problem #1 - Long feedback loop
+## Problem #1 - Long feedback loop
   - Code as a text
   - Lag between changing the code and executing it
   - Long feedback loops
@@ -77,34 +82,35 @@ Problem #1 - Long feedback loop
 
 ---
 
-Problem #2 - Risky changes
+## Problem #2 - Risky changes
 - Fear of refactoring
 - Low confidence in test suite
 - High chance of introducing bugs
 
 ---
+class: center, middle
 
-Problem #3 - Extensive use of debugger
-- Developers spend 25-50% of the time debugging 
-- Extensive use of debugger (add image)
-- Ironic and self-deprecating humor
+## Problem #3 - Extensive use of debugger
+
+<img src="./assets/debugging1.png" alt="Example Image" style="width:400px;">
 
 ---
 class: center, middle
 
-Problem #3 - Extensive use of debugger
-
-<img src="./assets/debugging1.png" alt="Example Image" style="width:500px;">
-
----
-class: center, middle
-
-Problem #3 - Extensive use of debugger
+## Problem #3 - Extensive use of debugger
 
 <img src="./assets/debugging2.png" alt="Example Image" style="width:500px;">
 
 ---
-Problem #4 - Bugs
+
+## Problem #3 - Extensive use of debugger
+- Developers spend 25-50% of the time debugging 
+- Unproductive activity
+- Ironic and self-deprecating humor
+
+---
+
+## Problem #4 - Bugs
 
 <div style="text-align: center;">
   <img src="./assets/bug-cost.png" alt="Example Image" style="width:400px;">
@@ -112,22 +118,24 @@ Problem #4 - Bugs
 
 ---
 
-Problem #4 - Bugs
+## Problem #4 - Bugs
 
 - Bugs are expensive and oftentime disastrous
 - Costs our reputation
 - We cant fulfill our most important task
 
 ---
-class: center, middle
+## Problem # 5 - We will refactor it later
 
-Problem # 5 - Famous last words: We will refactor it later
+Famous last words
 
-<img src="./assets/refactoring-later.png" alt="Example Image" style="width:500px;">
+<div style="text-align: center;">
+  <img src="./assets/refactoring-later.png" alt="Example Image" style="width:500px;">
+</div>
 
 ---
 
-Problem # 5 - Refactoring later
+## Problem # 5 - Refactoring later
 
 - Never happens
 - Hard justify - hard to sell
@@ -142,61 +150,174 @@ class: center, middle
 
 ---
 
-TDD solves all the discussed problems
+## TDD solves all the discussed problems
 
-- Reduce feedbackloops - running our test all the time
-- No risky changes as TDD leads to fully tested 
+- Reduce feedback loops - running our test all the time
+- No risky changes -  TDD leads to fully tested 
 - Minimized debugging - we run test all the time
-- Bugs are prevented - strong test suit and tested code
+- Bugs are prevented - strong test suite and fully tested code
 - Refactoring is done/reminded in every cycle of TDD
-- Lead to maintainable code (big ball of mud & spaghetti code)
+- Lead to maintainable code (no big ball of mud & spaghetti code)
 
-TODO: IN "iS DEISGN ,DEVELOPEMTN OR TESTIN" newsleter I have reasons  how the cycle fixes all. 
+???
+So we refactor during development
+---
+class: center, middle
 
-We should include it somewhere here as next
+ ## And this is just the beginnig...
 
-
-
-todo: write about the problems, 
-check 
-- https://craftbettersoftware.com/p/why-you-need-tdd
-- also check book how I started
+???
+TDD helps has a lot of additional killing features that helps you to write code in easy, safe and fast way.
 
 ---
 
-# What is TDD
+class: center, middle
 
+# What is TDD?
 
 ---
 
+---
 
 # History of TDD
 
+Punch card with a failing test
+<div style="text-align: center;">
+  <img src="./assets/punch-card.png" alt="Example Image" style="width:300px;">
+</div>
+
+Rediscovery from Kent Beck
+
+<div style="text-align: center;">
+  <img src="./assets/kent.png" alt="Example Image" style="width:200px;">
+</div>
+
+??? 
+
+Punch:
+The history of Test-Driven Development goes way back to 1950. Back then, programmers have done programming by preparing punch cards containing holes in them. A punch card is created either manually or by machines, where the holes represented data with its instructions. They were the input for the computer machines. Once the cards are created, they got fed into computers, then computers read the values and transformed them into digital information. The rules of the transformation were defined in machine code. As an output of the transformation, the computer produced a new punch card with holes that represented the results of the operations defined by the original input punch card. However, the programmers faced a challenge when they needed to confirm whether the results met their expectations. How could they quickly verify that their initially prepared punch cards contained the right holes to produce the expected output? Doing it manually was a time-consuming and cumbersome process, so they needed a better way. But luckily programming pioneers came up with a brilliant solution. For every input punch card, they also created an expected output card. They had namely a failing test which is the most famous phenomenon in TDD. Once the machine returned the actual result card, then they took and overlayed it with the expected output card. If both cards had the exact same holes, they have done a good job of punching holes in the input card. If the results did not match their expectations, they had to modify their program until it passed their tests of comparing punch cards. They had a failing test then they made it pass. That’s how TDD was born.
+Since then the IT industry has rapidly improved in terms of developer experience. We ditched the physical tapes and started communicating with machines by using text-based languages. Assembly, Fortran, COBOL, Basic, Pascal, C, C++, and all the way up to high-level abstract languages like Javascript, C#, Rust, and many more. We even reached the point that nowadays one doesn’t really need prior programming knowledge to create software. We just have to think about all the no-code tools in the market, such as WordPress. Although such no-code tools provide incredible results in a short amount of time, they're far from perfect, and once we need custom and more sophisticated solutions, we can go better with high-level programming languages. But to go fast with high-level programming languages, we need to write software well.
+
+Kent:
+Kent Beck has always been known for his humbleness. Being humble is one of the most valuable traits of a human being, there is nothing wrong with it. But the credit should go where it belongs to. What Kent did was not only a rediscovery of Test-Driven Development but also a historic invention of a quick-feedback-loop-based way of working with Object-Oriented Programming languages. His book “Test Driven Development: By Example” has become the bible for all extreme programming enthusiasts. He defined the exact rules and steps to write software in short cycles, with continuous improvements, and executed in baby steps. He literally invented the best software development approach for writing software in a fast, elegant, and safe way. He is literally the GOAT of our industry, admired and respected by all the software crafters in the world. He brought his attitudes, ideas, and practices to the mass, inspiring, mentoring, and creating high-class software professionals. His technological footprint is unprecedented, resulting in an environment where striving for technical excellence became the motto for everyone who cares about quality.
+
 
 ---
-# The TDD cycle
+
+class: center, middle
+
+# Design, development or testing tool?
+
+???
+There is a lot debate
 
 ---
 
-# Essence of TDD (because of TDD cycle)
+## What is TDD?
+
+<div style="text-align: center;">
+  <img src="./assets/tdd-design1.png" alt="Example Image" style="width:500px;">
+</div>
+
+---
+## What is TDD?
+
+<div style="text-align: center;">
+  <img src="./assets/tdd-design2.png" alt="Example Image" style="width:500px;">
+</div>
+
 
 ---
 
-# Three laws of TDD
+# What is TDD?
+
+It is a blend of three: design, development and testing
+
+Development
+- The TDD cycle and three laws of TDD
+
+Design
+- Tests are the first user the code (TODO: talk about these in the silver bullet in more detail, using the book)
+
+Testing  tool
+- We produce code by writing automated test
 
 
 ---
 
-# TDD followers
+## TDD CYCLE
 
-----
+3 phases:
+- Red: write a failing test
+- Green: make the test past
+- Refactoring: refactor both prod and test code
+
+Cycle time: ~1min
+<div style="text-align: center;">
+  <img src="./assets/tdd-cycle.png" alt="Example Image" style="width:300px;">
+</div>
+
+???
+But this is not enough. What is a good failing test? What is an enough test? What enforces us to take baby steps?
+
+---
+
+class: center, middle
+
+#The three laws of TDD
+
+---
+
+
+class: center, middle
+
+# Law #1
+
+## You are not allowed to write any production code unless it is to make a failing unit test pass
+
+##In other words: 
+<span class="green-bg">Start with a failing test</span>
+
+---
+
+class: center, middle
+
+# Law #2
+
+## You are not allowed to write any more of a unit test than is sufficient to fail, and compilation failures are failures
+
+## In other words: 
+<span class="green-bg">Stop writing your test as soon as it fails or doesn't compile</span>
+
+---
+
+class: center, middle
+
+# Law #3
+
+##You are not allowed to write any more production code than is sufficient to pass the one failing unit test
+
+## In other words: 
+<span class="green-bg">Stop writing production code as soon as the test passes</span>
+
+---
+
+# The TDD flow
+<div style="text-align: center;">
+  <img src="./assets/tdd-flow.png" alt="Example Image" style="width:550px;">
+</div>
+
+---
 
 # FizzBuzz
-
+TODO: prepare the base
 ---
 
-# Coding Exercise - Product endpoint
+# Product entity
 
+TODO: prepare the scenario
+
+---
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
