@@ -132,22 +132,6 @@ class: center, middle
 ## Which naming template to use?
 
 ---
-# Simple with no logic
-Cyclo complexity = 1
-
-<span class="red-bg">Avoid:</span>
-- if-else statements
-- for and while loops
-- switch cases
-
-<span class="green-bg">Solution:</span>
-- split up tests into multiple test cases
-- parameterized tests
-
-
-TODO: maybe it will be a smell, so we sould get rid of from ehre?!
-
----
 # Meaningful namings
 
 ### Tips:
@@ -253,21 +237,6 @@ T - Timely
 
 ---
 
-# Should not be fragile
-
-<div class="red-bg" style="text-align: center;">
-  Don't tests interface classes, functions and implementation details
-</div>
-
-<br>
-<div class="green-bg" style="text-align: center;">
-  Couple test to behaviours and public APIs
-</div>
-
-
-TODO: maybe this is also ssmell, remove if so
----
-
 # Meaningful test data
 - Real life example
 - Representative data
@@ -346,55 +315,6 @@ Capture domain knowledge
 - Production code: remove knowledge duplication
 - Test code: make tests self-contained
 
----
-
-# Use case in webshop
-
-Given a shopping cart that has products with a total grand 50 
-
-When the total grand is calculated 
-
-Then it returns 50 as the total grand
-
----
-
-# Bad Test
-
-```cs
-void ShoppingCartTest()
-{
-    var sc = new ShoppingCart();
-    sc.Add(new Product("id1", 10, "product 1", Category.Book));
-    sc.Add(new Product("id2", 15, "product 2", Category.Electronic));
-    sc.Add(new Product("id3", 25, "product 3", Category.Hardware));
-
-    var p = sc.Calc();
-    Assert.True(p == 50);
-}
-```
-
----
-
-# Clean Test
-
-```cs
-void CalculatePriceShouldSumPrices_whenCartContainsMultipleProducts()
-{
-    // Arrange
-    var shoppingCart = new ShoppingCart();
-
-    shoppingCart.Add(Product().WithPrice(10));
-    shoppingCart.Add(Product().WithPrice(15));
-    shoppingCart.Add(Product().WithPrice(25));
-
-    // Act
-    var totalPrice = shoppingCart.CalculateTotalPrice();
-
-    // Assert
-    Assert.That(totalPrice).IsEqualTo(50);
-}
-
-```
 ---
 class: center, middle
 
@@ -683,6 +603,57 @@ You use real and time-consuming dependencies when you run your tests.
 
 Mock your dependencies using one of the five test doubles.
 
+---
+
+---
+
+# Use case in webshop
+
+Given a shopping cart that has products with a total grand 50 
+
+When the total grand is calculated 
+
+Then it returns 50 as the total grand
+
+---
+
+# Bad Test
+
+```cs
+void ShoppingCartTest()
+{
+    var sc = new ShoppingCart();
+    sc.Add(new Product("id1", 10, "product 1", Category.Book));
+    sc.Add(new Product("id2", 15, "product 2", Category.Electronic));
+    sc.Add(new Product("id3", 25, "product 3", Category.Hardware));
+
+    var p = sc.Calc();
+    Assert.True(p == 50);
+}
+```
+
+---
+
+# Clean Test
+
+```cs
+void CalculatePriceShouldSumPrices_whenCartContainsMultipleProducts()
+{
+    // Arrange
+    var shoppingCart = new ShoppingCart();
+
+    shoppingCart.Add(Product().WithPrice(10));
+    shoppingCart.Add(Product().WithPrice(15));
+    shoppingCart.Add(Product().WithPrice(25));
+
+    // Act
+    var totalPrice = shoppingCart.CalculateTotalPrice();
+
+    // Assert
+    Assert.That(totalPrice).IsEqualTo(50);
+}
+
+```
 ---
 # TODO: generate code for fixing these
 Hidden 21 code smells
