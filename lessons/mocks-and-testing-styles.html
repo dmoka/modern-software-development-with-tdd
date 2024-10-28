@@ -14,6 +14,411 @@ class: center, middle
 
 ---
 
+# Test doubles
+
+
+Term “double” comes from movies
+
+Goals:
+- Replacing production grade dependencies
+
+- Achieving fast and robust tests
+
+- Isolating business logic
+
+Utilizing Dependency Injection (DI)
+
+---
+# The 5 Test doubles
+
+Dummy
+
+Stub
+
+Spy
+
+Mock
+
+Fake
+
+<div class="green-bg" style="text-align: center;">
+  They differ in intent
+</div>
+
+
+---
+# Dummy
+
+No behaviours
+
+For initialization
+
+Dummy values or objects
+
+<div style="text-align: center;">
+  <img src="./assets/dummy.png" alt="Example Image">
+</div>
+
+
+---
+
+# Dummy
+
+```
+public class UserService
+{
+    private readonly ILogger _logger;
+
+    public UserService(ILogger logger)
+    {
+        _logger = logger;
+    }
+
+    public bool ValidateUser(User user)
+    {
+        return UserValidator.Validate(user);
+    }
+
+    //Other service methods that use the logger
+    ...
+}
+
+```
+
+---
+
+# Dummy
+
+```
+public class DummyLogger : ILogger
+{
+    public void Log() {}
+}
+```
+
+```
+[Test]
+public void UserShouldBeValid_whenAllFieldsFilled() 
+{
+    //Arrange
+    var user = new User("Arnold", 42, "San Francisco");
+
+    var dummyLogger = new DummyLogger();
+    var userService = new UserService(dummyLogger);
+
+    //Act
+    var isUserValid = userService.ValidateUser(user);
+
+    //Assert
+    Check.That(isUserValid).IsEqualTo(true);
+}
+
+```
+
+
+---
+# Stub
+
+Simulating incoming interactions
+
+Hard-coded value
+
+Irrelevant behaviour
+
+<div style="text-align: center;">
+  <img src="./assets/stub.png" alt="Example Image">
+</div>
+---
+
+# Stub
+
+```
+public class UserService
+{
+    private IWageCalculator _wageCalculator;
+
+    public UserService(IWageCalculator wageCalculator)
+    {
+        _wageCalculator = wageCalculator;
+    }
+
+    public Payslip GeneratePayslip(User user)
+    {
+        var userWage = _wageCalculator.Calculate(user);
+
+        return new PaySlip(userWage);
+    }
+}
+```
+
+---
+
+# Stub
+
+```
+public class WageCalculatorStub : IWageCalculator
+{
+    public decimal Calculate(User user)
+    {
+        return 3700;
+    }
+}
+```
+```
+[Test]
+public void GeneratedPasySlipShouldHaveWageSet()
+{
+    //Arrange
+    var user = new User("Arnold", 42, "San Francisco");
+
+    var userService = new UserService(new WageCalculatorStub());
+
+    //Act
+    var paySlip = userService.GenerlatePayslip(user);
+
+    //Assert
+    Check.That(paySlip.GetWage()).IsEqualTo(3700);
+}
+```
+---
+# Spy
+
+Gather info about dependencies
+
+Record and verify outgoing interactions
+
+Access internals
+
+<div style="text-align: center;">
+  <img src="./assets/spy.png" alt="Example Image">
+</div>
+
+---
+
+# Spy
+
+```
+public bool ValidateUser(User user)
+{
+    var isUserValid = UserValidator.Validate(user);
+    if (!isUserValid) 
+    {
+        _logger.Log($"The user is invalid");
+    };
+
+    return isUserValid;
+}
+```
+
+---
+
+# Spy
+
+```
+public class LoggerSpy : ILogger
+{
+    private IList<string> LogMessages = new List<string>();
+
+    public void Log(string message) 
+    {
+        LogMessages.Add(message);        
+    }
+
+    public int TimesCalled() 
+    {
+        return LogMessages.Count;
+    }
+
+    public bool ContainsMessage(string text)
+    {
+        return LogMessages.Any(msg => msg.Contains(text));
+    }
+
+}
+```
+
+---
+
+# Spy
+
+```
+[Test]
+public void UserShouldBeValid_whenAllFieldsFilled() 
+{
+    //Arrange
+    var user = new User("Arnold", 42, "");
+
+    var loggerSpy = new LoggerSpy();
+    var userService = new UserService(loggerSpy);
+
+    //Act
+    var isUserValid = userService.ValidateUser(user);
+
+    //Assert
+    Check.That(loggerSpy.TimesCalled()).IsEqualTo(1);
+    Check.That(loggerSpy
+       .ContainsMessage("is invalid")).IsTrue();
+}
+
+```
+
+---
+
+# Mock
+
+Most versatile test double
+- Enforce behaviours
+- Verify outoing interactions
+- Eeasy to create by 3rd party libs (Moq in .NET)
+
+
+<div style="text-align: center;">
+  <img src="./assets/mock.png" alt="Example Image"  style="width:400px;">
+</div>
+
+---
+# Mock
+
+```
+public class UserService
+{
+    private readonly IUserRepository _userReposistory;
+
+    public UserService(IUserRepository userRepository)
+    {
+        _userReposistory = userRepository;
+    }
+
+    public void CreateUser(User user) 
+    {
+        UserValidator.Validate(user);
+
+        _userReposistory.Create(user);
+    }
+}
+```
+---
+
+# Mock
+
+```
+[Test]
+public void UserShouldBeCreated_whenUserIsValid() 
+{
+    //Arrange
+    var user = new User("Arnold", 42, "San Francisco");
+
+    var repositoryMock = new Mock<IUserRepository>();
+
+    var userService = new UserService(repositoryMock.Object);
+
+    //Act
+    userService.CreateUser(user);
+
+    //Assert
+    repositoryMock
+        .Verify(mock => mock.Create(user), Times.Once);
+}
+```
+
+---
+
+# Fake
+
+Lightweight implementation
+
+Simulating business behaviours
+
+State verification
+
+<div style="text-align: center;">
+  <img src="./assets/fake.png" alt="Example Image"  style="width:400px;">
+</div>
+
+---
+# Fake
+
+```
+public class UserService
+{
+    private readonly IUserRepository _userReposistory;
+
+    public UserService(IUserRepository userRepository)
+    {
+        _userReposistory = userRepository;
+    }
+
+    public void CreateUser(User user) 
+    {
+        UserValidator.Validate(user);
+
+        _userReposistory.Create(user);
+    }
+}
+```
+
+
+---
+# Fake
+
+```
+public class UserRepositoryFake : IUserRepository
+{
+    public List<User> Users = new List<User>();
+
+    public void Create(User user)
+    {
+        Users.Add(user);
+    }
+}
+```
+---
+
+# Fake
+
+```
+[Test]
+public void UserShouldBeCreated_whenUserIsValid()
+{
+    //Arrange
+    var user = new User("Arnold", 42, "San Francisco");
+    var repositoryFake = new UserRepositoryFake();
+
+    var userService = new UserService(repositoryFake);
+
+    //Act
+    userService.CreateUser(user);
+
+    //Assert
+    Check.That(repositoryFake.Users.Contains(user)).IsTrue();
+}
+```
+
+---
+class: center, middle
+
+# So which one to use?
+---
+
+# Cheatsheet
+
+
+Dummy: initialization
+
+Stub: simulating incoming interactions
+
+Spy: record and verify outgoing interactions
+
+Mock: enforce behaviors and verify outgoing interactions
+
+Fake: lightweight implementation of the dependency
+
+---
+class: center, middle
+
+# Two common smells
+
+---
 # Smell #1 - Fragile tests
 
 ❌ Problem
@@ -79,7 +484,7 @@ public void UserServiceShouldActivateUser()
 
 ❌ Symptom
 
-Mocking 3rd-party libraries directly.
+Mocking 3rd-party libraries directly
 
 🔃 Cause
 
@@ -118,43 +523,10 @@ List<UserProfile> GetUserProfiles()
 ```
 
 ---
+class: center, middle
 
-# Smell # 3 - Non-deterministic tests
-
-✅ Solution: Decouple your code
-
-```
-public class DeliveryService
-{
-    private readonly IDateTimeProvider _dateTimeProvider;
-
-    public DeliveryService(IDateTimeProvider dateTimeProvider)
-    {
-        _dateTimeProvider = dateTimeProvider;
-    }
-
-    public bool IsDeliveryAvailable()
-    {
-        var now = _dateTimeProvider.UtcNow;
-
-        if (now.DayOfWeek == DayOfWeek.Saturday)
-        {
-            return now.Hour >= 9 && now.Hour <= 17;
-        }
-
-        return now.Hour >= 7 && now.Hour <= 19;
-    }
-}
-
-```
-
+# The two schools of TDD
 ---
-
-# Temp
-
-<div style="text-align: center;">
-  <img src="./assets/silver-bullet.png" alt="Example Image" style="width:500px;">
-</div>
 
 
 
