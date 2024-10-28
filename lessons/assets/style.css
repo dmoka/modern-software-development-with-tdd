@@ -31,3 +31,7 @@ h1, h2, h3 {
 .red-bg {
   background-color: red;
 }
+
+.blue-bg {
+  background-color: rgb(0, 153, 255);
+}
