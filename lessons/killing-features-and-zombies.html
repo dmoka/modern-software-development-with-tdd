@@ -176,6 +176,196 @@ class: center, middle
 # ZOMBIES
 
 ---
+class: center, middle
+
+## What if I can't think of all the tests? 
+
+## How do I get started?
+
+---
+# Z.O.M.B.I.E.S by James Grenning
+
+### Z - Zero
+### O - One
+### M - Many (or more complex)
+### B - Boundary behaviours
+### I - Interface Definition
+### S - Simple scenarios, simple solutions
+
+---
+# Z.O.M.B.I.E.S
+
+### Z.O.M. - complexity of tests
+### M.B.I. - give the order in which to build test cases
+### S. - Tells developer to write Simple scenarios, simple solutions
+
+---
+
+# Shopping Cart Requirements
+
+TODO:
+Core Features:
+1. Allow adding items to a shopping cart
+2. Calculate the total price of all items in the cart
+
+Business Rules:
+1. An empty cart should have a total of zero
+2. Items can have a price of zero (free items)
+3. The total price is the sum of all item prices
+
+---
+
+# Z - Zero
+
+Start with the simplest test.
+
+```cs
+[Test]
+public void EmptyCart_ShouldHaveTotalOfZero()
+{
+    var cart = new ShoppingCart();
+
+    Assert.Equal(0, cart.CalculateTotal());
+}
+```
+
+TODO: we should apply B I and others here, think about what and where, check https://www.youtube.com/watch?v=dYM8HEacJgs again
+
+---
+
+# Z - Zero
+
+Solve it with the simplest solution.
+
+```cs
+public class ShoppingCart
+{
+    public decimal CalculateTotal()
+    {
+        return 0;
+    }
+}
+```
+
+---
+
+# O - One
+
+Test behaviour for single item
+
+```cs
+[Test]
+public void EmptyCart_ShouldHaveTotalOfZero()
+{
+    var cart = new ShoppingCart();
+    shoppingCart.Add(new Item(10m))
+
+    Assert.Equal(0, cart.CalculateTotal());
+}
+```
+
+---
+
+# O - One
+
+Implement behaviour for single item
+
+```cs
+public class ShoppingCart
+{
+    private Item _item;
+
+    public void AddItem(Item item)
+    {
+      _item = item;
+    }
+
+    public decimal CalculateTotal()
+    {
+        return _items.Price;
+    }
+}
+
+//Implementation of Item
+...
+
+```
+
+---
+
+# M - Many 
+
+Test behaviour for multiple items
+
+```
+[Test]
+public void MultipleItems_ShouldCalculateCorrectTotal()
+{
+    var cart = new ShoppingCart();
+    cart.AddItem(new Item(10.0m));
+    cart.AddItem(new Item(5.0m));
+    
+    Assert.Equal(15.0m, cart.CalculateTotal());
+}
+```
+---
+
+# M - Many 
+
+Implement behaviour for multiple items
+
+```
+public class ShoppingCart
+{
+    private readonly List<Item> _items = new();
+
+    public void AddItem(Item item)
+    {
+        _items.Add(item);
+    }
+
+    public decimal CalculateTotal()
+    {
+        return _items.Sum(item => item.GetPrice());
+    }
+}
+
+//Implementation of Item
+...
+```
+---
+
+
+1. Do the simplest think that could possibly work, and start to get the wheels turning
+So how do we get started and how to make sure we don't forget test cases? Well, guided by ZOMBIES?
+
+Zero test: the simplest tests, or the post conditions to create (is null, is Empty)
+One test: the result contains one item
+Many: Generalization
+
+Boundary behaviours: Zero helps define the oundary condition and interface. tests is the first user of the interface
+Exercise Exceptional behaviour:
+Simple: Keep your tests simple and focused, should test only one thing. Simple scenarios, simple solutions
+
+- ZOMBIES impact on define interfaces 
+
+It is a nice side effect
+
+interfaces exists for the benefit for the client. We use the interface first before there is anything behnid it.
+The impls should not dictate the interface
+
+---
+
+"I don't know how my code is supposed to do? So i donno how to write tests? 
+Well if you dont know what your code is supposed to do, how could you write the code
+
+from XP
+-Spike: going through all the layers and discover what is needed to solve the problem end to end  
+-Walking skeleton: putting the pieces together and see what we can do in a reasonable way
+
+but then throw away, and start again, mock our dependencies then you can attack them with zombies
+
+---
 
 ## TEMP
 
@@ -188,7 +378,9 @@ class: center, middle
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
     </script>
     <script>
-      var slideshow = remark.create();
+      var slideshow = remark.create({  
+        highlightLanguage: 'cs',
+         highlightStyle: 'monokai'});
     </script>
   </body>
 </html>

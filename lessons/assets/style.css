@@ -13,8 +13,10 @@ h1, h2, h3 {
   font-weight: normal;
   color: white;
 }
-.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
-
+.remark-code, .remark-inline-code { 
+  background-color: black !important; /* Dark background */
+  color: #b1b1b1 !important; /* Light text color */
+ }
 /* Customize slide content */
 .remark-slide-content {
   font-size: 28px;
