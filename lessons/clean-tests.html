@@ -12,6 +12,469 @@ class: center, middle
 
 # Clean tests
 
+---
+
+class: center, middle
+
+#<span class="green-bg" style="text-align: center;">You can't have clean code without clean tests</span>
+
+---
+
+# Purpose of a test in TDD
+
+- Prove if the code works
+- Tell how the code works
+- They ensure testable design
+- They document business knowledge
+
+---
+
+# What is a TDD test?
+
+## Only one requirement
+- It must be fast
+- Runs within 50ms, ideally 10ms
+
+<div class="green-bg" style="text-align: center;">
+  A TDD tests reads like a story, containing all the info needed to grasp the story.
+</div>
+
+---
+
+class: center, middle
+
+# The characteristics of a clean test
+
+
+---
+# The characteristics of a clean test
+
+### Subjective
+- based on domain, techstack and team standards
+
+### Objective
+- language/stack agnostic
+
+---
+
+class: center, middle
+
+# Objective characteristics
+
+
+---
+
+# Descriptive test name
+
+Identiy what is broken
+
+Clean entry points for business behaviours
+
+<span class="red-bg">Bad examples:</span>
+
+- `CheckEmailSending`
+
+- `UserLoginTest`
+
+- `TestShoppintCartAddition`
+
+- `Test1`
+
+- `TestDepositMethod`
+
+
+---
+
+# GivenWhenThen template
+
+Given{Percondition}_when{Action}_then{Expectation}
+
+
+```
+GivenUserIsNotLoggedIn_whenUserLogsIn_thenUserIsLoggedInSuccessfully
+```
+
+```
+GivenInvalidCardData_whenOrderIsPurchased_thenReturnsCardIsInvalidError
+```
+
+```
+GivenAccountBalanceIs1000Euro_when100EuroIsDeposited_thenAccountBalanceIs1100Euro
+```
+
+---
+
+# ShouldWhen template
+
+{Action}_Should_{Expectation}_when_{Precondition}
+
+Should_{Expectation}_when_{Precondition}
+
+
+
+```
+ShouldHaveUserLoggedIn_whenUserLogsIn
+```
+
+```
+ShouldReturnCreditCardIsInvalidValidationError_whenTheOrderIsPurchasedWithInvalidCreditCardData
+
+```
+
+```
+CreateFarmShouldFail_whenFieldsAreMissing
+
+```
+
+---
+class: center, middle
+
+## Which naming template to use?
+
+---
+# Simple with no logic
+Cyclo complexity = 1
+
+<span class="red-bg">Avoid:</span>
+- if-else statements
+- for and while loops
+- switch cases
+
+<span class="green-bg">Solution:</span>
+- split up tests into multiple test cases
+- parameterized tests
+
+
+TODO: maybe it will be a smell, so we sould get rid of from ehre?!
+
+---
+# Meaningful namings
+
+### Tips:
+- Don’t pollute names with technical details
+- Use functional namings relating to the business domain
+- Use named constants for magic numbers/strings
+- Don't use custom abbreviations
+- Avoid noise and redundant words
+- Be explicit instead of implicit
+- Be consistent with concepts
+
+---
+
+# Structed with AAA pattern
+
+Arrange
+- test setup
+
+Act
+- execution of the system under test
+
+Assert
+- verify behaviour
+
+---
+# Structed with AAA pattern
+
+```cs
+[Test]
+public void PlayerScoreIsZero_WhenGameStarts()
+{
+    var player = new Player();
+
+    var score = player.GetScore();
+
+    score.Should().Be(0);
+}
+```
+
+---
+# Structed with AAA pattern
+
+Where are each parts?!
+
+
+```cs
+[Test]
+public void PlayerScoreIsZero_WhenGameStarts()
+{
+    var player = new Player();
+    
+    player.ScoreHit();
+    player.ScoreHit();
+    player.ScoreHit();
+
+    player.TakeDamage();
+
+    var score = player.GetScore();
+
+    score.Should().Be(0);
+}
+```
+
+---
+# Structed with AAA pattern
+
+Separate by comment and blank line
+
+```cs
+[Test]
+public void PlayerScoreIsZero_WhenGameStarts()
+{
+    //Arrange
+    var player = new Player();
+    
+    player.ScoreHit();
+    player.ScoreHit();
+    player.ScoreHit();
+
+    player.TakeDamage();
+
+    //Act
+    var score = player.GetScore();
+
+    //Assert
+    score.Should().Be(0);
+}
+```
+
+---
+
+# Follows F.I.R.S.T. principle
+
+F - Fast
+
+I - Independent
+
+R - Repeatable
+
+S - Self-validating
+
+T - Timely
+
+---
+
+---
+
+# Should not be fragile
+
+<div class="red-bg" style="text-align: center;">
+  Don't tests interface classes, functions and implementation details
+</div>
+
+<br>
+<div class="green-bg" style="text-align: center;">
+  Couple test to behaviours and public APIs
+</div>
+
+
+TODO: maybe this is also ssmell, remove if so
+---
+
+# Meaningful test data
+- Real life example
+- Representative data
+- Clean documentation
+
+---
+# Hide irrelevant data
+
+- Increases noise
+- Decreases readability
+
+Goal: hide what is irrelevant, and reveal what is important
+
+---
+
+# Hide irrelevant data 
+
+What is the relevant data?
+
+```
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = new Employee("1234A", "John", "Doe", new Address("934-111", "Hungary"));
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
+
+
+---
+
+# Hide irrelevant data - Fix #1
+
+Use dummy null values
+
+```
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = new Employee("1234A", null, null, null);
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
+
+---
+
+# Hide irrelevant data - Fix #2
+
+Extract to function
+
+```
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = CreateEmployeeWithId("1234A");
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
+
+---
+
+# Hide irrelevant data - Fix #3
+
+Use builder pattern
+
+```
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = new EmployeeBuilder()
+                              .WithId("1234A")
+                              .Build();
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
+
+---
+
+# Clean assertions
+
+Most important part of a test
+
+Ensures working code
+
+Capture domain knowledge 
+
+<pre>
+  <code>
+  [Test]
+  public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+  {
+      Employee employee = new EmployeeBuilder()
+                                .WithId("1234A")
+                                .Build();
+      
+      paymentService.DeliverPayTo(employee);
+      
+      <span class="red-bg">Assert.IsEqual(paymentInfoService.Get(employee.Id).payed, false);</span>
+  }
+  </code>
+</pre>
+
+
+---
+
+# Clean assertions
+
+Most important part of a test
+
+Ensures working code
+
+Capture domain knowledge 
+
+<pre>
+  <code>
+  [Test]
+  public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+  {
+      Employee employee = new EmployeeBuilder()
+                                .WithId("1234A")
+                                .Build();
+      
+      paymentService.DeliverPayTo(employee);
+      
+      <span class="red-bg">Assert.IsEqual(paymentInfoService.Get(employee.Id).payed, false);</span>
+      <span class="green-bg">AssertPaymentNotDeliveredTo(employee);</span>
+  }
+  </code>
+</pre>
+
+---
+# Dont follow DRY strictly
+
+- Don’t Repeat Yourself (DRY) is for duplicate knowledge
+- Different for production and test code
+- Production code: remove knowledge duplication
+- Test code: make tests self-contained
+
+---
+
+# Use case in webshop
+
+Given a shopping cart that has products with a total grand 50 
+
+When the total grand is calculated 
+
+Then it returns 50 as the total grand
+
+---
+
+# Bad Test
+
+```cs
+void ShoppingCartTest()
+{
+    var sc = new ShoppingCart();
+    sc.Add(new Product("id1", 10, "product 1", Category.Book));
+    sc.Add(new Product("id2", 15, "product 2", Category.Electronic));
+    sc.Add(new Product("id3", 25, "product 3", Category.Hardware));
+
+    var p = sc.Calc();
+    Assert.True(p == 50);
+}
+```
+
+---
+
+# Clean Test
+
+```cs
+void CalculatePriceShouldSumPrices_whenCartContainsMultipleProducts()
+{
+    // Arrange
+    var shoppingCart = new ShoppingCart();
+
+    shoppingCart.Add(Product().WithPrice(10));
+    shoppingCart.Add(Product().WithPrice(15));
+    shoppingCart.Add(Product().WithPrice(25));
+
+    // Act
+    var totalPrice = shoppingCart.CalculateTotalPrice();
+
+    // Assert
+    Assert.That(totalPrice).IsEqualTo(50);
+}
+}
+```
+---
+class: center, middle
+
+# The 7 most common test smells
+
+---
 One smell: mock what you dont own
 
 ---
@@ -30,7 +493,9 @@ A bullet cast from silver is often one of the few weapons that are effective aga
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
     </script>
     <script>
-      var slideshow = remark.create();
-    </script>
+      var slideshow = remark.create({  
+        highlightLanguage: 'cs',
+         highlightStyle: 'monokai', highlightLines: true});    
+         </script>
   </body>
 </html>

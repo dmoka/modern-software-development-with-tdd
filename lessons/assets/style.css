@@ -24,6 +24,10 @@ h1, h2, h3 {
   color: white;
 }
 
+.remark-code-line-highlighted {
+  background-color: #ff0000;
+}
+
 .green-bg {
   background-color: green;
 }
