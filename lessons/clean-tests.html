@@ -253,8 +253,6 @@ T - Timely
 
 ---
 
----
-
 # Should not be fragile
 
 <div class="red-bg" style="text-align: center;">
@@ -275,87 +273,15 @@ TODO: maybe this is also ssmell, remove if so
 - Representative data
 - Clean documentation
 
----
-# Hide irrelevant data
+<span class="red-bg">Meaningless:</span>
 
-- Increases noise
-- Decreases readability
-
-Goal: hide what is irrelevant, and reveal what is important
-
----
-
-# Hide irrelevant data 
-
-What is the relevant data?
-
-```
-[Test]
-public void PaymentShouldFail_WhenEmployeeHasInvalidId()
-{
-    Employee employee = new Employee("1234A", "John", "Doe", new Address("934-111", "Hungary"));
-    
-    paymentService.DeliverPayTo(employee);
-    
-    AssertPaymentNotDeliveredTo(employee);
-}
+```cs
+new Employee { Name = "Employee", City = "Some city", Address = "Some address" };
 ```
 
-
----
-
-# Hide irrelevant data - Fix #1
-
-Use dummy null values
-
-```
-[Test]
-public void PaymentShouldFail_WhenEmployeeHasInvalidId()
-{
-    Employee employee = new Employee("1234A", null, null, null);
-    
-    paymentService.DeliverPayTo(employee);
-    
-    AssertPaymentNotDeliveredTo(employee);
-}
-```
-
----
-
-# Hide irrelevant data - Fix #2
-
-Extract to function
-
-```
-[Test]
-public void PaymentShouldFail_WhenEmployeeHasInvalidId()
-{
-    Employee employee = CreateEmployeeWithId("1234A");
-    
-    paymentService.DeliverPayTo(employee);
-    
-    AssertPaymentNotDeliveredTo(employee);
-}
-```
-
----
-
-# Hide irrelevant data - Fix #3
-
-Use builder pattern
-
-```
-[Test]
-public void PaymentShouldFail_WhenEmployeeHasInvalidId()
-{
-    Employee employee = new EmployeeBuilder()
-                              .WithId("1234A")
-                              .Build();
-    
-    paymentService.DeliverPayTo(employee);
-    
-    AssertPaymentNotDeliveredTo(employee);
-}
+<span class="green-bg">Meaningful:</span>
+```cs
+new Employee { Name = "Jason Leboski", City = "Amsterdam", Address = "Herengracht 123" };
 ```
 
 ---
@@ -379,7 +305,7 @@ Capture domain knowledge
       
       paymentService.DeliverPayTo(employee);
       
-      <span class="red-bg">Assert.IsEqual(paymentInfoService.Get(employee.Id).payed, false);</span>
+      Assert.IsEqual(paymentInfoService.Get(employee.Id).Payed, false);
   }
   </code>
 </pre>
@@ -467,7 +393,7 @@ void CalculatePriceShouldSumPrices_whenCartContainsMultipleProducts()
     // Assert
     Assert.That(totalPrice).IsEqualTo(50);
 }
-}
+
 ```
 ---
 class: center, middle
@@ -475,18 +401,398 @@ class: center, middle
 # The 7 most common test smells
 
 ---
-One smell: mock what you dont own
+# Smell #1 - Fragile tests
+
+❌ Problem
+
+Your tests fail to compile when you change the production code.
+
+🔃 Cause
+
+Your tests are coupled to low-level implementation details such as internal functions or classes.
+
+---
+# Smell #1 - Fragile tests
+
+Coupled to implementation details like `FindById(..)` and `Store(..)` methods.
+
+```cs
+[Test]
+public void UserServiceShouldActivateUser()
+{
+    // Arrange
+    var user = new User();
+
+    var userStoreMock = new Mock<IUserStore>();
+*    userStoreMock.Setup(mock => mock.FindById(It.IsAny<Guid>())).Returns(user);
+
+    var userService = new UserService(userStoreMock.Object);
+
+    // Act
+    userService.Activate(user);
+
+    // Assert
+*    userStoreMock.Verify(x => x.Store(It.Is<User>(u => u.IsActive)), Times.Once);
+}
+```
+
+---
+# Smell #1 - Fragile tests
+
+✅ Solution: couple tests to the behaviors of the public APIs
+
+```cs
+[Test]
+public void UserServiceShouldActivateUser()
+{
+    // Arrange
+    var user = new User();
+    var userStoreFake = new UserStoreFake(user);
+
+    var userService = new UserService(userStoreFake);
+
+    // Act
+    userService.Activate(user);
+
+    // Assert
+    user = userStoreFake.Users.First();
+    Check.That(user.IsActive).IsTrue();
+}
+```
+
+---
+# Smell #2 - Eager tests
+
+❌ Problem
+
+The test is hard to understand as it verifies too much functionality in a single test method.
+
+🔃 Cause
+
+Having multiple Act and Assert parts within a test.
+
+---
+# Smell #2 - Eager tests
+
+Multiple behaviors are covered
+
+```cs
+public void TestBankAccount()
+{
+    string validAccountNumber = "123456789";
+    decimal initialBalance = 1000m;
+    BankAccount account = new BankAccount(validAccountNumber, initialBalance);
+
+    account.AccountNumber.Should().Be(validAccountNumber);
+    account.Balance.Should().Be(initialBalance);
+    account.IsActive.Should().BeTrue();
+
+    account.Deposit(500m);
+    account.Balance.Should().Be(1500m);
+
+    decimal withdrawalAmount = 1600m;
+    Action act = () => account.Withdraw(withdrawalAmount);
+    act.Should().Throw<InvalidOperationException>();
+
+    withdrawalAmount = 500m;
+    account.Withdraw(withdrawalAmount);
+    account.Balance.Should().Be(1000m);
+}
+```
+---
+# Smell #2 - Eager tests
+
+✅ Solution: Split up the test into multiple test cases
+
+```cs
+[Test]
+public void ActiveAccountShouldBeInitialized_WhenConstructed(){...}
+
+[Test]
+public void ShouldIncreaseBalance_WhenDepositIsMade(){...}
+
+[Test]
+public void ShouldReturnError_WhenWithdrawAmountExceedsBalance(){...}
+
+[Test]
+public void ShouldDecreaseBalance_WhenValidWithdrawIsMade(){...}
+
+```
+
+---
+# Smell #3 - Mistery Guest
+
+❌ Problem
+
+The reader must look outside the test to understand the behavior being verified.
+
+🔃 Cause
+
+Some global context is used to initialize data for reusing objects and avoiding duplication.
+
+---
+# Smell #3 - Mistery Guest
+
+We don’t have any info about the `User`:
+
+```cs
+[Test]
+public void ContactShouldContainCombinedNameAndAddress()
+{
+    // Act
+    var contact = user.GetContact();
+
+    // Assert
+    contact.Should().Be("John Smith, 123 Main St, Springfield, 12345");
+}
+  ```
+---
+# Smell #3 - Mistery Guest
+
+✅ Solution: Include all the data.
+
+```cs
+[Test]
+public void ContactShouldContainCombinedNameAndAddress()
+{
+    var user = new User
+    {
+        FirstName = "John",
+        LastName = "Smith",
+        Address = new Address
+        {
+            Street = "123 Main St",
+            City = "Springfield",
+            ZipCode = "12345"
+        }
+    };
+
+    var contact = user.GetContact();
+
+    contact.Should().Be("John Smith, 123 Main St, Springfield, 12345");
+}
+```
+
+---
+# Smell #4 - Test with irrelevant data
+
+❌ Problem
+
+It's hard to tell which data affects the test result.
+
+🔃 Cause
+
+There is too much irrelevant information in the test case.
+
+---
+# Smell #4 - Test with irrelevant data
+
+Irrelevant data increases noise and decreases readability
+
+```cs
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = new Employee("1234A", "John", "Doe", new Address("934-111", "Hungary"));
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
+---
+
+# Irrelevant data - Fix #1
+
+Use dummy null values
+
+```
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = new Employee("1234A", null, null, null);
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
 
 ---
 
-# Silver bullet
+# Irrelevant data - Fix #2
 
-A bullet cast from silver is often one of the few weapons that are effective against a werewolf or witch - Wikipedia
+Extract to function
 
-<div style="text-align: center;">
-  <img src="./assets/silver-bullet.png" alt="Example Image" style="width:500px;">
-</div>
+```
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = CreateEmployeeWithId("1234A");
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
 
+---
+
+# Irrelevant data - Fix #3
+
+Use builder pattern
+
+```
+[Test]
+public void PaymentShouldFail_WhenEmployeeHasInvalidId()
+{
+    Employee employee = new EmployeeBuilder()
+                              .WithId("1234A")
+                              .Build();
+    
+    paymentService.DeliverPayTo(employee);
+    
+    AssertPaymentNotDeliveredTo(employee);
+}
+```
+
+---
+# Smell #5 - Test with logic
+
+❌ Problem
+
+Tests are too complex to understand and prone to bugs.
+
+🔃 Cause
+
+You use logic in tests such as if-else statements, loops, or switch cases.
+
+---
+
+# Smell #5 - Test with logic
+
+```cs
+[Test]
+public void MembershipFeeShouldBeCalculated_withDifferentJoinDates()
+{
+    var members = new List<GymMember>
+    {
+        new GymMember("Jason Statham", new DateTime(2021, 8, 22)),
+        new GymMember("Steven Seagal", new DateTime(2024, 3, 11))
+    };
+
+    foreach (var member in members)
+    {
+        if (member.JoinedBefore(new DateTime(2022, 1, 1)))
+        {
+            var fee = MembershipFeeCalculator.Calculate(member);
+            Check.That(fee).IsEqualTo(new Fee(100, "EUR"));
+        }
+        else
+        {
+            var fee = MembershipFeeCalculator.Calculate(member);
+            Check.That(fee).IsEqualTo(new Fee(150, "EUR"));
+        }
+    }
+}
+
+
+```
+
+---
+
+# Smell #5 - Test with logic
+
+✅ Solution: Avoid any logic in your test code!
+
+```cs
+[TestCase("Jason Statham", "2021-08-22", 100)]
+[TestCase("Steven Seagal", "2024-03-11", 150)]
+public void MembershipFeeShouldBeCalculatedCorrectly(
+    string name,
+    DateTime joinDate,
+    decimal expectedFee)
+{
+    var member = new GymMember(name, joinDate);
+
+    var fee = MembershipFeeCalculator.Calculate(member);
+
+    Check.That(fee).IsEqualTo(new Fee(expectedFee, "EUR"));
+}
+
+```
+???
+Once you feel the need for these, it's a smell that you test more than one thing. You can get rid of test logic by splitting up your tests into multiple test cases.
+
+Another option is to use parameterized tests to declare your test cases and to avoid duplication:
+
+
+
+---
+
+# Smell #6 - Mocking 3rd party libraries
+
+❌ Symptom
+
+Mocking 3rd-party libraries directly.
+
+🔃 Cause
+
+Mocking libraries are easy to misuse.
+```
+List<UserProfile> GetUserProfiles()
+  {
+      _azureAPI.Authorize();  // Leads to complex test setup
+      let azureUsers = _azureAPI.GetUsers();  // Tight coupling
+  
+      let profiles = ConvertToUserProfiles(azureUsers);
+
+      return FormatProfiles(profiles);
+  }
+  ```
+
+---
+# Smell #6 - Test with logic
+
+✅ Solution: Mock your dependencies using one of the five test doubles.
+
+```
+interface IUsersService
+{
+    IList<User> GetUsers();  // Expose only what you need
+}
+
+List<UserProfile> GetUserProfiles()
+{
+    let users = _usersService.GetUsers();  // Easily mockable
+
+    let profiles = ConvertToUserProfiles(users);
+    return FormatProfiles(profiles);
+}
+
+```
+
+---
+
+# Smell #7 - Slow tests
+
+❌ Symptom
+
+Your unit tests take minutes to run.
+
+🔃 Cause
+
+You use real and time-consuming dependencies when you run your tests.
+
+✅ Solution
+
+Mock your dependencies using one of the five test doubles.
+
+---
+# TODO: generate code for fixing these
+Hidden 21 code smells
+
+---
 
 
     </textarea>
