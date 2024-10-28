@@ -195,9 +195,12 @@ class: center, middle
 ---
 # Z.O.M.B.I.E.S
 
-### Z.O.M. - complexity of tests
-### M.B.I. - give the order in which to build test cases
-### S. - Tells developer to write Simple scenarios, simple solutions
+### Z.O.M. - Complexity of tests
+### B.I.E - Test cases for each
+### S. - Simple scenarios, simple solutions
+
+???
+S.  - tells developer to write Simple scenarios, simple solutions
 
 ---
 
@@ -229,6 +232,15 @@ public void EmptyCart_ShouldHaveTotalOfZero()
 }
 ```
 
+Boundary (B) behaviour is defined.
+
+Interface (I) are defined:
+
+- Interfaces exists for the benefit for the client
+- We use the interface first before there is anything behind it
+- The impls should not dictate the interface
+
+???
 TODO: we should apply B I and others here, think about what and where, check https://www.youtube.com/watch?v=dYM8HEacJgs again
 
 ---
@@ -255,14 +267,17 @@ Test behaviour for single item
 
 ```cs
 [Test]
-public void EmptyCart_ShouldHaveTotalOfZero()
+public void CartWithOneItem_shouldHaveTotalOfItemPrice()
 {
     var cart = new ShoppingCart();
-    shoppingCart.Add(new Item(10m))
+    shoppingCart.AddItem(new Item(10m))
 
-    Assert.Equal(0, cart.CalculateTotal());
+    Assert.Equal(10, cart.CalculateTotal());
 }
 ```
+
+Interface (I) is defined:
+- AddItem(...)
 
 ---
 
@@ -290,22 +305,47 @@ public class ShoppingCart
 ...
 
 ```
+---
+class: center, middle
+
+#How about Exceptional Behaviour?
+
+---
+
+# E - Exceptional Behaviour for One item
+
+Test behaviour for single item
+
+```cs
+[Test]
+public void ShouldThrowError_whenItemSpecifiedWithZeroPrice()
+{
+    var cart = new ShoppingCart();
+    
+    var addItemAction = () => cart.AddItem(new Item(0m));
+
+    addItemAction.Should().Throw<ArgumentException>();
+}
+```
 
 ---
 
 # M - Many 
 
-Test behaviour for multiple items
+Generaliation: Test behaviour for multiple items
 
 ```
 [Test]
 public void MultipleItems_ShouldCalculateCorrectTotal()
 {
     var cart = new ShoppingCart();
-    cart.AddItem(new Item(10.0m));
+    cart.AddItem(new Item(1.0m));
+    cart.AddItem(new Item(2.0m));
+    cart.AddItem(new Item(3.0m));
+    cart.AddItem(new Item(4.0m));
     cart.AddItem(new Item(5.0m));
     
-    Assert.Equal(15.0m, cart.CalculateTotal());
+    Assert.Equal(15.0m, cart.CalculateTotal());    
 }
 ```
 ---
@@ -335,36 +375,109 @@ public class ShoppingCart
 ```
 ---
 
+# E - Exceptional Behaviour for Many items
 
-1. Do the simplest think that could possibly work, and start to get the wheels turning
-So how do we get started and how to make sure we don't forget test cases? Well, guided by ZOMBIES?
+Test exceptional behaviour for multiple items
 
-Zero test: the simplest tests, or the post conditions to create (is null, is Empty)
-One test: the result contains one item
-Many: Generalization
+```
+[Test]
+public void AddingMoreThanFiveItems_ShouldThrowException()
+{
+    // Arrange
+    var cart = new ShoppingCart();
 
-Boundary behaviours: Zero helps define the oundary condition and interface. tests is the first user of the interface
-Exercise Exceptional behaviour:
-Simple: Keep your tests simple and focused, should test only one thing. Simple scenarios, simple solutions
+    cart.AddItem(new Item(10.0m));
+    cart.AddItem(new Item(10.0m));
+    cart.AddItem(new Item(10.0m));
+    cart.AddItem(new Item(10.0m));
+    cart.AddItem(new Item(10.0m));
+    
+    // Act
+    var action = () => cart.AddItem(new Item(10.0m));
 
-- ZOMBIES impact on define interfaces 
+    // Assert
+    action.Should().Throw<InvalidOperationException>();
+}
+```
+---
+# E - Exceptional Behaviour for Many items
 
-It is a nice side effect
+Implement exceptional behaviour for multiple items
 
-interfaces exists for the benefit for the client. We use the interface first before there is anything behnid it.
-The impls should not dictate the interface
+```
+public class ShoppingCart
+{
+    private const int MaxItems = 5;
+    private readonly List<Item> _items = new();
+
+    public void AddItem(Item item)
+    {
+        if (_items.Count >= MaxItems)
+        {
+            throw new InvalidOperationException("Cart cannot contain more than 5 items");
+        }
+        
+        _items.Add(item);
+    }
+
+    public decimal CalculateTotal()
+    {
+        return _items.Sum(item => item.GetPrice());
+    }
+}
+```
+
+---
+# S  - Simple scenarios, simple solutions
+
+- Keep your tests focused
+- Test only one thing
+- Single condition, path or behaviour
+
+```
+[Test]
+public void EmptyCart_ShouldHaveTotalOfZero() {...}
+
+[Test]
+public void CartWithOneItem_shouldHaveTotalOfItemPrice() {...}
+
+[Test]
+public void ShouldThrowError_whenItemSpecifiedWithZeroPrice() {...}
+
+[Test]
+public void MultipleItems_ShouldCalculateCorrectTotal() {...}
+
+[Test]
+public void AddingMoreThanFiveItems_ShouldThrowException() {...}
+
+```
 
 ---
 
-"I don't know how my code is supposed to do? So i donno how to write tests? 
-Well if you dont know what your code is supposed to do, how could you write the code
+class: center, middle
 
-from XP
--Spike: going through all the layers and discover what is needed to solve the problem end to end  
--Walking skeleton: putting the pieces together and see what we can do in a reasonable way
+# How to write tests if I don't know what my code is supposed to do?
 
-but then throw away, and start again, mock our dependencies then you can attack them with zombies
+---
 
+class: center, middle
+
+# If you dont know what your code is supposed to do, how could you write the code?!
+
+---
+
+# 2 practices from Extreme Programming (XP)
+
+1.Learn and explore:
+- Spike: going through all the layers and discover what is needed to solve the problem end to end  
+- Walking skeleton : putting the pieces together and see what we can do in a reasonable way
+
+2.Throw it away
+- Start again with TDD
+- When you throw away your code, you throw away your typing not your thinking
+
+---
+TODO: add example for Product domain, some searcher service etc, so we can use zombies and the killing features
 ---
 
 ## TEMP
