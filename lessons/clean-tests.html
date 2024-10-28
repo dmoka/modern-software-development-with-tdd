@@ -398,70 +398,11 @@ void CalculatePriceShouldSumPrices_whenCartContainsMultipleProducts()
 ---
 class: center, middle
 
-# The 7 most common test smells
+# The 5 most common test smells
+
 
 ---
-# Smell #1 - Fragile tests
-
-❌ Problem
-
-Your tests fail to compile when you change the production code.
-
-🔃 Cause
-
-Your tests are coupled to low-level implementation details such as internal functions or classes.
-
----
-# Smell #1 - Fragile tests
-
-Coupled to implementation details like `FindById(..)` and `Store(..)` methods.
-
-```cs
-[Test]
-public void UserServiceShouldActivateUser()
-{
-    // Arrange
-    var user = new User();
-
-    var userStoreMock = new Mock<IUserStore>();
-*    userStoreMock.Setup(mock => mock.FindById(It.IsAny<Guid>())).Returns(user);
-
-    var userService = new UserService(userStoreMock.Object);
-
-    // Act
-    userService.Activate(user);
-
-    // Assert
-*    userStoreMock.Verify(x => x.Store(It.Is<User>(u => u.IsActive)), Times.Once);
-}
-```
-
----
-# Smell #1 - Fragile tests
-
-✅ Solution: couple tests to the behaviors of the public APIs
-
-```cs
-[Test]
-public void UserServiceShouldActivateUser()
-{
-    // Arrange
-    var user = new User();
-    var userStoreFake = new UserStoreFake(user);
-
-    var userService = new UserService(userStoreFake);
-
-    // Act
-    userService.Activate(user);
-
-    // Assert
-    user = userStoreFake.Users.First();
-    Check.That(user.IsActive).IsTrue();
-}
-```
-
----
-# Smell #2 - Eager tests
+# Smell #1 - Eager tests
 
 ❌ Problem
 
@@ -472,7 +413,7 @@ The test is hard to understand as it verifies too much functionality in a single
 Having multiple Act and Assert parts within a test.
 
 ---
-# Smell #2 - Eager tests
+# Smell #1 - Eager tests
 
 Multiple behaviors are covered
 
@@ -500,7 +441,7 @@ public void TestBankAccount()
 }
 ```
 ---
-# Smell #2 - Eager tests
+# Smell #1 - Eager tests
 
 ✅ Solution: Split up the test into multiple test cases
 
@@ -520,7 +461,7 @@ public void ShouldDecreaseBalance_WhenValidWithdrawIsMade(){...}
 ```
 
 ---
-# Smell #3 - Mistery Guest
+# Smell #2 - Mistery Guest
 
 ❌ Problem
 
@@ -531,7 +472,7 @@ The reader must look outside the test to understand the behavior being verified.
 Some global context is used to initialize data for reusing objects and avoiding duplication.
 
 ---
-# Smell #3 - Mistery Guest
+# Smell #2 - Mistery Guest
 
 We don’t have any info about the `User`:
 
@@ -547,7 +488,7 @@ public void ContactShouldContainCombinedNameAndAddress()
 }
   ```
 ---
-# Smell #3 - Mistery Guest
+# Smell #2 - Mistery Guest
 
 ✅ Solution: Include all the data.
 
@@ -574,7 +515,7 @@ public void ContactShouldContainCombinedNameAndAddress()
 ```
 
 ---
-# Smell #4 - Test with irrelevant data
+# Smell #3 - Test with irrelevant data
 
 ❌ Problem
 
@@ -657,7 +598,7 @@ public void PaymentShouldFail_WhenEmployeeHasInvalidId()
 ```
 
 ---
-# Smell #5 - Test with logic
+# Smell #4 - Test with logic
 
 ❌ Problem
 
@@ -669,7 +610,7 @@ You use logic in tests such as if-else statements, loops, or switch cases.
 
 ---
 
-# Smell #5 - Test with logic
+# Smell #4 - Test with logic
 
 ```cs
 [Test]
@@ -701,7 +642,7 @@ public void MembershipFeeShouldBeCalculated_withDifferentJoinDates()
 
 ---
 
-# Smell #5 - Test with logic
+# Smell #4 - Test with logic
 
 ✅ Solution: Avoid any logic in your test code!
 
@@ -726,55 +667,9 @@ Once you feel the need for these, it's a smell that you test more than one thing
 
 Another option is to use parameterized tests to declare your test cases and to avoid duplication:
 
-
-
 ---
 
-# Smell #6 - Mocking 3rd party libraries
-
-❌ Symptom
-
-Mocking 3rd-party libraries directly.
-
-🔃 Cause
-
-Mocking libraries are easy to misuse.
-```
-List<UserProfile> GetUserProfiles()
-  {
-      _azureAPI.Authorize();  // Leads to complex test setup
-      let azureUsers = _azureAPI.GetUsers();  // Tight coupling
-  
-      let profiles = ConvertToUserProfiles(azureUsers);
-
-      return FormatProfiles(profiles);
-  }
-  ```
-
----
-# Smell #6 - Test with logic
-
-✅ Solution: Mock your dependencies using one of the five test doubles.
-
-```
-interface IUsersService
-{
-    IList<User> GetUsers();  // Expose only what you need
-}
-
-List<UserProfile> GetUserProfiles()
-{
-    let users = _usersService.GetUsers();  // Easily mockable
-
-    let profiles = ConvertToUserProfiles(users);
-    return FormatProfiles(profiles);
-}
-
-```
-
----
-
-# Smell #7 - Slow tests
+# Smell #5 - Slow tests
 
 ❌ Symptom
 
