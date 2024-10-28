@@ -120,7 +120,7 @@ triangulation: it is a process to find a coordinate. It is the same in softwarte
 - Focusing only one thing at a time
 
 <div class="green-bg" style="text-align: center;">
-  Test-Driven Development is a way of managing fear during programming.
+  "Test-Driven Development is a way of managing fear during programming" - Kent Beck
 </div>
 <br>
 
@@ -173,7 +173,7 @@ And this is probably the reason why most developers don’t like testing and don
 ---
 class: center, middle
 
-# ZOMBIES
+# Z.O.M.B.I.E.S.
 
 ---
 class: center, middle
@@ -190,13 +190,14 @@ class: center, middle
 ### M - Many (or more complex)
 ### B - Boundary behaviours
 ### I - Interface Definition
+### E - Exceptional behaviours
 ### S - Simple scenarios, simple solutions
 
 ---
 # Z.O.M.B.I.E.S
 
 ### Z.O.M. - Complexity of tests
-### B.I.E - Test cases for each
+### B.I.E. - Test cases for each
 ### S. - Simple scenarios, simple solutions
 
 ???
@@ -206,15 +207,14 @@ S.  - tells developer to write Simple scenarios, simple solutions
 
 # Shopping Cart Requirements
 
-TODO:
-Core Features:
+### Core Features:
 1. Allow adding items to a shopping cart
 2. Calculate the total price of all items in the cart
 
-Business Rules:
+### Business Rules:
 1. An empty cart should have a total of zero
-2. Items can have a price of zero (free items)
-3. The total price is the sum of all item prices
+2. Items can't have a price of zero 
+3. Max number of items of a cart is 5
 
 ---
 
@@ -234,7 +234,7 @@ public void EmptyCart_ShouldHaveTotalOfZero()
 
 Boundary (B) behaviour is defined.
 
-Interface (I) are defined:
+Interface (I) is defined:
 
 - Interfaces exists for the benefit for the client
 - We use the interface first before there is anything behind it
@@ -247,7 +247,7 @@ TODO: we should apply B I and others here, think about what and where, check htt
 
 # Z - Zero
 
-Solve it with the simplest solution.
+Solve it with the simplest solution
 
 ```cs
 public class ShoppingCart
@@ -456,7 +456,7 @@ public void AddingMoreThanFiveItems_ShouldThrowException() {...}
 
 class: center, middle
 
-# How to write tests if I don't know what my code is supposed to do?
+# How to write tests if I <span class="red-bg">don't know</span> what my code is supposed to do?
 
 ---
 
@@ -474,17 +474,25 @@ class: center, middle
 
 2.Throw it away
 - Start again with TDD
-- When you throw away your code, you throw away your typing not your thinking
 
----
-TODO: add example for Product domain, some searcher service etc, so we can use zombies and the killing features
----
-
-## TEMP
-
-<div style="text-align: center;">
-  <img src="./assets/tdd-design1.png" alt="Example Image" style="width:500px;">
+<div class="green-bg" style="text-align: center;">
+  When you throw away your code, you throw away your typing, not your thinking
 </div>
+
+
+---
+
+# What if I have many test case in mind?
+
+### <span class="green-bg"> Use Task-List pattern</span>
+- Sticky note or in code comment
+- Write down the test cases you have in mind
+- Keep the list updated
+
+---
+
+### TODO: add example for Product domain, some searcher service etc, so we can use zombies and the killing features
+---
 
 
     </textarea>
