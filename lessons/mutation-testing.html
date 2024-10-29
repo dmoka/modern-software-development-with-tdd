@@ -69,6 +69,14 @@ Artifical bugs
 Created both manually and by frameworks
 
 ---
+
+# Code coverage vs Mutation Testing
+
+Code Coverage: how much of the code is executed
+
+Mutation Testing: how much of the code is asserted
+
+---
 # Code coverage vs Mutation Testing
 
 Code Coverage: how much the bread is covered
@@ -78,6 +86,7 @@ Mutation Testing: what the bread covered with
 <div style="text-align: center;">
   <img src="./assets/nutella.webp" alt="Example Image" style="width:500px;">
 </div>
+
 
 ---
 # Example
@@ -129,20 +138,103 @@ public bool IsUserOldEnough(User user) {
 
 # Type of Mutation
 
-TODO: do example one by one
-
 Operator Mutations
-- e.g., replacing "+" with "-"
 
 Conditional Mutations
-- e.g., negating booleans
 
 Statement mutation
-- e.g., deleting a line of code
 
 Value mutation
-- e.g., altering a function's return value
 
+<div class= "green-bg" style="text-align: center;">
+  Any code change without compilation error.
+</div>
+
+---
+# Operator Mutations
+
+```
+decimal CalculateInterest(decimal principal, decimal rate)
+{
+    return principal * rate;
+}
+```
+
+---
+
+# Operator Mutations
+
+```
+decimal CalculateInterest(decimal principal, decimal rate)
+{
+    return principal / rate; 
+}
+
+```
+---
+# Conditional Mutations
+
+```
+bool IsHighValueTransaction(decimal amount, decimal threshold)
+{
+    return amount >= threshold;
+}
+```
+---
+
+# Conditional Mutations
+
+```
+bool IsHighValueTransaction(decimal amount, decimal threshold)
+{
+    return amount < threshold;
+}
+```
+
+---
+
+# Statement Mutations
+
+```
+void ProcessTransaction(User user, decimal amount)
+{
+    LogTransaction(amount);
+    UpdateBalance(amount);
+    NotifyUser(user, amount);
+}
+```
+---
+
+# Statement Mutations
+
+```
+void ProcessTransaction(User user, decimal amount)
+{
+    LogTransaction(amount);
+*   UpdateBalance(amount);
+    NotifyUser(user, amount);
+}
+```
+---
+
+# Value Mutation
+
+```
+bool IsEligibleForSeniorAccount(int age)
+{
+    return age >= 60; 
+}
+```
+---
+
+# Value Mutation
+
+```
+bool IsEligibleForSeniorAccount(int age)
+{
+    return age >= 18; 
+}
+```
 ---
 
 # Mutation Score
@@ -162,9 +254,88 @@ $$
 
 ---
 class: center, middle
+
+# Demo time: Mutation Testing in Action
+---
+
+class: center, middle
+
+# What is the ultimate solution?
+
+---
+
+class: center, middle
+
+# <span class="green-bg">Test-Driven Development</span>
+
 ---
 
 
+class: center, middle
+
+# Law #1
+
+## You are not allowed to write any production code unless it is to make a failing unit test pass
+
+##In other words: 
+<span class="green-bg">Start with a failing test</span>
+
+---
+
+class: center, middle
+
+# Law #2
+
+## You are not allowed to write any more of a unit test than is sufficient to fail, and compilation failures are failures
+
+## In other words: 
+<span class="green-bg">Stop writing your test as soon as it fails or doesn't compile</span>
+
+---
+
+class: center, middle
+
+# Law #3
+
+##You are not allowed to write any more production code than is sufficient to pass the one failing unit test
+
+## In other words: 
+<span class="green-bg">Stop writing production code as soon as the test passes</span>
+---
+
+# TDD leads to 100% mutation score
+
+Ensured by the laws of TDD
+- 1st law: We only write code if there is a Test
+- 3rd law: We don’t write more code than sufficient to pass the failing test
+
+Seeing the test failing.
+
+
+<div class= "orange-bg" style="text-align: center;">
+  Coverage tools only for quality checks
+</div>
+
+---
+# Conclusion
+
+Without TDD
+- you need to use code coverage tools heavily
+
+With TDD
+- you need coverage tools only for quality checks
+
+
+<div class= "green-bg" style="text-align: center;">
+  TDD is the safest and fastest way to write
+</div>
+
+---
+class: center, middle
+
+# TDD and Mutation testing in action
+
+---
 # 
 
 ASD
