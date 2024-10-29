@@ -20,8 +20,9 @@ class: center, middle
 
 ---
 
-# Purpose of a test in TDD
+# Tests are first class-class citiezes
 
+They:
 - Prove if the code works
 - Tell how the code works
 - They ensure testable design
@@ -626,7 +627,6 @@ void ShoppingCartTest()
     sc.Add(new Product("id1", 10, "product 1", Category.Book));
     sc.Add(new Product("id2", 15, "product 2", Category.Electronic));
     sc.Add(new Product("id3", 25, "product 3", Category.Hardware));
-
     var p = sc.Calc();
     Assert.True(p == 50);
 }
