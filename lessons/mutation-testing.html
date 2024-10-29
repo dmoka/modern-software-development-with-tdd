@@ -4,6 +4,8 @@
     <title>Title</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="./assets/style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
   </head>
   <body>
     <textarea id="source">
@@ -13,7 +15,155 @@ class: center, middle
 # Mutation Testing in Action
 
 ---
-TODO: also show mutations in slidesheet
+
+# Code Coverage
+Misleading metric
+
+- Detects untested area
+- Tells nothing about tested area
+
+Percentage of your code executed by your tests
+
+No behaviours
+
+
+<div class="red-bg" style="text-align: center;">
+  You can have 100% code coverage with no assertions
+</div>
+
+---
+# 100% Coverage without assertions
+
+1. Imagine you have a code with 100% coverage
+2. Now imagine deleting all assertions
+3. Run your code coverage tool again
+---
+# 100% Coverage without assertions
+
+1. Imagine you have a code with 100% coverage
+2. Now imagine deleting all assertions
+3. Run your code coverage tool again
+
+<div class="red-bg" style="text-align: center;">
+  The result? 100% coverage
+</div>
+
+---
+class: center, middle
+
+# How can we measure the quality of our tests?
+
+---
+
+class: center, middle
+
+# Mutation Testing
+
+---
+# Mutation Testing
+
+Modified versions of source code - mutants
+
+Artifical bugs
+
+Created both manually and by frameworks
+
+---
+# Code coverage vs Mutation Testing
+
+Code Coverage: how much the bread is covered
+
+Mutation Testing: what the bread covered with
+
+<div style="text-align: center;">
+  <img src="./assets/nutella.webp" alt="Example Image" style="width:500px;">
+</div>
+
+---
+# Example
+
+```
+public bool IsUserOldEnough(User user) {
+  return user.Age >= 18;
+}
+```
+
+---
+# Example - Mutation # 1
+
+```
+public bool IsUserOldEnough(User user) {
+  return user.Age > 18;
+}
+```
+
+---
+
+# Example - Mutation # 2
+
+```
+public bool IsUserOldEnough(User user) {
+  return user.Age < 18;
+}
+```
+
+---
+# Example - Mutation # 3
+
+```
+public bool IsUserOldEnough(User user) {
+  return true;
+}
+```
+
+---
+
+# Example - Mutation # 3
+
+```
+public bool IsUserOldEnough(User user) {
+  return false;
+}
+```
+---
+
+# Type of Mutation
+
+TODO: do example one by one
+
+Operator Mutations
+- e.g., replacing "+" with "-"
+
+Conditional Mutations
+- e.g., negating booleans
+
+Statement mutation
+- e.g., deleting a line of code
+
+Value mutation
+- e.g., altering a function's return value
+
+---
+
+# Mutation Score
+
+Measuring the quality of the tests
+
+For every mutant we run all our tests and check if they fail or not
+
+<span class="green-bg"> Killed Mutant</span>: At least one failing test
+
+<span class="red-bg"> Surviving Mutant</span>: No failing test
+
+$$
+\text{Mutation Score} = \frac{\text{Number of Killed Mutants}}{\text{Number of All Mutants}} \times 100
+$$
+
+
+---
+class: center, middle
+---
+
 
 # 
 
@@ -28,7 +178,7 @@ ASD
     <script>
       var slideshow = remark.create({  
         highlightLanguage: 'cs',
-         highlightStyle: 'monokai'});
+         highlightStyle: 'monokai', highlightLines: true});
     </script>
   </body>
 </html>
