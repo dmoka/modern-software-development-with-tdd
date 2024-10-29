@@ -522,14 +522,201 @@ List<UserProfile> GetUserProfiles()
 
 ```
 
+TODO: add Test
+TODO: maybe this goes after london/chiavo
+
 ---
 class: center, middle
 
 # The two schools of TDD
 ---
 
+# Goals of both schools
+
+- Working in baby steps
+- Managing complexity
+- Eliminating fear
+- Striving for simple design
+
+---
+
+# Chicago (Classicist) school
+
+- Testing state changes and return values
+- Inside-out approach
+- Unit: A small collection of pieces that otgether deliver some behaviour
+- Promotes using fakes for state verification
+
+<div style="text-align: center;">
+    <img src="./assets/chicago.png" alt="Example Image"  style="width:300px;">
+</div>
+
+---
+# Chicago (Classicist) school
+
+We verify state
+
+```
+[Fact]
+public void ShouldReducebalance_whenWithdrawnAmounn()
+{
+    var account = new BankAccount();
+    account.Deposit(100);
+
+    account.Withdraw(50);
+
+    account.Balance.Should().Be(50);
+}
+```
+---
+# London(Mockist) school
+
+- Focus on interfactions
+- Top-down/outside-in approach
+- Starting with high-level test, then drive the design from there
+- Unit = class
+- Promotes using mocks to verify interactions
+
+<div style="text-align: center;">
+    <img src="./assets/london.png" alt="Example Image"  style="width:260px;">
+</div>
+
+---
+# London(Mockist) school
+
+We verify interaction
+
+```
+[Fact]
+public void CreateProduct_ShouldCallProductServiceCreate()
+{
+    // Arrange
+    var productServiceMock = new Mock<IProductService>();
+    var controller = new ProductController(productServiceMock.Object);
+    var name = "Logictech 720 WebCam";
+    var price = 140.5m;
+
+    // Act
+    controller.CreateProduct(name, price);
+
+    // Assert
+    productServiceMock.Verify(service => service
+                .AddProduct(name, price), Times.Once);
+}
+```
 
 
+---
+# London's Advantages vs Disadvantages
+
+## Advantages
+- Delaying implementation decision
+
+- Focusing on acceptance tests
+
+## Disadvantages
+
+- Fragile tests - class is a unit
+
+- Might lead to more complex/slower test
+
+
+---
+
+# Chicago's Advantages vs Disadvantages
+
+## Advantages
+- More focused on behaviour via state verifcation
+    - What happened instead of what is called
+
+## Disadvantage
+- Bottom up approach 
+    - less confidence in the whole system
+---
+
+class: center, middle
+
+# <span class="red-bg">The million dollar question: </span>
+
+# Which one to pick?
+
+---
+class: center, middle
+
+
+# <span class="green-bg">You don't need to pick. </span>
+
+# <span class="green-bg">Combine the both!</span>
+
+???
+This is also my style
+---
+# The ultimate testing style
+
+From London:
+- High level tests
+- Verify interfactions only on the edge of the app
+    - only where state check doesn't make sense
+
+From Chicago:
+- Focus on state verifications
+- Unit is the behaviour by multiple classes
+---
+
+# The ultimate testing style
+
+## <span class="green-bg">Write big tests!</span>
+
+✅ better confidence and realism
+
+✅ serves better documentation for real-life usage
+
+✅ good refactoring tool as no coupling to implementation details
+
+---
+
+# The ultimate testing style
+
+## <span class="green-bg">Listen to your tests!</span>
+
+If your code is hard to test, you have a bad design.
+
+Typical code smells:
+
+
+- ❌ Complex test setup
+
+- ❌ Using too many mocks
+
+- ❌ Unclear API signatures
+
+- ❌ Tests dependent on each other
+
+- ❌ Slow, flaky and frequently breaking tests
+
+
+???
+Listen to you tests. If you mock too much then your design sucks. You need to limit the number of interfactions, and so limiting the number of dependencies.  
+
+---
+class: center, middle
+
+# <span class="green-bg">Don't use tests only for verification. </span>
+
+# <span class="green-bg"> Use them to design software.</span>
+
+???
+Summing up everything
+
+---
+# TODO: make exercise that we need database repository (fake), calling an API (mock)
+
+Plus using dummies, spyes and stubs too
+
+TODO: # Small exercise on mocking out 3rd party code?
+# Small exercise on which one to use and why? Maybe in slidesheet, or maybe in code?
+
+---
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
     </script>
