@@ -42,6 +42,8 @@ class: center, middle
 
 ---
 
+---
+
 # Testing legacy code is simple
 
 1. Identify changes points (Seams)
@@ -54,9 +56,12 @@ class: center, middle
   - functional tests
   - mutation testing
 
-1. Write tests for the to achieve ~100 code coverage and mutation score
+1. Write tests for the to achieve ~100% code coverage and mutation score
 
 1. Refactor the code
+
+??? 
+People are scared of legacy code because they don't know how to test it. But that's why you are all here, to learn the important bits of working with legacy softrware.
 
 ---
 
@@ -210,7 +215,7 @@ public static string FormatText(string text)
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("plain text");
+  let formattedText = Pattern.FormatText("plain text");
 }
 
 ```
@@ -220,7 +225,7 @@ public void asd() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("plain text");
+  let formattedText = Pattern.FormatText("plain text");
 
   formattedText.Should().Be(null);
 }
@@ -232,7 +237,7 @@ public void asd() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("plain text");
+  let formattedText = Pattern.FormatText("plain text");
 
   formattedText.Should().Be(null);
 }
@@ -254,7 +259,7 @@ Make it pass
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("plain text");
+  let formattedText = Pattern.FormatText("plain text");
 
   formattedText.Should().Be("plain text");
 }
@@ -269,7 +274,7 @@ Capture behaviour
 ```
 [Test]
 public void ShouldNotChangeUntaggedText() {
-  let formattedText = Pattern.formatText("plain text");
+  let formattedText = Pattern.FormatText("plain text");
 
   formattedText.Should().Be("plain text");
 }
@@ -281,7 +286,7 @@ public void ShouldNotChangeUntaggedText() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+  let formattedText = Pattern.FormatText("<tag>TDD rocks</tag>");
 }
 
 ```
@@ -291,7 +296,7 @@ public void asd() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+  let formattedText = Pattern.FormatText("<tag>TDD rocks</tag>");
 
   formattedText.Should().Be(null);
 }
@@ -303,7 +308,7 @@ public void asd() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+  let formattedText = Pattern.FormatText("<tag>TDD rocks</tag>");
 
   formattedText.Should().Be(null);
 }
@@ -325,7 +330,7 @@ Make it pass
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+  let formattedText = Pattern.FormatText("<tag>TDD rocks</tag>");
 
   formattedText.Should().Be("TDD rocks");
 }
@@ -338,7 +343,7 @@ Capture behaviour
 ```
 [Test]
 public void ShouldRemoveOpeningAndClosingTagsFromText() {
-  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+  let formattedText = Pattern.FormatText("<tag>TDD rocks</tag>");
 
     formattedText.Should().Be("TDD rocks");
   }
@@ -349,7 +354,7 @@ public void ShouldRemoveOpeningAndClosingTagsFromText() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("<>");
+  let formattedText = Pattern.FormatText("<>");
 }
 ```
 ---
@@ -357,7 +362,7 @@ public void asd() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("<>");
+  let formattedText = Pattern.FormatText("<>");
 
   formattedText.Should().Be("");
 }
@@ -368,7 +373,7 @@ public void asd() {
 ```
 [Test]
 public void asd() {
-  let formattedText = Pattern.formatText("<>");
+  let formattedText = Pattern.FormatText("<>");
 
   formattedText.Should().Be("");
 }
@@ -385,15 +390,98 @@ Is it a bug? Or feature?
 
 ---
 
-# Approval testing
+# Approval/Snapshot testing
 
-Not testable behaviour (no output)
+Storing previously generated output
 
-Capture responses
-- write to text file using logger
-- query database
+Compare new output with the approved ones
 
-TODO: continue
+Easer than writing tons of assertions
+
+---
+# Verify - .NET snapshot testing library
+
+Automatic file handling
+
+Customizeable comparison (f.e.: ignore fields)
+
+Supports multiple formats (JSON, XML, CSV, etc.)
+
+Human friendly diffs
+
+Powerfull integration with test runners
+
+---
+# Use Verify on a CSV 
+```
+public class CsvConverter
+    {
+        private const char DefaultSeparator = ',';
+
+        public Stream ConvertToCsv(IEnumerable<User> users)
+        {
+            var stream = new MemoryStream();
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.WriteLine($"Id{DefaultSeparator}Name{DefaultSeparator}Email");
+
+                foreach (var user in users)
+                {
+                    var values = new[] { user.Id.ToString(), user.Name, user.Email };
+                    writer.WriteLine(string.Join(DefaultSeparator, values));
+                }
+            }
+
+            stream.Position = 0;
+            return stream;
+        }
+    }
+```
+---
+
+# Use Verify on a CSV 
+
+
+```
+[Test]
+public async Task VerifyCsvSnapshot()
+{
+    // Arrange
+    var users = new List<User>
+    {
+        new User { 
+          Id = 12345, 
+          Name = "John Doe", 
+          Email = "john.doe@gmail.com" },
+        new User { 
+          Id = 67890, 
+          Name = "Jane Smith", 
+          Email = "jane.smith@gmail.com" }
+    };
+
+    // Act
+    using var csvStream = new CsvConverter().ConvertToCsv(users);
+
+    // Assert
+    await Verifier.Verify(csvStream);
+}
+```
+---
+
+# TODO: run this to see how it works, so we show how the file/diff/etc looks like
+
+# For failing case, we can change the 
+
+---
+
+# Put thees in exercise:
+- calling database
+    - doing read and write
+- calling a 3rd party email sending service
+- create a CVS file
+- capture some temp output with approval testing
+---- have separation date format config, hardcoded
+
 
 ---
 
