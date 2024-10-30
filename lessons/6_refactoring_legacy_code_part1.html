@@ -142,16 +142,249 @@ Use real dependencies
 Break dependencies once everything is tested
 
 ---
-# 3. Characterization tests
-todo: check twitter thread i created
 
----
+# 3. Characterization testing - WHY
 
 <div class="red-bg" style="text-align: center;">
-  You can have 100% code coverage with no assertions
+  Goal is not to find bugs
 </div>
 
+<br>
+<div class="green-bg" style="text-align: center;">
+  Goal is to understand the behaviours
+</div>
+
+
 ---
+
+# 3. Characterization tests - WHEN 
+
+Code is too complex to know what it does
+
+Doesn't have any documnetation
+
+Has no tests
+
+---
+
+# 3. Characterization tests - HOW
+
+1. Create a test
+2. Write a failing assertion
+3. Execute the test to observe the actual behaviour of the system
+4. Change the test that it expects the actual behaviour
+5. Repeat until you understand the code well
+
+---
+
+# 3. Characterization tests 
+
+```
+public static string FormatText(string text)
+{
+    var result = new StringBuilder();
+    for (int n = 0; n < text.Length; ++n)
+    {
+        char c = text[n];
+        if (c == '<')
+        {
+            while (n < text.Length && text[n] != '/' && text[n] != '>')
+                n++;
+
+            if (n < text.Length && text[n] == '/')
+                n += 4;
+            else
+                n++; 
+        }
+
+        if (n < text.Length)
+            result.Append(text[n]);
+    }
+
+    return result.ToString();
+}
+```
+---
+
+# 1. Create a test
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("plain text");
+}
+
+```
+---
+
+# 2. Add failing assertion
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("plain text");
+
+  formattedText.Should().Be(null);
+}
+
+```
+---
+
+# 2. Add failing assertion
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("plain text");
+
+  formattedText.Should().Be(null);
+}
+
+```
+
+# 3. Execute test to observe behaviour
+
+
+Error:
+```
+Expected formattedText to be <null>, but found "plain text".
+```
+---
+# 4. Change the test
+
+Make it pass
+
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("plain text");
+
+  formattedText.Should().Be("plain text");
+}
+```
+
+---
+
+# 4. Change the test
+
+Capture behaviour
+
+```
+[Test]
+public void ShouldNotChangeUntaggedText() {
+  let formattedText = Pattern.formatText("plain text");
+
+  formattedText.Should().Be("plain text");
+}
+```
+
+---
+
+# 1. Create a test
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+}
+
+```
+---
+
+# 2. Add failing assertion
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+
+  formattedText.Should().Be(null);
+}
+
+```
+---
+
+# 2. Add failing assertion
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+
+  formattedText.Should().Be(null);
+}
+
+```
+
+# 3. Execute test to observe behaviour
+
+
+Error:
+```
+Expected formattedText to be <null>, but found "TDD rocks"
+```
+---
+# 4. Change the test
+
+Make it pass
+
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+
+  formattedText.Should().Be("TDD rocks");
+}
+```
+---
+# 4. Change the test
+
+Capture behaviour
+
+```
+[Test]
+public void ShouldRemoveOpeningAndClosingTagsFromText() {
+  let formattedText = Pattern.formatText("<tag>TDD rocks</tag>");
+
+    formattedText.Should().Be("TDD rocks");
+  }
+```
+---
+
+# 1. Create a test
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("<>");
+}
+```
+---
+# 2. Add assertion
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("<>");
+
+  formattedText.Should().Be("");
+}
+```
+---
+
+# 2. Add assertion
+```
+[Test]
+public void asd() {
+  let formattedText = Pattern.formatText("<>");
+
+  formattedText.Should().Be("");
+}
+```
+
+## <span class="red-bg">But it passes</span>
+
+Is it a bug? Or feature?
+
+- Escalate the issue if necessary
+- Leave it there
+  - we only document behaviour, no bug finding
+- Fix if you are 100% sure it's a bug
+
+---
+
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
