@@ -15,21 +15,137 @@ class: center, middle
 # Refactoring legacy code
 
 ---
+
 class: center, middle
 
-# Legacy is code is simply code without tests - Michael Feathers
+# What is legacy code?
 ---
 
-# What is legacy code?
-Misleading metric
+class: center, middle
 
-- Detects untested area
-- Tells nothing about tested area
+# Legacy is code is simply code without tests - Michael C. Feathers
+---
 
-Percentage of your code executed by your tests
+# Working Effectively with Legacy Code
 
-No behaviours
+<div style="text-align: center;">
+  <img src="./assets/legacy-code-book.png" alt="Example Image", style="width: 550px;">
+</div>
 
+---
+
+class: center, middle
+
+# The million dollar quesion:
+
+# <span class="red-bg">How to test legacy code?</span> 
+
+---
+
+# Testing legacy code is simple
+
+1. Identify changes points (Seams)
+
+1. Break dependencies
+
+1. Write tests
+  - characetization tests
+  - approval tests
+  - functional tests
+  - mutation testing
+
+1. Write tests for the to achieve ~100 code coverage and mutation score
+
+1. Refactor the code
+
+---
+
+# 1. Identify changes points - Seams
+
+Most legacy code is not testable
+
+The goal is to make it testable.
+
+<div style="text-align: center;" class="orange-bg">
+
+Seams: a place to alter program behaviour, with minimal structural change
+
+</div>
+---
+# 1. Identify changes points - Seams
+
+TODO: find example with overriding, then also show when we need to do small changes? Or not needed
+
+```
+public class OrderService
+{
+    public decimal GetOrderTotal(int orderId)
+    {
+        var order = OrderApi.GetOrder(orderId);
+
+        return order.Total;
+    }
+}
+```
+---
+# 1. Identify changes points - Seams
+
+
+```
+public class OrderService
+{
+    public decimal GetOrderTotal(int orderId)
+    {
+*        var order = OrderApi.GetOrder(orderId);
+
+        return order.Total;
+    }
+}
+```
+---
+
+# 2. Break dependencies
+
+Abstract away tightly-coupled dependency
+
+Inject a test double like mocks or stubs
+---
+# 2. Break dependencies
+
+```
+public class OrderService
+{
+    private readonly IOrderRepository _orderRepository;
+
+    public OrderService(IOrderRepository orderRepository)
+    {
+        _orderRepository = orderRepository;
+    }
+
+    public decimal GetOrderTotal(int orderId)
+    {
+        var order = _orderRepository.GetOrder(orderId);
+        return order.Total;
+    }
+}
+```
+
+---
+# 2. Break dependencies
+
+You don't always need to break dependencies at first
+
+Use real dependencies
+- if they are not that slow
+- crucial for the flow
+
+Break dependencies once everything is tested
+
+---
+# 3. Characterization tests
+todo: check twitter thread i created
+
+---
 
 <div class="red-bg" style="text-align: center;">
   You can have 100% code coverage with no assertions
