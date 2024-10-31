@@ -19,9 +19,11 @@ namespace CsvConverter.Tests
             };
             // Act
             using var csvStream = new CsvConverter().ConvertToCsv(users);
+            using var reader = new StreamReader(csvStream);
+            var csvContent = await reader.ReadToEndAsync();
 
             // Assert
-            await Verifier.Verify(csvStream);
+            await Verifier.Verify(csvContent);
         }
     }
 }

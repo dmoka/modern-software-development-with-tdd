@@ -3,7 +3,7 @@
 
     public class CsvConverter
     {
-        private const char DefaultSeparator = ',';
+        private const char DefaultSeparator = ';';
 
         public Stream ConvertToCsv(IEnumerable<User> users)
         {

@@ -412,7 +412,7 @@ Human friendly diffs
 Powerfull integration with test runners
 
 ---
-# Use Verify on a CSV 
+# Use Verify in .NET
 ```
 public class CsvConverter
     {
@@ -439,9 +439,7 @@ public class CsvConverter
 ```
 ---
 
-# Use Verify on a CSV 
-
-
+# Use Verify in .NET
 ```
 [Test]
 public async Task VerifyCsvSnapshot()
@@ -461,11 +459,54 @@ public async Task VerifyCsvSnapshot()
 
     // Act
     using var csvStream = new CsvConverter().ConvertToCsv(users);
+    using var reader = new StreamReader(csvStream);
+    var csvContent = await reader.ReadToEndAsync();
 
     // Assert
     await Verifier.Verify(csvStream);
 }
 ```
+---
+
+# Use Verify in .NET
+
+<div style="text-align: center;">
+  <img src="./assets/verify_1_firstrun.png" alt="Example Image", style="width: 650px;">
+</div>
+
+---
+
+# Use Verify in .NET
+
+<div style="text-align: center;">
+  <img src="./assets/verify_2_firstrun_diff.png" alt="Example Image", style="width: 750px;">
+</div>
+
+---
+
+# Use Verify in .NET
+
+```
+public class CsvConverter
+{
+*   private const char DefaultSeparator = ';';
+    private const char DefaultSeparator = ',';
+
+    public Stream ConvertToCsv(IEnumerable<User> users)
+    {
+       ...
+    }
+}
+```
+
+---
+
+# Use Verify in .NET
+
+<div style="text-align: center;">
+  <img src="./assets/verify_3_change_diff.png" alt="Example Image", style="width: 750px;">
+</div>
+
 ---
 
 # TODO: run this to see how it works, so we show how the file/diff/etc looks like
