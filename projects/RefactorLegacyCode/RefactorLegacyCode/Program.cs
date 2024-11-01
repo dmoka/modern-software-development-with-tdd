@@ -10,6 +10,9 @@ public class WarehouseManagementSystem
 
     public async Task ProcessOrder(int orderId)
     {
+        //TODO: add edge/corner cases
+        //TODO: add negative cases
+        //TODO: combine presentation logic too
         // Load order details from the database
         OrderDetails orderDetails = null;
         using (var connection = new SqlConnection(_connectionString))
