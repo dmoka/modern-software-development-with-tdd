@@ -15,8 +15,246 @@ class: center, middle
 # Refactor like a PRO
 
 ---
+class: center, middle
 
-Use this as base then book https://craftbettersoftware.com/p/refactor-like-a-pro
+#<span class="red-bg">Why refactoring is crucial in TDD?</span>
+
+---
+class: center, middle
+
+#<span class="green-bg">TDD is about growing the design by practicing continuous refactoring.</span>
+
+<div style="text-align: center;">
+  <img src="./assets/tdd-refactor.webp" alt="Example Image", style="width: 400px;">
+</div>
+---
+
+# What is refactoring?
+
+<div style="text-align: center;">
+  <img src="./assets/stop-planning-refactoring.png" alt="Example Image">
+</div>
+
+---
+# What is refactoring?
+
+<div style="text-align: center;">
+  <img src="./assets/never-ask-permission.png" alt="Example Image">
+</div>
+
+---
+# What is refactoring?
+
+Do you need permission?
+
+Refactoring != rewriting
+
+Refactoring is a type of rewriting
+
+---
+
+# What is refactoring?
+
+Refactoring - change internal structure without altering APIs
+- simplify design
+- improve namings
+- identify and remove code smells
+- use design patterns for common problems
+- improve testability and maintainability
+
+Rewriting:
+- Change high-level structure
+- Can come with API changes
+- More time consuming than refactoring
+
+---
+class: center, middle
+
+# 7 tips to become PRO in refactoring
+
+---
+
+# 1. Do aggressive refactoring at small scales
+
+Two common mistakes:
+- Refactoring at a large scale all at once
+- Not running tests continuously
+
+Agressive refactoring:
+1. Refactor a little piece of code
+2. Run all your tests
+3. Repeat 1-2. until your code is in a good shape
+
+???
+When I work with developers, I notice two common mistakes related to refactoring:
+
+---
+# 2. Master the hotkeys of your IDE
+
+Most common refactoring hotkeys:
+- Rename
+- Move line
+- Inline variable
+- Extract to method
+- Introduce variable
+- Introduce parameter
+- Change function signature
+
+---
+# 3. Do comprehensive testing before refactoring
+- full code coverage
+- full behaviour coverage
+- full confidence
+---
+# 4. Turn comments into components
+
+<div style="text-align: center;">
+  <img src="./assets/code-comments-be-like-1.png" alt="Example Image", style="width: 400px;">
+</div>
+---
+# 4. Turn comments into components
+
+<div style="text-align: center;">
+  <img src="./assets/code-comments-be-like-2.png" alt="Example Image", style="width: 400px";>
+</div>
+
+
+---
+# 4. Turn comments into components
+
+
+Code comments are code smells:
+- ❌ They are never compiled or executed
+- ❌ They become easily outdated and rotten
+- ❌ If used extensively, nobody reads them
+
+Exceptions:
+- ✅ Explaining the why
+- ✅ API doc generation
+- ✅ Revealing implicit behaviors
+
+<div style="text-align: center;">
+  <span class="green-bg">Dont write comments. Use intention revealing names instead.</span>
+</div>
+---
+class: center, middle
+
+# <span class="green-bg">5. Follow the Rule of Three</span>
+
+Strike balance between premature optimization and excessive duplication
+
+---
+class: center
+
+# <span class="red-bg"> Don't Repeat Yourself (DRY) is not about code</span>
+
+<div style="text-align: center;">
+  <img src="./assets/dry.png" alt="Example Image", >
+</div>
+
+---
+# DRY is about knowledge
+
+```
+public class Basket
+{
+    private List<string> products = new List<string>();
+
+    public void AddProduct(string product)
+    {
+        if (products.Count == 3)
+        {
+            throw new Exception("Max 3 products allowed");
+        }
+        products.Add(product);
+    }
+}
+
+```
+---
+# DRY is about knowledge
+
+```
+public class Shipment
+{
+    private List<string> products = new List<string>();
+
+    public void AddProduct(string product)
+    {
+        if (products.Count == 3)
+        {
+            throw new Exception("Max 3 products allowed");
+        }
+        products.Add(product);
+    }
+}
+```
+
+---
+# DRY is about knowledge
+
+```
+public abstract class ProductContainer
+{
+    protected List<string> products = new List<string>();
+
+    public void AddProduct(string product)
+    {
+        if (products.Count == 3)
+        {
+            throw new Exception("Max 3 products allowed");
+        }
+        products.Add(product);
+    }
+}
+
+public sealed class Basket : ProductContainer {}
+public sealed class Shipment : ProductContainer {}
+```
+
+---
+
+# DRY is about knowledge
+
+What about the business rules?
+
+Rule for Basket: 
+- Supply of products are limited, so we want to give our customer equal opportunity to buy
+
+Rule for Shipment:
+- Products can be flammable so, not allowed to have more than three items
+
+<span class="red-bg">These rules might change independently!
+
+---
+class: center, middle
+
+## <span class="green-bg">DRY is about duplicated knowledge, not code</span>
+
+---
+
+# 6. Don't mix refactoring with changing behavior
+
+<div style="text-align: center;">
+  <img src="./assets/tdd-refactor.webp" alt="Example Image", style="width: 400px;">
+</div>
+
+---
+# 7. Keep personal preferences in check
+
+<div style="text-align: center;">
+  <img src="./assets/clean-code-paradox.png" alt="Example Image", style="width: 500px;">
+</div>
+
+---
+class: center, middle
+
+# Clean Code
+
+todo: add some bits about clean code, and tell why TDD wont tell you this.
+it just gives feedback about the deisgin
+
+TODO: check book for the details
 
 ---
 
