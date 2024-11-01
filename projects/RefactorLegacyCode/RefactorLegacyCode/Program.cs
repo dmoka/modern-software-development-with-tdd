@@ -8,6 +8,8 @@ public class WarehouseManagementSystem
 {
     private string _connectionString = "Server=myServer;Database=WarehouseDB;User Id=myUsername;Password=myPassword;";
 
+    //TODO: maybe process multiple orders?
+    //TODO: return value could be some presentation mode?
     public async Task ProcessOrder(int orderId)
     {
         //TODO: add edge/corner cases
