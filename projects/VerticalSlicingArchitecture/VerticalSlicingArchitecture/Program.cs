@@ -38,3 +38,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.Run();
+
+public partial class Program { } // This makes the Program class public and accessible

@@ -29,8 +29,14 @@ public class CreateProduct
 
     internal sealed class Handler : IRequestHandler<Command, Result<Guid>>
     {
-       private readonly WarehousingDbContext _dbContext;
-       private readonly IValidator<Command> _validator;
+        private readonly WarehousingDbContext _dbContext;
+        private readonly IValidator<Command> _validator;
+
+        public Handler(WarehousingDbContext dbContext, IValidator<Command> validator)
+        {
+            _dbContext = dbContext;
+            _validator = validator;
+        }
 
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
