@@ -8,6 +8,24 @@ namespace VerticalSlicingArchitecture.Features.Product;
 
 public class CreateProduct
 {
+    public class Endpoint : ICarterModule
+    {
+        public void AddRoutes(IEndpointRouteBuilder app)
+        {
+            app.MapPost("api/products", async (Command Command, ISender sender) =>
+            {
+                var result = await sender.Send(Command);
+
+                if (result.IsFailure)
+                {
+                    return Results.BadRequest(result.Error);
+                }
+
+                return Results.Created($"/api/products/{result.Value}", result.Value);
+            });
+        }
+    }
+
     public class Command : IRequest<Result<Guid>>
     {
         public string Name { get; set; }
@@ -57,24 +75,6 @@ public class CreateProduct
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Result<Guid>.Success(product.Id);
-        }
-    }
-
-    public class Endpoint : ICarterModule
-    {
-        public void AddRoutes(IEndpointRouteBuilder app)
-        {
-            app.MapPost("api/products", async (Command Command, ISender sender) =>
-            {
-                var result = await sender.Send(Command);
-
-                if (result.IsFailure)
-                {
-                    return Results.BadRequest(result.Error);
-                }
-
-                return Results.Created($"/api/products/{result.Value}", result.Value);
-            });
         }
     }
 }
