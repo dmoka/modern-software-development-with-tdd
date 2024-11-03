@@ -16,6 +16,11 @@ public class CreateProduct
             {
                 var result = await sender.Send(Command);
 
+                return result.Match(
+                    onSuccess: id => Results.Created($"/api/products/{id}", id),
+                    onFailure: error => Results.BadRequest(error));
+
+                //Or this
                 if (result.IsFailure)
                 {
                     return Results.BadRequest(result.Error);

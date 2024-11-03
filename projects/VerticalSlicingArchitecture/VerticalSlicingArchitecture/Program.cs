@@ -3,6 +3,9 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using VerticalSlicingArchitecture.Database;
 
+//TODO:
+//-add global error handling
+//-add logging/auth
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
