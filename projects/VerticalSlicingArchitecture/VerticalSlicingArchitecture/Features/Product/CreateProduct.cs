@@ -66,16 +66,14 @@ public class CreateProduct
         {
             app.MapPost("api/products", async (Command Command, ISender sender) =>
             {
-
                 var result = await sender.Send(Command);
 
                 if (result.IsFailure)
                 {
-
                     return Results.BadRequest(result.Error);
                 }
 
-                return Results.Ok(result.Value);
+                return Results.Created($"/api/products/{result.Value}", result.Value);
             });
         }
     }
