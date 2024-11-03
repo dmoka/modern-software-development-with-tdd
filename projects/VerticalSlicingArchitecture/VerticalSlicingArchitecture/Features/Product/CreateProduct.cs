@@ -54,31 +54,37 @@ public static class CreateProduct
     internal sealed class Handler : IRequestHandler<Command, Result<Guid>>
     {
         private readonly WarehousingDbContext _context;
+        private readonly IValidator<Command> _validator;
 
-        public Handler(WarehousingDbContext context)
+        public Handler(WarehousingDbContext context, IValidator<Command> validator)
         {
             _context = context;
+            _validator = validator;
         }
 
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var validationResult = _validator.Validate(request);
+
+            if (!validationResult.IsValid)
+            {
+                return Result<Guid>.Failure(new Error("CreateArticle.Validation", validationResult.ToString()));
+            }
+
             var product = new Entities.Product
             {
                 Name = request.Name,
                 Description = request.Description,
                 Price = request.Price
             };
-
             _context.Products.Add(product);
 
-            var stockLevel = new StockLevel
+            var stockLevel = StockLevel.New(product.Id, request.InitialStock, DateTime.UtcNow);
+            if (stockLevel.IsFailure)
             {
-                ProductId = product.Id,
-                Quantity = request.InitialStock,
-                LastUpdated = DateTime.UtcNow
-            };
-
-            _context.StockLevels.Add(stockLevel);
+                return Result<Guid>.Failure(stockLevel.Error);
+            }
+            _context.StockLevels.Add(stockLevel.Value);
 
             await _context.SaveChangesAsync(cancellationToken);
 
