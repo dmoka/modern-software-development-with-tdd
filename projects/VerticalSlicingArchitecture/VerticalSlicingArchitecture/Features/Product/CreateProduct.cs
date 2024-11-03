@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VerticalSlicingArchitecture.Database;
 using VerticalSlicingArchitecture.Shared;
+using VerticalSlicingArchitecture.Entities;
 namespace VerticalSlicingArchitecture.Features.Product;
 
 public class CreateProduct
@@ -16,11 +17,6 @@ public class CreateProduct
             {
                 var result = await sender.Send(Command);
 
-                return result.Match(
-                    onSuccess: id => Results.Created($"/api/products/{id}", id),
-                    onFailure: error => Results.BadRequest(error));
-
-                //Or this
                 if (result.IsFailure)
                 {
                     return Results.BadRequest(result.Error);
@@ -47,6 +43,7 @@ public class CreateProduct
         {
             RuleFor(c => c.Name).NotEmpty();
             RuleFor(c => c.Description).NotEmpty();
+            RuleFor(c => c.Price).GreaterThan(0);
         }
     }
 
@@ -68,6 +65,7 @@ public class CreateProduct
             {
                 return Result<Guid>.Failure(new Error("CreateArticle.Validation", validationResult.ToString()));
             }
+
             var product = new Entities.Product
             {
                 Name = request.Name,
