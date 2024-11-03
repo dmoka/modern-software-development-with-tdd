@@ -4,11 +4,14 @@ using VerticalSlicingArchitecture.Shared;
 public class StockLevel
 {
     private const int MaxStockLevel = 50;
+    private const int MaxPickQuantityPerOperation = 10;
 
     public Guid Id { get; }
     public Guid ProductId { get; }
     public int Quantity { get; private set; }
     public DateTime LastUpdated { get; private set; }
+    public QualityStatus QualityStatus { get; private set; }
+
 
     public static Result<StockLevel> New(Guid productId, int quantity, DateTime lastUpdated)
     {
@@ -20,20 +23,33 @@ public class StockLevel
         return Result<StockLevel>.Success(stockLevel);
     }
 
-    public void UpdateQuantity(int newQuantity)
+    public Result Decrease(int pickCount)
     {
-        if (newQuantity > MaxStockLevel)
+
+        if (QualityStatus != QualityStatus.Available)
         {
-            throw new InvalidOperationException($"Quantity cannot exceed {MaxStockLevel}");
+            return Result.Failure(new Error("PickProduct.QualityHold",
+                $"Product is currently under {QualityStatus} status"));
         }
-        if (newQuantity < 0)
+
+        if (pickCount > MaxPickQuantityPerOperation)
         {
-            throw new InvalidOperationException("Quantity cannot be negative");
+            return Result.Failure(new Error("PickProduct.ExceedsMaxPick",
+                $"Cannot pick more than {MaxPickQuantityPerOperation} items in a single operation"));
         }
-        
-        Quantity = newQuantity;
-        LastUpdated = DateTime.UtcNow;
+
+        if (Quantity < pickCount)
+        {
+            return Result.Failure(
+                new Error("PickProduct.InsufficientStock",
+                    $"Cannot pick {pickCount} items. Only {Quantity} available"));
+        }
+
+        Quantity -= pickCount;
+
+        return Result.Success();
     }
+
 
     private StockLevel(Guid productId, int quantity, DateTime lastUpdated)
     {
@@ -43,4 +59,11 @@ public class StockLevel
     }
 
     private StockLevel() { }
+}
+
+public enum QualityStatus
+{
+    Available,
+    Damaged,
+    Expired
 }
