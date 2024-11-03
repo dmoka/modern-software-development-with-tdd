@@ -7,8 +7,9 @@ using VerticalSlicingArchitecture.Shared;
 using VerticalSlicingArchitecture.Entities;
 namespace VerticalSlicingArchitecture.Features.Product;
 
-public class CreateProduct
+public static class CreateProduct
 {
+
     public class Endpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
@@ -34,8 +35,11 @@ public class CreateProduct
         public string Description { get; set; }
 
         public decimal Price { get; set; }
+        
+        public int InitialStock { get; set; }
 
     }
+
 
     public class Validator : AbstractValidator<Command>
     {
@@ -49,23 +53,15 @@ public class CreateProduct
 
     internal sealed class Handler : IRequestHandler<Command, Result<Guid>>
     {
-        private readonly WarehousingDbContext _dbContext;
-        private readonly IValidator<Command> _validator;
+        private readonly WarehousingDbContext _context;
 
-        public Handler(WarehousingDbContext dbContext, IValidator<Command> validator)
+        public Handler(WarehousingDbContext context)
         {
-            _dbContext = dbContext;
-            _validator = validator;
+            _context = context;
         }
 
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var validationResult = _validator.Validate(request);
-            if (!validationResult.IsValid)
-            {
-                return Result<Guid>.Failure(new Error("CreateArticle.Validation", validationResult.ToString()));
-            }
-
             var product = new Entities.Product
             {
                 Name = request.Name,
@@ -73,9 +69,18 @@ public class CreateProduct
                 Price = request.Price
             };
 
-            _dbContext.Add(product);
+            _context.Products.Add(product);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            var stockLevel = new StockLevel
+            {
+                ProductId = product.Id,
+                Quantity = request.InitialStock,
+                LastUpdated = DateTime.UtcNow
+            };
+
+            _context.StockLevels.Add(stockLevel);
+
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Result<Guid>.Success(product.Id);
         }

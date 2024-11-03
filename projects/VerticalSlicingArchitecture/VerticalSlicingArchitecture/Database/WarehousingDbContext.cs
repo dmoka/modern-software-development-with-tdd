@@ -14,7 +14,8 @@ namespace VerticalSlicingArchitecture.Database
         {
         }
 
-        public DbSet<Product> Products { get; set; }
+        public DbSet<Product> Products { get; set; } = null!;
+        public DbSet<StockLevel> StockLevels { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +35,13 @@ namespace VerticalSlicingArchitecture.Database
 
                 entity.Property(e => e.Price)
                     .HasPrecision(18, 2);
+            });
+
+            modelBuilder.Entity<StockLevel>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.ProductId).IsUnique();
+                entity.Property(e => e.LastUpdated).IsRequired();
             });
         }
     }
