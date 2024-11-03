@@ -9,9 +9,6 @@ namespace VerticalSlicingArchitecture.Features.Product;
 
 public static class PickProduct
 {
-    public record Command(Guid ProductId, int PickCount) : IRequest<Result>;
-    
-
     public class Endpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
@@ -29,6 +26,9 @@ public static class PickProduct
             });
         }
     }
+
+    public record Command(Guid ProductId, int PickCount) : IRequest<Result>;
+
 
     public class Validator : AbstractValidator<Command>
     {
