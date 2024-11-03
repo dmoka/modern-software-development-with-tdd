@@ -35,12 +35,18 @@ namespace VerticalSlicingArchitecture.Database
 
                 entity.Property(e => e.Price)
                     .HasPrecision(18, 2);
+
+               /* entity.HasOne<StockLevel>()
+                    .WithOne()
+                    .HasForeignKey<StockLevel>(s => s.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);*/
             });
 
             modelBuilder.Entity<StockLevel>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.ProductId).IsUnique();
+                entity.Property(e => e.ProductId).IsRequired();
                 entity.Property(e => e.LastUpdated).IsRequired();
             });
         }

@@ -5,6 +5,7 @@ public class StockLevel
 {
     private const int MaxStockLevel = 50;
 
+    public Guid Id { get; }
     public Guid ProductId { get; }
     public int Quantity { get; }
     public DateTime LastUpdated { get; }
@@ -28,4 +29,7 @@ public class StockLevel
         Quantity = quantity;
         LastUpdated = lastUpdated;
     }
+
+    private StockLevel() { }
+
 }

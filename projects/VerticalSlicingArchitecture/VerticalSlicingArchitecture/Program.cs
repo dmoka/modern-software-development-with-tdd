@@ -34,6 +34,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseGlobalExceptionHandler();
+
 app.MapCarter();//This scans the current assembly, find impls for ICarderModule and calls AddRoutes
 
 app.UseHttpsRedirection();

@@ -40,7 +40,6 @@ public static class CreateProduct
 
     }
 
-
     public class Validator : AbstractValidator<Command>
     {
         public Validator()
@@ -74,11 +73,15 @@ public static class CreateProduct
             var product = new Entities.Product
             {
                 Name = request.Name,
+
+
                 Description = request.Description,
                 Price = request.Price
             };
+
             _context.Products.Add(product);
 
+            
             var stockLevel = StockLevel.New(product.Id, request.InitialStock, DateTime.UtcNow);
             if (stockLevel.IsFailure)
             {
