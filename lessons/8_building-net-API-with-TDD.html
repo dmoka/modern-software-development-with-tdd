@@ -21,8 +21,47 @@ class: center, middle
 TODO: check https://medium.com/@hoagsie/youre-all-doing-entity-framework-wrong-ea0c40e20502
 ---
 
-#<span class="red-bg">Why refactoring is crucial in TDD?</span>
+# Exceptions for control flow
 
+- dont use it for control flow
+- use only for exceptional situation
+
+Two kind of errors:
+- errors you know how to handle
+- errors you don't know how to handle (exceptions)
+----cathc and handle at the lowerst level
+
+---
+
+# Use Result pattern
+add code etc
+
+---
+
+Create Error classes
+```
+rewrite
+public static class FollowerErrors
+{
+    public static readonly Error SameUser = new Error(
+        "Followers.SameUser", "Can't follow yourself");
+
+    public static readonly Error NonPublicProfile = new Error(
+        "Followers.NonPublicProfile", "Can't follow non-public profiles");
+
+    public static readonly Error AlreadyFollowing = new Error(
+        "Followers.AlreadyFollowing", "Already following");
+}
+```
+Instead of static fields, you can also use static methods returning an error.
+
+```
+public static class FollowerErrors
+{
+    public static Error NotFound(Guid id) => new Error(
+        "Followers.NotFound", $"The follower with Id '{id}' was not found");
+}
+```
 ---
 
     </textarea>
