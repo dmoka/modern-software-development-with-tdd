@@ -131,8 +131,8 @@ Hexagonal Architecture
 ❌Cons:
 - Too opinionated - too many rules
 - Organized by technical concerns
-- Changes involves many layers
-- High entry curve for developers
+- Changes involves many layers - slower development time
+- High entry curve for new developers
 
 ???
 - high entry curve for developers
@@ -236,9 +236,164 @@ class: middle, center
 
 # <span class="green-bg">Vertical Slice Architecture</span>
 
+---
+
+# Layers of Clean Architecture
+<div style="text-align: center;">
+  <img src="./assets/vsa-ca-layered.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+# Remove technical layers
+<div style="text-align: center;">
+  <img src="./assets/vsa-unlayered.png" alt="Example Image" style="width:700px;">
+</div>
 
 ---
 
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-1.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-2.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-3.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-4.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-5.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-6.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-7.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Organize by feature
+<div style="text-align: center;">
+  <img src="./assets/vsa-sliced-8.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+
+# Web App characteriscs
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-web-app-char.png" alt="Example Image" style="width:600px;">
+</div>
+
+---
+
+# CQRS
+
+Command and Query Segregation Principle
+
+Two models: read and write
+
+Separation of Concerns
+
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-cqrs.png" alt="Example Image" style="width:400px;">
+</div>
+
+---
+
+# VSA + CQRS
+
+Commands and Queries are first class citizens
+
+Only way to communicate with the apps
+
+Simple Model For Requests
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-request-model.png" alt="Example Image" style="width:600px;">
+</div>
+
+---
+
+# VSA + CQRS
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-cqrs-together.png" alt="Example Image" style="width:600px;">
+</div>
+
+---
+
+# How to organize code?
+
+Move code to a single physical place
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-move-services.png" alt="Example Image" style="width:700px;">
+</div>
+---
+# How to organize code
+
+Show image of folder structure
+with simple
+or with folders
+---
+
+
+
+Command and Queries as first class citizens
+
+Logical boundaries
+Feature Featur feature
+Modelling
+DB
+
+---
+# Move code to a single physical place
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-move-services.png" alt="Example Image" style="width:700px;">
+</div>
+
+---
+TDD STRATEGY
+
+- SOLITARY VS SOCIABLE TEST
+- LONDON
+- CGHICAGO FOR state
+    - IBERACTIS FOR EXTERNA L SERVUICE CALLS
+- NO LOW level
+-    EXCEPTIONS: domain entities, business heavy logic, property based testing
+-REFACTOR ARCHITECTURE EASILY - NO FRAGILE  TESTS
+---
 Notes:
 
 Layered Archi, Hexagonal Architecture, values
@@ -270,34 +425,7 @@ Dont ask the csutoemr what features they want.
 
 https://verticalslicearchitecture.com/
 
-Traditional N-tier:
-- for small systems and teams, it is fine
-UI
-BLLayer
-DALayer
-Database
-
-(DDD-style N-tier
-UI
-serivces
-domain
-Repositories)
-
-CA and HA, CA from Uncle Bob - show images of all of These
-Benefits of these 3:
-- independent of frameworks
-- independent of UI, database nad external dependencies
-- testable
-
-Disadvanteges:
-- organized by  technical concerns/lastyers
-----person, personcontroller, personservice, personrepositry
-
-- a changes impacts a lot of layer and files
-- high entry curve developers
-
-another problem is that any controller can call any servies and repos (check jimmy te slide)
-- it introduces coupling between classes
+Disadvantages:
 
 Talk about why Repository pattern is an anti paytern violating SRP
 
