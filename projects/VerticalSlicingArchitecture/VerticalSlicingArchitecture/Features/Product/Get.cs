@@ -7,7 +7,7 @@ using VerticalSlicingArchitecture.Shared;
 
 namespace VerticalSlicingArchitecture.Features.Product;
 
-public class GetProduct
+public class Get
 {
     public class Endpoint : ICarterModule
     {

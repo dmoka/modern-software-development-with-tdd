@@ -322,8 +322,14 @@ Domain drives the design.
 ---
 # Logical boundaries
 
-TODO:
-COP: 32
+Segregated by logical boundaries
+
+Sharing still happens!
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-shared-model.png" alt="Example Image" style="width:700px;">
+</div>
+
 ---
 
 # Web App characteriscs
@@ -373,10 +379,151 @@ Simple Model For Requests
 class: middle, center
 
 # <span class="green-bg">How to do VSA in .NET?</span>
+---
+# Modelling requests in .NET
 
+Mediator pattern
+
+MediatR library
+
+<div style="text-align: center;">
+  <img src="./assets/mediatr.png" alt="Example Image" style="width:300px;">
+</div>
+
+???
+
+The mediator pattern is like a "middle friend" that helps different parts talk to each other without needing to know everyone else.
+In MediatR, this "middle friend" handles messages (or requests) between parts of your app, so they can talk without directly knowing each other.
+
+---
+# Modelling requests in .NET
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-request-model-net1.png" alt="Example Image" style="width:600px;">
+</div>
 
 ---
 
+# Modelling requests in .NET
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-request-model-net2.png" alt="Example Image" style="width:600px;">
+</div>
+
+<div style="text-align: center;">
+  <pre>
+<code>
+Task Handle(Query request){...}
+
+Task Handle(Command request){...}
+</code>
+</pre>
+
+</div>
+---
+# Modelling requests in .NET
+
+```
+public class GetAllProductsQuery : IRequest<Result<Response>>
+{
+}
+```
+
+```
+public class GetProductQuery : IRequest<Result<Response>>
+{
+    public Guid Id { get; set; }
+}
+```
+
+```
+public class SearchForProductsQuery : IRequest<Result<Response>>
+{
+    public String Name { get; set; }
+    public decimal Price { get; set; }
+    public bool IsOnDiscount { get; set; }
+}
+```
+
+---
+
+# Modelling requests in .NET
+
+```
+public class ActivateDiscountsCommand : IRequest<Result<Guid>>
+{
+}
+```
+
+```
+public class CreateProductCommand : IRequest<Result<Guid>>
+  {
+      public string Name { get; set; }
+
+      public string Description { get; set; }
+
+      public decimal Price { get; set; }
+  }
+```
+
+---
+# Modelling responses in .NET
+
+<span class="red-bg">Don't use exceptions for control flow.</span>
+
+<span class="green-bg">Exceptions are only for exceptional situations.</span>
+
+2 kinds of errors:
+- you know how to handle
+  - use result paradigm
+- you don't know how to handle
+  - use exceptions
+  - catch and handle at the lowerst level
+#
+---
+# Result paradigm
+
+```
+public class Result<T>
+  {
+      private Result(bool isSuccess, T value, Error error)
+      {
+          ...
+      }
+  
+      public bool IsSuccess { get; }
+  
+      public bool IsFailure => !IsSuccess;
+  
+      public T Value { get; }
+  
+      public Error Error { get; }
+  
+      public static Result<T> Success(T value) 
+        => new(true, value, Error.None);
+  
+      public static Result<T> Failure(Error error) 
+        => new(false, default, error);
+  }
+```
+---
+# Modelling responses in .NET
+
+```
+public class GetProductQuery : IRequest<Result<Response>>
+{
+    public Guid Id { get; set; }
+}
+
+public class Response
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public decimal Price { get; set; }
+}
+```
+---
 # How to organize code
 
 Move code to a single physical place
@@ -387,28 +534,130 @@ Move code to a single physical place
 ---
 # How to organize code
 
-Show image of folder structure
-with simple
-or with folders
+📁 Features
+
+    |__ 📁CarPicker
+       |__ 🗎 ReserveCar.cs
+       |__ 🗎 UnreserveCar.cs
+       |__ 🗎 HoldCar.cs
+       |__ 🗎 ...
+    |__ 📁UserManager
+
+    |__ 📁PaymentProcessor
+
+    |__ 📁InvoiceGenerator
+
+    |__ 📁SupportCenter
+
+    |__ ...
+
 ---
 
+# How to organize one feature
 
-
-Logical boundaries
-Feature Featur feature
-Modelling
-DB
-
----
-# Move code to a single physical place
+One class - One file - one folder
 
 <div style="text-align: center;">
-  <img src="./assets/vsa-move-services.png" alt="Example Image" style="width:700px;">
+  <img src="./assets/vsa-net-collapsed.png" alt="Example Image" style="width:500px;">
 </div>
 
 ---
-TDD STRATEGY
+class: center, middle
 
+# <span class="orange-bg">Why all of this so powerfull?</span>
+
+---
+# Pragmatism
+
+- ✅ Minimal and lean solution
+- ✅ Guidelines over rigid rules
+- ✅ Freedom of choice
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-query-3-forms.png" alt="Example Image" style="width:600px;">
+</div>
+
+???
+It supports to mindset of a pragmatic engineer menaing ...
+That is how we want to keep our solutions lean, simple and minimal. 
+Software practices are guidelines not rigid rules.
+
+it does not mean that my team members can do whatever they want.
+but they can use whatever they need
+
+the best practice is is to use our critical thinking
+
+---
+
+# High cohesion
+
+✅ Everything in one place
+
+✅ Screaming architecture
+
+✅ App is organized by features, not by technical concerns
+
+✅ Focused on business logic
+
+---
+
+# How about coupling?
+
+✅ High coupling inside the slice
+
+✅ Low coupling with other features
+
+✅ Reduced complexity -> more confidence
+
+
+???
+high coupling inside slcie is readonable as the things which sh ould change together should live together
+---
+class: center, middle
+
+# <span class="red-bg"> That's it? </span>
+
+---
+class: center, middle
+
+# <span class="green-bg">The Ultimate TDD Strategy </span>
+
+---
+
+# Two kind of unit tests
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-solitary-vs-sociable.png" alt="Example Image" style="width:600px;">
+</div>
+
+
+---
+class: center, middle
+
+# <span class="red-bg">Don't couple your tests to code structure</span>
+
+# <span class="green-bg">Couple them to the behaviours of the public APIs</span>
+
+???
+dont; coumple your tests to code strucrture, they will be fragile, bla bla
+---
+# Sociable test on WebAPI
+
+- Feature represents the API
+- London mixed with Chicago
+- State vs interaction verification
+- No low-level tests
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-sociable-web-api.png" alt="Example Image" style="width:500px;">
+</div>
+
+???
+  - Exceptions: domain heavy logic or prop tests
+
+---
+TODO: Add image of mixing the inside wih different ways of handling stuff, also add layered or clean archi in the end
+---
 - SOLITARY VS SOCIABLE TEST
 - LONDON
 - CGHICAGO FOR state

@@ -1,4 +1,4 @@
-﻿using static VerticalSlicingArchitecture.Features.Product.CreateProduct;
+﻿using static VerticalSlicingArchitecture.Features.Product.Create;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
