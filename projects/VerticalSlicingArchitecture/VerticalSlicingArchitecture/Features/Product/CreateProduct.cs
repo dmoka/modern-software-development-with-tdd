@@ -8,7 +8,7 @@ using VerticalSlicingArchitecture.Entities;
 
 namespace VerticalSlicingArchitecture.Features.Product
 {
-    public static class Create
+    public static class CreateProduct
     {
         public class Endpoint : ICarterModule
         {
