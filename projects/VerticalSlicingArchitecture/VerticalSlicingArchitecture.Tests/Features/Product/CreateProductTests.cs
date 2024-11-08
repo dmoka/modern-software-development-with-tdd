@@ -64,7 +64,7 @@ public class CreateProductIntegrationTests
     public async Task CreateProduct_WithValidData_ShouldReturnCreated()
     {
         // Arrange
-        var command = new CreateProduct.Command
+        var command = new Create.Command
         {
             Name = "Test Product",
             Description = "Test Description",
@@ -86,7 +86,7 @@ public class CreateProductIntegrationTests
     public async Task CreateProduct_WithInvalidData_ShouldReturnBadRequest()
     {
         // Arrange
-        var command = new CreateProduct.Command
+        var command = new Create.Command
         {
             Name = "", // Invalid: empty name
             Description = "Test Description",

@@ -37,7 +37,6 @@ namespace VerticalSlicingArchitecture.Features.Product
             public decimal Price { get; set; }
 
             public int InitialStock { get; set; }
-
         }
 
         public class Validator : AbstractValidator<Command>

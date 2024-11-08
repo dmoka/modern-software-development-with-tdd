@@ -6,6 +6,7 @@ using VerticalSlicingArchitecture.Database;
 //TODO:
 //-add global error handling
 //-add logging/auth
+// pipeline behaviours for cruss cutting concerns!!!
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

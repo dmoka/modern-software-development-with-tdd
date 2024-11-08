@@ -524,6 +524,17 @@ public class Response
 }
 ```
 ---
+# How to organize projects?
+
+One assembly - one project
+
+Multiple if needed for scaling
+
+???
+
+If the deployment sturcutre requires, or multiple applications would use, you can pull out things to separate assemblies.
+
+---
 # How to organize code
 
 Move code to a single physical place
@@ -555,7 +566,7 @@ Move code to a single physical place
 
 # How to organize single feature
 
-One class - One file - one folder
+One class - One file - One folder
 
 <div style="text-align: center;">
   <img src="./assets/vsa-net-collapsed.png" alt="Example Image" style="width:500px;">
@@ -612,6 +623,27 @@ the best practice is is to use our critical thinking
 
 ???
 high coupling inside slcie is readonable as the things which sh ould change together should live together
+
+---
+# Code sharing
+
+Layered approach: sharing is default
+
+Slice approach: sharing is optional
+
+<span class="orange-bg">Defer decision, not eliminate it.</span>
+
+How to share:
+- extension methods
+- refactoring to functions/classes
+- rich domain model
+
+???
+SLices does not mean sharing isn't allowed. It's just it is not the default choice.
+
+Whereas in layered approach, sharing means default choice. 
+
+
 ---
 class: center, middle
 
@@ -643,10 +675,10 @@ dont; coumple your tests to code strucrture, they will be fragile, bla bla
 ---
 # Sociable test on WebAPI
 
-- Feature represents the API
+- Entry point: public API of WebAPI
 - London mixed with Chicago
 - State vs interaction verification
-- No low-level tests
+- Minimizing low-level tests
 
 <div style="text-align: center;">
   <img src="./assets/vsa-sociable-web-api.png" alt="Example Image" style="width:500px;">
@@ -654,35 +686,77 @@ dont; coumple your tests to code strucrture, they will be fragile, bla bla
 
 ???
   - Exceptions: domain heavy logic or prop tests
+---
+
+# Technology agnostic test
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-sociable-web-api-2.png" alt="Example Image" style="width:600px;">
+</div>
 
 ---
-TODO: add info that with TDD we write failing test for behaviour - arrange context, call web api, check state/interfactions
-TODO: Add image of mixing the inside wih different ways of handling stuff, also add layered or clean archi in the end
+
+# Technology agnostic test
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-sociable-web-api-3.png" alt="Example Image" style="width:600px;">
+</div>
+
+---
+
+# Technology agnostic test
+
+<div style="text-align: center;">
+  <img src="./assets/vsa-sociable-web-api-4.png" alt="Example Image" style="width: 600px;">
+</div>
+
+???
+Even if ou have clean architecutr,e dont change it because I said
+ you can do the same, high level tests
+ that's the beauty. I can easiy refactor this code using CleanArchitecture, and tests remain,
+  only there will be some more dependencies for the text context
+
+---
+
+# Acceptance Test-Driven Development (ATDD)
+
+What the system should do from the user POV
+
+Unit tests becomes Acceptance Tests
+
+What to test:
+
+- What are the observable behaviors?
+
+- What are the side effects?
+
+- What is the interaction with external systems?
+
+???
+TDD has a special form called Acceptance Test-Driven Development (ATDD). Acceptance Tests provide us with a user-focused take on what our system should do. They work alongside technical tests to check how the system behaves from an outside perspective, in real-life scenarious. ATDD is an approach that focuses on building software around its intended purpose and outcomes rather than specific technologies or implementation details. This “outside-in
+
+---
+When to use Solitary tests?
+
 TODO: add when sociable tests can be usefull (but only when we are done with the code)
+
 ---
-- SOLITARY VS SOCIABLE TEST
-- LONDON
-- CGHICAGO FOR state
-    - IBERACTIS FOR EXTERNA L SERVUICE CALLS
-- NO LOW level
--    EXCEPTIONS: domain entities, business heavy logic, property based testing
--REFACTOR ARCHITECTURE EASILY - NO FRAGILE  TESTS
+TODO: summary
+Summary:
+
+Pragmatic mindset
+
+Use what you need, throw away what you don't.
+
+Use the abstractions you only need but not one more. 
+- You need an abstraction? Do it
+
+Optimize on the fly, instead of being upfront and descriptive what to use.
+
 ---
-Notes:
 
-Layered Archi, Hexagonal Architecture, values
-You can have use TDD on all, the problem with the first 2 that they are too opinionated 
+TODO: add slides about how about DDD
 
-
-Pragmatic Archiecture is a methdlogy/mindset, not an endstate
-
-How much design do we need to implement right now to keep the codebase maintainable?
-
-That is how we want to keep our solutions lean, simple and minimal. 
-
-This is how we can shift away from thinking about endstates and required structures.
-
-Get what is good, trhrow away what is right.
 
 How about DDD? 
 
@@ -697,138 +771,12 @@ Add post image: guidelines, not rigid rules
 DDD is not about sturctural patterns, it is about collaborating closely with domain experts and have a clear understand about what we want to build, then do it in short, Iterative
 Dont ask the csutoemr what features they want.
 
-https://verticalslicearchitecture.com/
-
-Disadvantages:
-
-Talk about why Repository pattern is an anti paytern violating SRP
-
----jim
-VSA:
-move code to single place
-
-InvoiceSerivce
-- void approved
-- void Reject
-- void flag
-todO: show image to move these into separate classes
-
-Move these to separate, they are phusicall separated
-
-Commans/Queries first class citizens
-
-Modelling requests:
-Input -> RequestHandler -> Output (chcek jim immage)
-
-MediatR
-IRequest -> IRequestHandle<TReq,TRes> -> TResponse
-
-Image about coming a GET/Request, goes to WebApp layer then to query-handle-response or command-handler-response
-
-Image about Complete Encapsulation
-
-Areas of change only one folder, that's it
-
-QUERIES:
-Query->Response->Handler
-Show code about Queriy types
-
-SHow code about Response
-
-Show example code of Handler, where we use ORM
-Show example where we use raw SQL, so we optimize
-
-Query -> ORM - Response
-Query -> dapperrawSql -> Response
-Query -> HttpClient - Response
-
-You dont need, But you ahve the easy freedom.
-
-But shared logic in common:
-- class, function, extension method (check other part for this)
-
-
-COMMANDS:
-
-Show example of Command:
-(like user type input)
-
-Command is a model of an indivudual operation
-
-Show an UI image with thre button then on the right show the 3 C-H-Resp image
-
-modellingReponse: 
-- success of fail
-- guid
-- or even complex result - check Jim code about complex response (introduce only if needed)
-
-
-Query/Command duality
-
-show code example:
-check again
-
-
-HANDLERS:
-- procedural code
-- simplest thing that possibly work - TDD style
-- only adding abstaction if pain aries, not before
-
-Handlers can become complex?
-no worries, TDD refactor step, investigating code smells
-- large class -> Extract class, extract subclass
-long method -> extract method, move method
-push logic to the domain obhject (so load, domkain does the job, save)
-
-
-Drive refactoring based on code smells.
-
-For example complex swith statement with Strategy Pattern pattern.
-
-So start with the smell, then drive the design
-
-VLAIDATION SCOPES:
-
-request VLAIDATION:
-- fluentValidation
-
-Command vlidation (domain model, db, external mode)
-
 CROSS CUTTING CONCERNS: pipeline behaviours!!!
 
 QUESTION: wher we need UoW?
 check the a architecture is slices slidesheet
 
----
-Further notes:
-Clean Architecture favours a layered approach, where each layer is a technical concern.
-VSA favours a feature-based approach, where each feature is a business concern.
-
-Show the direction of dependencies in images
-Layers for both ca and VS
-- pres
-- app
-- domain
-- infra
-
-a slice represents a self-contained unit of functonaltiy
-contains all the logic to implement a feature
-- also helps to wrap the feature under feature flag
-
-Benefits:
-- improved cohesion
-- reduced complexity
-- focus on business logic
-- high coupling inside the slice, low coupling with other features
-- more screaming Architecture - easier nagivation and maintenance  
-
-3 things in an api
-- presentation logic - json, xlm, conversiin
-- business logic - business rules
-- persystence logic
-
-todo: add image - also for CS project 
-
+-
 VSA:
 You only need a new project when you need a new assembly.
 
@@ -853,7 +801,6 @@ Or:
 - sociable test with mocked stuff
 - integration test
 
-integratio ntests are good if we can use them to drive the design. Lot of external calls, etc, dont allow e that
 
 
 MIGRATING FROM CLEAN/N-TIER
@@ -883,43 +830,12 @@ vids:
 
 COpin:
 
-VSA:
-CA organizes code into layers
-- why CA is good? Stability, everything depends on domain, so no UI changes etc should ha ve impa ct on it
-- when you need a simple change, you need to change in a lot of places/projects
-- physical layers (show 4 projects)
-- in order to understand functionality, you need to have 10 different files to open and jump back and fort
+VSA conclusion:
 
-Show CA an example: https://www.youtube.com/watch?v=L2Wnq0ChAIA
-- find template projects and show the projects structure
+✅ pragmatic mindset
+✅ 
 
-Dont organize code by technical concerns? Because coupling
-
-But how about cohesion? Low coupling nad high cohesion
-
-cohesion: degree t owhich the elemnets inide a module belong together
-- grouped related to operation on data
-- grouped related to operations of a task
-
-
-
-Coupling: degree of interpdenednenceb between software  modules
-- show big ball of mud diagram
-
-
-Logical boundaries:
-feature | feature | feautre
-MOOOOOODEEEEEEEEEEEEEEELELLLL
-        (Database)
-
-CQRS: 
-- separation of concerns?
-- eliminates the need of serivces having massive lines of codes. It streamslines the communication between developers and makes the code more intuitive.
-- modelling actions in our system in terms of commands, which are things that mutate state, and queries that read state
-- commands: mutate state
-- add image for commands-queires
-- does it solve coupling?
-- you dont need, but it makes the separation clearer
+- 
 
 
 TODO: refine this
@@ -942,7 +858,7 @@ Readable, testable, team-driven clean code is more important.
 VSA summary:
 - functional cohesion
 - organize by feature
-- decidesion by feature
+- decision by feature
 
 we can still have coupling with VSA, but better cohesion.
 
@@ -951,22 +867,11 @@ TradeOffs vof VSA: (TODO: find more flaws)
 - requires constant evaluation
 
 ---
-Testing .NET API
-Why is it good?
-Even if ou have clean architecutr,e dont change it because I said
- you can do the same, high level tests
- that's the beauty. I can easiy refactor this code using CleanArchitecture, and tests remain,
-  only there will be some more dependencies for the text context
 
-Solitary and socialble tests
-Sometimes even real database, for smaller systems
 
 
 ---
-# Coding example TODOS:
 
-- show in the code that everyhing in one file would be in different layers
-- warehousing, sales, catalog
 
 
 #<span class="red-bg">Why refactoring is crucial in TDD?</span>
