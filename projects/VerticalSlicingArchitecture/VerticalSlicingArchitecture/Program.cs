@@ -5,7 +5,7 @@ using VerticalSlicingArchitecture.Database;
 
 //TODO:
 //-add global error handling
-//-add logging/auth
+//-add logging/auth - https://juliocasal.com/blog/Dont-Unit-Test-Your-AspNetCore-API
 // pipeline behaviours for cruss cutting concerns!!!
 var builder = WebApplication.CreateBuilder(args);
 
