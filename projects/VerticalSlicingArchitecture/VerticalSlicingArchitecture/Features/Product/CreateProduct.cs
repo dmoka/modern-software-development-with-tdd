@@ -23,7 +23,7 @@ namespace VerticalSlicingArchitecture.Features.Product
                         return Results.BadRequest(result.Error);
                     }
 
-                    return Results.Created($"/api/products/{result.Value}", result.Value);
+                    return Results.Created($"/api/products/{result.Value}", new {id = result.Value});
                 });
             }
         }
@@ -72,8 +72,6 @@ namespace VerticalSlicingArchitecture.Features.Product
                 var product = new Entities.Product
                 {
                     Name = request.Name,
-
-
                     Description = request.Description,
                     Price = request.Price
                 };
@@ -81,7 +79,7 @@ namespace VerticalSlicingArchitecture.Features.Product
                 _context.Products.Add(product);
 
 
-                var stockLevel = StockLevel.New(product.Id, request.InitialStock, DateTime.UtcNow);
+                var stockLevel = StockLevel.New(product.Id, request.InitialStock);
                 if (stockLevel.IsFailure)
                 {
                     return Result<Guid>.Failure(stockLevel.Error);

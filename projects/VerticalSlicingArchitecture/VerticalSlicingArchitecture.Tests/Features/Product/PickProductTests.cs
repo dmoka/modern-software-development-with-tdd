@@ -26,7 +26,7 @@ public class PickProductTests
         await testServer.DbContext().Products.AddAsync(product);
         await testServer.DbContext().SaveChangesAsync();
 
-        var stockLevel = StockLevel.New(product.Id, 10, DateTime.Now).Value;
+        var stockLevel = StockLevel.New(product.Id, 10).Value;
         await testServer.DbContext().StockLevels.AddAsync(stockLevel);
         
         await testServer.DbContext().SaveChangesAsync();

@@ -47,7 +47,6 @@ namespace VerticalSlicingArchitecture.Database
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.ProductId).IsUnique();
                 entity.Property(e => e.ProductId).IsRequired();
-                entity.Property(e => e.LastUpdated).IsRequired();
             });
         }
     }

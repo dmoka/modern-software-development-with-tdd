@@ -9,17 +9,16 @@ public class StockLevel
     public Guid Id { get; }
     public Guid ProductId { get; }
     public int Quantity { get; private set; }
-    public DateTime LastUpdated { get; private set; }
     public QualityStatus QualityStatus { get; private set; }
 
 
-    public static Result<StockLevel> New(Guid productId, int quantity, DateTime lastUpdated)
+    public static Result<StockLevel> New(Guid productId, int quantity)
     {
         if (quantity > MaxStockLevel)
         {
             return Result<StockLevel>.Failure(new Error("CreateArticle.Validation", "The quantity can not be more than max stock level"));
         }
-        var stockLevel = new StockLevel(productId, quantity, lastUpdated);
+        var stockLevel = new StockLevel(productId, quantity);
         return Result<StockLevel>.Success(stockLevel);
     }
 
@@ -51,11 +50,10 @@ public class StockLevel
     }
 
 
-    private StockLevel(Guid productId, int quantity, DateTime lastUpdated)
+    private StockLevel(Guid productId, int quantity)
     {
         ProductId = productId;
         Quantity = quantity;
-        LastUpdated = lastUpdated;
     }
 
     private StockLevel() { }
