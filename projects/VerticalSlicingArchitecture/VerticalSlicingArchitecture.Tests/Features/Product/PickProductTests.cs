@@ -2,19 +2,13 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-using VerticalSlicingArchitecture.Database;
-using VerticalSlicingArchitecture.Entities;
 using VerticalSlicingArchitecture.Features.Product;
 using VerticalSlicingArchitecture.Tests.Shared;
 
 namespace VerticalSlicingArchitecture.Tests.Features.Product;
 
-public class PickProductIntegrationTests
+public class PickProductTests
 {
 
     [Test]

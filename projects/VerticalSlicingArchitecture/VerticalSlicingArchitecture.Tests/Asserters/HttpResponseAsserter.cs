@@ -5,26 +5,26 @@ using VerticalSlicingArchitecture.Entities;
 
 namespace VerticalSlicingArchitecture.Tests.Asserters
 {
-    public class HttpResponseMessageAsserter : AbstractAsserter<HttpResponseMessage, HttpResponseMessageAsserter>
+    public class HttpResponseAsserter : AbstractAsserter<HttpResponseMessage, HttpResponseAsserter>
     {
 
-        public static HttpResponseMessageAsserter AssertThat(HttpResponseMessage httpResponseMessage)
+        public static HttpResponseAsserter AssertThat(HttpResponseMessage httpResponseMessage)
         {
-            return new HttpResponseMessageAsserter(httpResponseMessage);
+            return new HttpResponseAsserter(httpResponseMessage);
         }
 
-        public HttpResponseMessageAsserter(HttpResponseMessage actual) : base(actual)
+        public HttpResponseAsserter(HttpResponseMessage actual) : base(actual)
         {
         }
 
-        public HttpResponseMessageAsserter HasFailedStatus()
+        public HttpResponseAsserter HasFailedStatus()
         {
             Actual.IsSuccessStatusCode.Should().BeFalse();
 
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasStatusCode(HttpStatusCode statusCode)
+        public async Task<HttpResponseAsserter> HasStatusCode(HttpStatusCode statusCode)
         {
             var bodyContent = await Actual.Content.ReadAsStringAsync();
             Actual.StatusCode.Should().Be(statusCode, bodyContent);
@@ -32,7 +32,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasEmptyJsonBody()
+        public async Task<HttpResponseAsserter> HasEmptyJsonBody()
         {
             var content = await Actual.Content.ReadAsStringAsync();
             content.Should().BeEmpty();
@@ -40,7 +40,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasJsonInBody(string expectedJson)
+        public async Task<HttpResponseAsserter> HasJsonInBody(string expectedJson)
         {
             var content = await Actual.Content.ReadAsStringAsync();
             JsonAsserter.AssertThat(content)
@@ -49,7 +49,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasTextInBody(string expectedText)
+        public async Task<HttpResponseAsserter> HasTextInBody(string expectedText)
         {
             var content = await Actual.Content.ReadAsStringAsync();
 
@@ -58,7 +58,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasJsonInBody(dynamic expectedJson)
+        public async Task<HttpResponseAsserter> HasJsonInBody(dynamic expectedJson)
         {
             JsonAsserter.AssertThat(await Actual.Content.ReadAsStringAsync())
                 .IsEqualTo(JsonConvert.SerializeObject(expectedJson));
@@ -66,7 +66,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasJsonArrayInBody(string expectedJson)
+        public async Task<HttpResponseAsserter> HasJsonArrayInBody(string expectedJson)
         {
             JsonAsserter.AssertThat(await Actual.Content.ReadAsStringAsync())
                 .IsEqualToArray(expectedJson);
@@ -74,7 +74,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasJsonArrayInBody(dynamic expectedJson)
+        public async Task<HttpResponseAsserter> HasJsonArrayInBody(dynamic expectedJson)
         {
             JsonAsserter.AssertThat(await Actual.Content.ReadAsStringAsync())
                 .IsEqualToArray(JsonConvert.SerializeObject(expectedJson));
@@ -82,17 +82,17 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             return this;
         }
 
-        public async Task<HttpResponseMessageAsserter> HasJsonArrayInBody<TAsserter>(params Func<TAsserter>[] entityAsserters) where TAsserter : AbstractAsserter<Product, TAsserter>
+        public Task<HttpResponseAsserter> HasJsonArrayInBody<TAsserter>(params Func<TAsserter>[] entityAsserters) where TAsserter : AbstractAsserter<Product, TAsserter>
         {
             foreach (var asserter in entityAsserters)
             {
                 asserter.Invoke();
             }
 
-            return this;
+            return Task.FromResult(this);
         }
 
-        public async Task<HttpResponseMessageAsserter> HasEmptyJsonArrayInBody()
+        public async Task<HttpResponseAsserter> HasEmptyJsonArrayInBody()
         {
             JsonAsserter.AssertThat(await Actual.Content.ReadAsStringAsync())
                 .IsEqualToArray(JsonConvert.SerializeObject(new dynamic[] { }));
