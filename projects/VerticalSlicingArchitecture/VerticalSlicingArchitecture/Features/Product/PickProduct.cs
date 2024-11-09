@@ -59,12 +59,7 @@ public static class PickProduct
             }
 
             var stockLevel = await _context.StockLevels
-                .FirstOrDefaultAsync(sl => sl.ProductId == request.ProductId, cancellationToken);
-
-            if (stockLevel == null)
-            {
-                return Result.Failure(new Error("PickProduct.NotFound", "Stock level not found for the product"));
-            }
+                .FirstAsync(sl => sl.ProductId == request.ProductId, cancellationToken);
 
             var decreaseResult = stockLevel.Decrease(request.PickCount);
             if (decreaseResult.IsFailure)

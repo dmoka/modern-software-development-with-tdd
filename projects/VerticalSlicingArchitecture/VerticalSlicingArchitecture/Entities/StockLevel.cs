@@ -9,7 +9,7 @@ public class StockLevel
     public Guid Id { get; }
     public Guid ProductId { get; }
     public int Quantity { get; private set; }
-    public QualityStatus QualityStatus { get; private set; }
+    public QualityStatus QualityStatus { get; set; }
 
 
     public static Result<StockLevel> New(Guid productId, int quantity)
