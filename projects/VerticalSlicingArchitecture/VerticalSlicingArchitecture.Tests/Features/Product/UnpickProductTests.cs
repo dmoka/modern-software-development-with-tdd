@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using VerticalSlicingArchitecture.Entities;
 using VerticalSlicingArchitecture.Features.Product;
@@ -36,11 +37,74 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
         [Test]
         public async Task UnpickShouldFail_WhenProductDoesNotExist()
         {
-            true.Should().BeFalse();
+            using var testServer = new InMemoryTestServer();
+
+            var productId = Guid.NewGuid();
+            var command = new UnpickProduct.Endpoint.Command(productId, 3);
+            var response = await testServer.Client()
+                .PostAsync($"api/products/{productId}/unpick", JsonPayloadBuilder.Build(command));
+
+           await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+           await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+           {
+               code = "UnpickProduct.Validation",
+               description = $"Product with id {productId} doesn't exist"
+           });
         }
 
-        /*[Test]
-        public async Task UnpickShouldFail_WhenStockReachesMoreThanMaxLimit()*/
+        [Test]
+        public async Task UnpickShouldFail_WhenNoProductIdSpecified()
+        {
+            using var testServer = new InMemoryTestServer();
+
+            var productId = Guid.Empty;
+            var command = new UnpickProduct.Endpoint.Command(productId, 3);
+            var response = await testServer.Client()
+                .PostAsync($"api/products/{productId}/unpick", JsonPayloadBuilder.Build(command));
+
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+            await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+            {
+                code = "UnpickProduct.Validation",
+                description = "'Product Id' must not be empty."
+            });
+        }
+
+        [Test]
+        public async Task UnpickShouldFail_WhenInvalidQuantitySpecified()
+        {
+            using var testServer = new InMemoryTestServer();
+
+            var productId = Guid.NewGuid();
+            var command = new UnpickProduct.Endpoint.Command(productId, 0);
+            var response = await testServer.Client()
+                .PostAsync($"api/products/{productId}/unpick", JsonPayloadBuilder.Build(command));
+
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+            await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+            {
+                code = "UnpickProduct.Validation",
+                description = "UnpickCount must be greater than 0"
+            });
+        }
+
+        [Test]
+        public async Task UnpickShouldFail_WhenStockReachesMoreThanMaxLimit()
+        {
+            using var testServer = new InMemoryTestServer();
+            var product = await CreateProduct(testServer, 45);
+
+            var command = new UnpickProduct.Endpoint.Command(product.Id, 6);
+            var response = await testServer.Client()
+                .PostAsync($"api/products/{product.Id}/unpick", JsonPayloadBuilder.Build(command));
+
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+            await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+            {
+                code = "UnpickProduct.Validation",
+                description = "Cannot unpick more than max stock level"
+            });
+        }
 
 
         private static async Task<Entities.Product> CreateProduct(InMemoryTestServer testServer, int quantity)

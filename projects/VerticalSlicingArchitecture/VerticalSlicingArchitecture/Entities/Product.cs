@@ -34,11 +34,11 @@ namespace VerticalSlicingArchitecture.Entities
             return StockLevel.Decrease(pickCount);
         }
 
-        public void Unpick(int quantity)
+        public Result Unpick(int quantity)
         {
             LastOperation = LastOperation.Unpicked;
 
-            StockLevel.Increase(quantity);
+            return StockLevel.Increase(quantity);
         }
     }
 }

@@ -62,6 +62,8 @@ public static class PickProduct
                 .Include(p => p.StockLevel)
                 .SingleOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken);
 
+            //TODO: add check for null
+
             var pickResult =  product.Pick(request.PickCount);
 
             if (pickResult.IsFailure)

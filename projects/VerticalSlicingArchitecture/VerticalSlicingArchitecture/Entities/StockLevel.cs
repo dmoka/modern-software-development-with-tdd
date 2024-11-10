@@ -20,6 +20,7 @@ public class StockLevel
         {
             return Result<StockLevel>.Failure(new Error("CreateArticle.Validation", "The quantity can not be more than max stock level"));
         }
+
         var stockLevel = new StockLevel(productId, quantity);
         return Result<StockLevel>.Success(stockLevel);
     }
@@ -51,9 +52,17 @@ public class StockLevel
         return Result.Success();
     }
 
-    public void Increase(int quantity)
+    public Result Increase(int quantity)
     {
+        var newQuantity = Quantity + quantity;
+        if (newQuantity > MaxStockLevel)
+        {
+            return Result.Failure(new Error("UnpickProduct.Validation", "Cannot unpick more than max stock level"));
+        }
+
         Quantity += quantity;
+
+        return Result.Success();
     }
 
 
