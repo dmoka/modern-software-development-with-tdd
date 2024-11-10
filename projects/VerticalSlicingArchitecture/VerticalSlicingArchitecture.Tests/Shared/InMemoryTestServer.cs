@@ -1,9 +1,12 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using VerticalSlicingArchitecture.Database;
 
 namespace VerticalSlicingArchitecture.Tests.Shared;
@@ -35,7 +38,20 @@ public class InMemoryTestServer : IDisposable
                     services.AddValidatorsFromAssembly(assembly);
                     services.AddMediatR(config =>
                         config.RegisterServicesFromAssembly(assembly));
+
+                    services.Configure<HttpsRedirectionOptions>(options =>
+                    {
+                        options.HttpsPort = 443;  // Set a dummy port or disable redirection
+                    });
                 });
+
+                //Restrict EF Core logs
+                builder.ConfigureLogging(logging =>
+                {
+                    logging.SetMinimumLevel(LogLevel.Warning); // This sets the minimum level to Warning, hiding Info and Debug logs
+                    logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
+                });
+
             });
 
         _dbContext = _factory.Services.CreateScope()
