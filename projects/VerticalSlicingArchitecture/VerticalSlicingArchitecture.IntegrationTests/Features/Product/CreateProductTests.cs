@@ -35,7 +35,6 @@ namespace VerticalSlicingArchitecture.IntegrationTests.Features.Product
             createProduct.Name.Should().Be(command.Name);
             createProduct.Description.Should().Be("CPU");
             createProduct.Price.Should().Be(223.99m);
-
         }
     }
 }
