@@ -182,6 +182,27 @@ public class PickProductTests
         product.StockLevel.Quantity.Should().Be(7);
     }
 
+    [Test]
+    public async Task PickProductShouldFail_whenNoProductExists()
+    {
+        // Arrange
+        using var testServer = new InMemoryTestServer();
+        var productId = Guid.NewGuid();
+        var command = new PickProduct.Command(productId, 3);
+
+        // Act
+        var response = await testServer.Client().PostAsync($"/api/products/{productId}/pick", JsonPayloadBuilder.Build(command));
+
+        // Assert
+        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+        {
+            code = "PickProduct.NoProductExist",
+            description = $"The product with id {productId} doesn't exist"
+        });
+    }
+
+
     private static async Task<Entities.Product> CreateProductWith10Units(InMemoryTestServer testServer, int quantity)
     {
         var product = new Entities.Product

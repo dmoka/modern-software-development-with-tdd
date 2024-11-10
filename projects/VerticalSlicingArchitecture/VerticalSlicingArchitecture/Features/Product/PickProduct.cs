@@ -62,7 +62,11 @@ public static class PickProduct
                 .Include(p => p.StockLevel)
                 .SingleOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken);
 
-            //TODO: add check for null
+            if (product == null)
+            {
+                return Result.Failure(new Error("PickProduct.NoProductExist", $"The product with id {request.ProductId} doesn't exist"));
+            }
+
 
             var pickResult =  product.Pick(request.PickCount);
 
