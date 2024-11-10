@@ -51,6 +51,11 @@ public class StockLevel
         return Result.Success();
     }
 
+    public void Increase(int quantity)
+    {
+        Quantity += quantity;
+    }
+
 
     private StockLevel(Guid productId, int quantity)
     {
@@ -59,6 +64,8 @@ public class StockLevel
     }
 
     private StockLevel() { }
+
+
 }
 
 public enum QualityStatus

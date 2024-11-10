@@ -33,5 +33,12 @@ namespace VerticalSlicingArchitecture.Entities
 
             return StockLevel.Decrease(pickCount);
         }
+
+        public void Unpick(int quantity)
+        {
+            LastOperation = LastOperation.Unpicked;
+
+            StockLevel.Increase(quantity);
+        }
     }
 }
