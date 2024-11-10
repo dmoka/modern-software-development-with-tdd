@@ -36,10 +36,11 @@ namespace VerticalSlicingArchitecture.Database
                 entity.Property(e => e.Price)
                     .HasPrecision(18, 2);
 
-               /* entity.HasOne<StockLevel>()
-                    .WithOne()
+                // Configure one-to-one relationship
+                entity.HasOne(p => p.StockLevel)
+                    .WithOne(s => s.Product)
                     .HasForeignKey<StockLevel>(s => s.ProductId)
-                    .OnDelete(DeleteBehavior.Cascade);*/
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<StockLevel>(entity =>

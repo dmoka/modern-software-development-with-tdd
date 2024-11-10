@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using VerticalSlicingArchitecture.Entities;
 using VerticalSlicingArchitecture.Features.Product;
 using VerticalSlicingArchitecture.Tests.Asserters;
 using VerticalSlicingArchitecture.Tests.Shared;
@@ -173,11 +174,12 @@ public class PickProductTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var newStockLevel = await testServer.DbContext().StockLevels.AsNoTracking()
-            .FirstOrDefaultAsync(sl => sl.ProductId == product.Id);
+        product = await testServer.DbContext().Products.AsNoTracking().Include(p => p.StockLevel)
+            .FirstOrDefaultAsync();
 
-        newStockLevel.Should().NotBeNull();
-        newStockLevel!.Quantity.Should().Be(7);
+        product.Should().NotBeNull();
+        product.LastOperation.Should().Be(LastOperation.Picked);
+        product.StockLevel.Quantity.Should().Be(7);
     }
 
     private static async Task<Entities.Product> CreateProductWith10Units(InMemoryTestServer testServer, int quantity)

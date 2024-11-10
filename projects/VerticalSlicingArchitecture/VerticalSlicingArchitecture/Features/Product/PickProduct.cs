@@ -58,13 +58,15 @@ public static class PickProduct
                 return Result.Failure(new Error("PickProduct.Validation", validationResult.ToString()));
             }
 
-            var stockLevel = await _context.StockLevels
-                .FirstAsync(sl => sl.ProductId == request.ProductId, cancellationToken);
+            var product = await _context.Products
+                .Include(p => p.StockLevel)
+                .SingleOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken);
 
-            var decreaseResult = stockLevel.Decrease(request.PickCount);
-            if (decreaseResult.IsFailure)
+            var pickResult =  product.Pick(request.PickCount);
+
+            if (pickResult.IsFailure)
             {
-                return Result.Failure(decreaseResult.Error);
+                return Result.Failure(pickResult.Error);
             }
 
             await _context.SaveChangesAsync(cancellationToken);

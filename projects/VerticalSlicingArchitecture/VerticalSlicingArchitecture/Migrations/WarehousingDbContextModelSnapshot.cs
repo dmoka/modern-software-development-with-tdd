@@ -56,6 +56,9 @@ namespace VerticalSlicingArchitecture.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<int>("LastOperation")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -68,6 +71,23 @@ namespace VerticalSlicingArchitecture.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("StockLevel", b =>
+                {
+                    b.HasOne("VerticalSlicingArchitecture.Entities.Product", "Product")
+                        .WithOne("StockLevel")
+                        .HasForeignKey("StockLevel", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("VerticalSlicingArchitecture.Entities.Product", b =>
+                {
+                    b.Navigation("StockLevel")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

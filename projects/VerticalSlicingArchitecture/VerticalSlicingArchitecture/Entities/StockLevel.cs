@@ -1,4 +1,5 @@
 using System;
+using VerticalSlicingArchitecture.Entities;
 using VerticalSlicingArchitecture.Shared;
 
 public class StockLevel
@@ -10,6 +11,7 @@ public class StockLevel
     public Guid ProductId { get; }
     public int Quantity { get; private set; }
     public QualityStatus QualityStatus { get; set; }
+    public Product Product { get; set; }
 
 
     public static Result<StockLevel> New(Guid productId, int quantity)

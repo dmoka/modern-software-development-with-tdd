@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using VerticalSlicingArchitecture.Entities;
 using VerticalSlicingArchitecture.Features.Product;
 using VerticalSlicingArchitecture.Tests.Asserters;
 using VerticalSlicingArchitecture.Tests.Shared;
@@ -117,17 +118,17 @@ public class CreateProductTests
 
         // Assert
         await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Created);
-        var product = await testServer.DbContext().Products.FirstOrDefaultAsync();
+        var product = await testServer.DbContext().Products.Include(p => p.StockLevel).FirstOrDefaultAsync();
         product.Should().NotBeNull();
         product.Name.Should().Be(command.Name);
         product.Description.Should().Be(command.Description);
         product.Price.Should().Be(command.Price);
+        product.LastOperation.Should().Be(LastOperation.None);
 
-        var stocklevel = await testServer.DbContext().StockLevels.FirstOrDefaultAsync();
-        stocklevel.Should().NotBeNull();
-        stocklevel.ProductId.Should().Be(product.Id);
-        stocklevel.Quantity.Should().Be(command.InitialStock);
-        stocklevel.QualityStatus.Should().Be(QualityStatus.Available);
+        product.StockLevel.Should().NotBeNull();
+        product.StockLevel.ProductId.Should().Be(product.Id);
+        product.StockLevel.Quantity.Should().Be(command.InitialStock);
+        product.StockLevel.QualityStatus.Should().Be(QualityStatus.Available);
 
         await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
         {
