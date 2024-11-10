@@ -23,12 +23,12 @@ namespace VerticalSlicingArchitecture.Features.Product
                         return Results.BadRequest(result.Error);
                     }
 
-                    return Results.Created($"/api/products/{result.Value}", new {id = result.Value});
+                    return Results.Created($"/api/products/{result.Value}", result.Value);
                 });
             }
         }
 
-        public class Command : IRequest<Result<Guid>>
+        public class Command : IRequest<Result<Response>>
         {
             public string Name { get; set; }
 
@@ -38,6 +38,9 @@ namespace VerticalSlicingArchitecture.Features.Product
 
             public int InitialStock { get; set; }
         }
+
+        public record Response(Guid Id);
+
 
         public class Validator : AbstractValidator<Command>
         {
@@ -49,7 +52,7 @@ namespace VerticalSlicingArchitecture.Features.Product
             }
         }
 
-        internal sealed class Handler : IRequestHandler<Command, Result<Guid>>
+        internal sealed class Handler : IRequestHandler<Command, Result<Response>>
         {
             private readonly WarehousingDbContext _context;
             private readonly IValidator<Command> _validator;
@@ -60,13 +63,13 @@ namespace VerticalSlicingArchitecture.Features.Product
                 _validator = validator;
             }
 
-            public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Response>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var validationResult = _validator.Validate(request);
 
                 if (!validationResult.IsValid)
                 {
-                    return Result<Guid>.Failure(new Error("CreateArticle.Validation", validationResult.ToString()));
+                    return Result<Response>.Failure(new Error("CreateArticle.Validation", validationResult.ToString()));
                 }
 
                 var product = new Entities.Product
@@ -82,13 +85,13 @@ namespace VerticalSlicingArchitecture.Features.Product
                 var stockLevel = StockLevel.New(product.Id, request.InitialStock);
                 if (stockLevel.IsFailure)
                 {
-                    return Result<Guid>.Failure(stockLevel.Error);
+                    return Result<Response>.Failure(stockLevel.Error);
                 }
                 _context.StockLevels.Add(stockLevel.Value);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return Result<Guid>.Success(product.Id);
+                return Result<Response>.Success(new Response(product.Id));
             }
         }
     }
