@@ -42,7 +42,6 @@ We are building the **Product** domain entity for an inventory management system
 ### **Behavior**
 - **Create New Stock Level**:
   - The Id is generated during creation.
-  - Ensure the initial quantity does not exceed the maximum stock level.
   - Set the quality status to `Available`.
 
 ---
