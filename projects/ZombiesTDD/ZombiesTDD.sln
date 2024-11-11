@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZombiesTDD", "ZombiesTDD\ZombiesTDD.csproj", "{793FFD1F-1610-4489-B6EA-C2F3E2F6B905}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZombiesTDD.Tests", "ZombiesTDD.Tests\ZombiesTDD.Tests.csproj", "{EC1DA70A-8586-487B-8941-C27C247AF496}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{793FFD1F-1610-4489-B6EA-C2F3E2F6B905}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{793FFD1F-1610-4489-B6EA-C2F3E2F6B905}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{793FFD1F-1610-4489-B6EA-C2F3E2F6B905}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{793FFD1F-1610-4489-B6EA-C2F3E2F6B905}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC1DA70A-8586-487B-8941-C27C247AF496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC1DA70A-8586-487B-8941-C27C247AF496}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC1DA70A-8586-487B-8941-C27C247AF496}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC1DA70A-8586-487B-8941-C27C247AF496}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {212A7436-986A-4E98-BB9F-3E8F0136DAA4}
+	EndGlobalSection
+EndGlobal
