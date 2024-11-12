@@ -5,12 +5,12 @@ public class Product
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; }
-    public double Price { get; }
+    public decimal Price { get; }
     public PickStatus LastOperation { get; set; }
 
     public StockLevel StockLevel { get; set; }
 
-    public Product(string name, string description, double price)
+    public Product(string name, string description, decimal price)
     {
         Name = name;
         Description = description;

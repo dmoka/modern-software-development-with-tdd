@@ -16,36 +16,31 @@ Create a searcher module that must filter a collection of products based on the 
    - Products must have a price less than or equal to a specified maximum price.
 3. **Quality Status**: Filter products based on their stock's quality (e.g., Available, Damaged, Expired).
 4. **Sorting**:
+   - Products can be sorted by name in ascaneding or descending order.
    - Products can be sorted by price in ascending or descending order.
-
 ---
 
 ### **Input**
 
 The search method must accept a `SearchCriteria` object containing:
 - `SearchTerm` (string)
-- `MinPrice` (double, optional)
-- `MaxPrice` (double, optional)
+- `MinPrice` (decimal, optional)
+- `MaxPrice` (decimal, optional)
 - `QualityStatus` (enum, optional)
-- `SortByPriceAscending` (boolean, optional)
-- `SortByPriceDescending` (boolean, optional)
+- `Sorting` (enum, optional
 
 ---
 
 ### **Output**
 
-The search method must return a `SearchResult` containing:
-- A list of products that match the criteria.
-- A message indicating the result of the search (e.g., "No products found", "3 products found").
-
----
+List of prodicts according to the search criteria.
 
 ### **Constraints**
 
 1. If `MinPrice` or `MaxPrice` is negative, throw an exception.
 2. If `MaxPrice` is less than `MinPrice`, throw an exception.
 3. If no products match the criteria, return an empty result list with an appropriate message.
-4. The search must handle edge cases (e.g., empty product list, null inputs) gracefully.
+4. The search must throw error when null provided as input.
 
 ---
 
