@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 using DomainTDD;
 using FluentAssertions;
 
-//TODO: in init example, change hte price to decimal
-//TODO: use the updated readme
-
 namespace ZombiesTDD.Tests
 {
     public class ProductSearcherTests
