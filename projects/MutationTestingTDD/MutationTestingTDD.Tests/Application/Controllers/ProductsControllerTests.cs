@@ -168,6 +168,7 @@ namespace MutationTestingTDD.Tests.Application.Controllers
             await HttpResponseMessageAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
         }
 
+        //False positive
         [Test]
         public async Task PickShouldNotWork_whenPickedBiggerThanMaxPickCountOperation()
         {
