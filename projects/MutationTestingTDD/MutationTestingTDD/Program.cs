@@ -24,7 +24,7 @@ builder.Services.AddDbContext<WarehousingDbContext>(o =>
 
 // Register your services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IProductsFinder, ProductsFinder>();
+builder.Services.AddScoped<IProductsSearcher, ProductsSearcher>();
 
 var app = builder.Build();
 

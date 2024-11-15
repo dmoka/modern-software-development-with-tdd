@@ -10,12 +10,12 @@ namespace MutationTestingTDD.Application.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProductsFinder _productsFinder;
+        private readonly IProductsSearcher _productsSearcher;
 
-        public ProductsController(IUnitOfWork unitOfWork, IProductsFinder productsFinder)
+        public ProductsController(IUnitOfWork unitOfWork, IProductsSearcher productsSearcher)
         {
             _unitOfWork = unitOfWork;
-            _productsFinder = productsFinder;
+            _productsSearcher = productsSearcher;
         }
 
         [HttpGet]
@@ -46,7 +46,7 @@ namespace MutationTestingTDD.Application.Controllers
                 return BadRequest("The search text must be specified");
             }
 
-            var products = _productsFinder.Find(queryParameters).Select(p => new ProductViewModel()
+            var products = _productsSearcher.Find(queryParameters).Select(p => new ProductViewModel()
             {
                 Id =  p.Id,
                 Name = p.Name,
@@ -85,7 +85,6 @@ namespace MutationTestingTDD.Application.Controllers
             {
                 var product = await _unitOfWork.Products.GetAsync(id);
                 product.Pick(payload.Count);
-                await _unitOfWork.CommitAsync();
             }
             catch (ApplicationException e)
             {

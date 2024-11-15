@@ -2,7 +2,7 @@
 
 namespace MutationTestingTDD.Domain
 {
-    public interface IProductsFinder
+    public interface IProductsSearcher
     {
         IEnumerable<Product> Find(ProductsQueryParameters queryParameters);
     }

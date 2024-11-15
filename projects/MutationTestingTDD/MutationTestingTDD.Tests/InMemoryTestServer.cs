@@ -54,7 +54,7 @@ public class InMemoryTestServer : IDisposable
 
                     // Register required services
                     services.AddScoped<IUnitOfWork, UnitOfWork>();
-                    services.AddScoped<IProductsFinder, ProductsFinder>();
+                    services.AddScoped<IProductsSearcher, ProductsSearcher>();
                     services.AddControllers();
 
                     services.Configure<HttpsRedirectionOptions>(options =>

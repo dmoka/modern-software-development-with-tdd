@@ -76,7 +76,7 @@ namespace MutationTestingTDD.Tests.Application.Controllers
             await scope.AddProductsToDbContext(product2);
 
             //Act
-            var response = await scope.Client().GetAsync("/products?searchText=best&maxPrice=400");
+            var response = await scope.Client().GetAsync("/products?searchText=best&minPrice=0&maxPrice=400");
 
             //Assert
             await HttpResponseMessageAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);
