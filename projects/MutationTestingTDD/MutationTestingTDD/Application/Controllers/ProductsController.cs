@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using MutationTestingTDD.Domain;
 
 namespace MutationTestingTDD.Application.Controllers
@@ -28,18 +29,30 @@ namespace MutationTestingTDD.Application.Controllers
                 return NotFound();
             }
 
-            return Ok(product);
+            return Ok(new ProductViewModel()
+            {
+                Id = product.Id, 
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price
+            });
         }
 
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] ProductsQueryParameters queryParameters)
         {
-            if (!queryParameters.Category.HasValue)
+            if (queryParameters.SearchText.IsNullOrEmpty())
             {
-                return BadRequest("The product category must be specified");
+                return BadRequest("The search text must be specified");
             }
 
-            var products = await _productsFinder.Find(queryParameters);
+            var products = _productsFinder.Find(queryParameters).Select(p => new ProductViewModel()
+            {
+                Id =  p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price
+            });
 
             return Ok(products);
         }
@@ -54,9 +67,7 @@ namespace MutationTestingTDD.Application.Controllers
                 return StatusCode(409);
             }
 
-            var saleState = productPayload.IsOnSale ? SaleState.OnSale : SaleState.NoSale;
-            var product = new Product(productPayload.Name, productPayload.Category, productPayload.Price,
-                saleState);
+            var product = new Product(productPayload.Name, productPayload.Description, productPayload.Price);
 
             var storedProduct = _unitOfWork.Products.Create(product);
 

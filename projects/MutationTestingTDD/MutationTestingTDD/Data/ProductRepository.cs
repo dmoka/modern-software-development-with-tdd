@@ -5,10 +5,10 @@ namespace MutationTestingTDD.Data
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly WarehouseDbContext _dbContext;
+        private readonly WarehousingDbContext _dbContext;
         private readonly DbSet<Product> _entities;
 
-        public ProductRepository(WarehouseDbContext dbContext)
+        public ProductRepository(WarehousingDbContext dbContext)
         {
             if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
 
@@ -21,11 +21,6 @@ namespace MutationTestingTDD.Data
             return _entities.SingleOrDefaultAsync(p => p.Id == id);
         }
 
-        public Task<List<Product>> GetAllAsync(ProductCategory category)
-        {
-            return _entities.Where(p => p.Category == category).ToListAsync();
-        }
-
         public Product Create(Product entity)
         {
             var entry = _entities.Add(entity);
@@ -36,6 +31,11 @@ namespace MutationTestingTDD.Data
         public bool Exists(string name)
         {
             return _entities.Any(p => p.Name == name);
+        }
+
+        public IEnumerable<Product> GetAll()
+        {
+            return _entities.ToList();
         }
     }
 }

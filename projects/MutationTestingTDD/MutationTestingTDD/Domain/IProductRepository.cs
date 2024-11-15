@@ -1,11 +1,15 @@
-﻿namespace MutationTestingTDD.Domain
+﻿using System.Collections;
+
+namespace MutationTestingTDD.Domain
 {
     public interface IProductRepository
     {
         Task<Product> GetAsync(Guid id);
 
-        Task<List<Product>> GetAllAsync(ProductCategory category);
         Product Create(Product product);
+        
         bool Exists(string name);
+
+        IEnumerable<Product> GetAll();
     }
 }

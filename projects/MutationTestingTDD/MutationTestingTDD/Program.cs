@@ -1,49 +1,46 @@
-
+using Microsoft.EntityFrameworkCore;
 using MutationTestingTDD.Data;
 using MutationTestingTDD.Domain;
+using System.Text.Json.Serialization;
 
-namespace MutationTestingTDD
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 
-            // Add services to the container.
+builder.Services.AddAuthorization();
 
-            builder.Services.AddControllers();
-            builder.Services.ConfigureDbContextUsingInMemorySQLite();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<IProductsFinder, ProductsFinder>();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IStockLevelRepository, StockLevelRepository>();
-            builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
-            builder.Services.AddScoped<IHandler<ProductCreatedEvent>, ProductCreatedEventHandler>();
-            builder.Services.AddScoped<IHandler<ProductPickedEvent>, ProductPickedEventHandler>();
-            builder.Services.AddScoped<IHandler<ProductUnpickedEvent>, ProductUnpickedEventHandler>();
+builder.Services.AddDbContext<WarehousingDbContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+// Register your services
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProductsFinder, ProductsFinder>();
 
-            var app = builder.Build();
+var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-            app.Run();
-        }
-    }
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+
+public partial class Program { }

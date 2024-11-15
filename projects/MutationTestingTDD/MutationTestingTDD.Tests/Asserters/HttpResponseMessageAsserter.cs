@@ -2,6 +2,7 @@
 using FluentAssertions;
 using MutationTestingTDD.Domain;
 using Newtonsoft.Json;
+using VerticalSlicingArchitecture.Tests.Asserters;
 
 namespace MutationTestingTDD.Tests.Asserters
 {
@@ -60,6 +61,8 @@ namespace MutationTestingTDD.Tests.Asserters
 
         public async Task<HttpResponseMessageAsserter> HasJsonInBody(dynamic expectedJson)
         {
+            var content = Actual.Content.ReadAsStringAsync();
+            var expected = JsonConvert.SerializeObject(expectedJson);
             JsonAsserter.AssertThat(await Actual.Content.ReadAsStringAsync())
                 .IsEqualTo(JsonConvert.SerializeObject(expectedJson));
 

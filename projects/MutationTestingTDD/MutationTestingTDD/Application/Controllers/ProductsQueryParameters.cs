@@ -4,10 +4,10 @@ namespace MutationTestingTDD.Application.Controllers
 {
     public class ProductsQueryParameters
     {
-        public ProductCategory? Category { get; set; }
+        public string? SearchText { get; set; }
+
+        public decimal? MinPrice { get; set; }
 
         public decimal? MaxPrice { get; set; }
-
-        public bool? IsOnSale { get; set; }
     }
 }

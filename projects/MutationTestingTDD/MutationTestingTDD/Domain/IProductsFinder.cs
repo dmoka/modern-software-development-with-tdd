@@ -4,6 +4,6 @@ namespace MutationTestingTDD.Domain
 {
     public interface IProductsFinder
     {
-        Task<IEnumerable<Product>> Find(ProductsQueryParameters queryParameters);
+        IEnumerable<Product> Find(ProductsQueryParameters queryParameters);
     }
 }

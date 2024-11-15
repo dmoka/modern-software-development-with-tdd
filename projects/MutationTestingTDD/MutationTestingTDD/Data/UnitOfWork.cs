@@ -4,17 +4,15 @@ namespace MutationTestingTDD.Data
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly WarehouseDbContext _dbContext;
+        private readonly WarehousingDbContext _dbContext;
         private IProductRepository _products;
-        private IStockLevelRepository _stocks;
 
-        public UnitOfWork(WarehouseDbContext dbContext)
+        public UnitOfWork(WarehousingDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         public IProductRepository Products => _products ??= new ProductRepository(_dbContext);
-        public IStockLevelRepository Stocks => _stocks ??= new StockLevelRepository(_dbContext);
 
 
 

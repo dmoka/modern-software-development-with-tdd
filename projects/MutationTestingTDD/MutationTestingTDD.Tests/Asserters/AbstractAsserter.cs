@@ -1,4 +1,4 @@
-﻿namespace MutationTestingTDD.Tests.Asserters
+﻿namespace VerticalSlicingArchitecture.Tests.Asserters
 {
     public abstract class AbstractAsserter<TEntity, TSpecificAsserter>
         where TEntity : class
@@ -20,8 +20,8 @@
             IList<TEntity> actualList = actualEntities.ToList();
             var numberOfActualOrders = expectedEntriesAsserters.Length;
 
-            Assert.True(
-                actualList.Count == numberOfActualOrders,
+            Assert.That(
+                actualList.Count == numberOfActualOrders, Is.True,
                 string.Format(
                     $"Lists (containing {typeof(TEntity).Name}s) have different sizes. Expected list size: {0}, actual list size: {1}",
                     numberOfActualOrders, actualList.Count));

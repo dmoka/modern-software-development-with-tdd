@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json.Linq;
-
+using FluentAssertions.Json;
 namespace MutationTestingTDD.Tests.Asserters
 {
     public class JsonAsserter
@@ -42,6 +42,7 @@ namespace MutationTestingTDD.Tests.Asserters
             var actualJToken = JToken.Parse(Actual);
 
             actualJToken.Should().BeEquivalentTo(expectedJToken);
+
         }
 
     }

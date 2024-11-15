@@ -1,54 +1,61 @@
 ﻿namespace MutationTestingTDD.Domain
 {
-    public class Product : BaseEntity
+
+    public class Product
     {
-        public string Name { get; }
-        public ProductCategory Category { get; }
-        public string Description { get; }
-        public decimal Price { get; }
-        public SaleState SaleState { get; }
-        public PickState LastPickState { get; private set; }
+        public Guid Id { get; set; }
 
-        public Product(string name, ProductCategory category, decimal price, SaleState saleState)
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public decimal Price { get; set; }
+        public PickStatus PickStatus { get; set; }
+
+        public Product(string name, string description, decimal price)
         {
-            Id = Guid.NewGuid();
-            Category = category;
-            Price = price;
-            SaleState = saleState;
             Name = name;
-            SaleState = saleState;
-            LastPickState = PickState.New;
+            Description = description;
+            Price = price;
+            Id = Guid.NewGuid();
 
-            RaiseDomainEvent(new ProductCreatedEvent(Id));
-
+            StockLevel = new StockLevel();
         }
 
-        public void Pick(int count)
-        {
-            LastPickState = PickState.Picked;
+        public StockLevel StockLevel { get; set; }
 
-            RaiseDomainEvent(new ProductPickedEvent(Id, count));
+        public void Pick(int quanitity)
+        {
+            PickStatus = PickStatus.Picked;
+
+            StockLevel.Decrease(quanitity);
         }
 
-        public void Unpick(int count)
+        public void Unpick(int i)
         {
-            LastPickState = PickState.Unpicked;
+            StockLevel.Increase(i);
+            var newStockLevel = StockLevel.Quantity + i;
+            if (newStockLevel > 50)
+            {
+                throw new ApplicationException();
+            }
 
-            RaiseDomainEvent(new ProductUnpickedEvent(Id, count));
-
+            StockLevel.Quantity += i;
         }
     }
 
-    public enum PickState
+    public enum QualityStatus
     {
-        New,
+        Available,
+        Damaged,
+        Expired
+    }
+
+    public enum PickStatus
+    {
+        None,
         Picked,
         Unpicked
     }
-
-    public enum SaleState
-    {
-        NoSale,
-        OnSale,
-    }
 }
+
