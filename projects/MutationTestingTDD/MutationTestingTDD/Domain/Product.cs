@@ -31,7 +31,7 @@
             StockLevel.Decrease(quanitity);
         }
 
-        public void Unpick(int i)
+        /*public void Unpick(int i)
         {
             StockLevel.Increase(i);
             var newStockLevel = StockLevel.Quantity + i;
@@ -41,7 +41,7 @@
             }
 
             StockLevel.Quantity += i;
-        }
+        }*/
     }
 
     public enum QualityStatus

@@ -152,6 +152,42 @@ namespace MutationTestingTDD.Tests.Application.Controllers
         }
 
         [Test]
+        public async Task PickShouldNotWork_whenProductIsExpired()
+        {
+            //Arrange
+            using var scope = new InMemoryTestServer();
+
+            var product = new Product("Logitech HD Pro Webcam", "The best logitech webcam in 2024", 200);
+            product.StockLevel.QualityStatus = QualityStatus.Expired;
+            await scope.AddProductsToDbContext(product);
+
+            //Act
+            var response = await scope.Client().PostAsync($"/products/{product.Id}/pick", JsonPayloadBuilder.Build(new PickPayload { Count = 2 }));
+
+            //Assert
+            await HttpResponseMessageAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        }
+
+        [Test]
+        public async Task PickShouldNotWork_whenPickedBiggerThanMaxPickCountOperation()
+        {
+            //Arrange
+            using var scope = new InMemoryTestServer();
+
+            var product = new Product("Logitech HD Pro Webcam", "The best logitech webcam in 2024", 200);
+            product.StockLevel.Quantity = 50;
+            product.StockLevel.QualityStatus = QualityStatus.Expired;
+            await scope.AddProductsToDbContext(product);
+
+            //Act
+            var response = await scope.Client().PostAsync($"/products/{product.Id}/pick", JsonPayloadBuilder.Build(new PickPayload { Count = 35 }));
+
+            //Assert
+            await HttpResponseMessageAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        }
+
+
+        [Test]
         public async Task PickProductShouldDecreaseStockLevel()
         {
             //Arrange

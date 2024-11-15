@@ -96,7 +96,7 @@ namespace MutationTestingTDD.Application.Controllers
             return StatusCode(204);
         }
 
-        [HttpPost]
+       /* [HttpPost]
         [Route("{id}/unpick")]
         public async Task<IActionResult> UnpickProduct(Guid id, PickPayload payload)
         {
@@ -113,6 +113,6 @@ namespace MutationTestingTDD.Application.Controllers
 
 
             return StatusCode(204);
-        }
+        }*/
     }
 }

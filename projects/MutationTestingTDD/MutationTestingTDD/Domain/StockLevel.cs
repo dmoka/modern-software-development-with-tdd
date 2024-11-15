@@ -53,7 +53,7 @@ public class StockLevel
         }
     }
 
-    public void Increase(int quantity)
+   /* public void Increase(int quantity)
     {
         EnsureMaxStockLevelNotReached(quantity);
 
@@ -68,6 +68,6 @@ public class StockLevel
         {
             throw new ApplicationException();
         }
-    }
+    }*/
 
 }
