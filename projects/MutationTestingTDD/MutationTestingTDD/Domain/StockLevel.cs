@@ -49,7 +49,7 @@ public class StockLevel
     {
         if (QualityStatus != QualityStatus.Available)
         {
-            throw new ApplicationException("Can't pick damaged product");
+            throw new ApplicationException("Can't pick non available product");
         }
     }
 
