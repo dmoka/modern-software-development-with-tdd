@@ -43,7 +43,7 @@ namespace MutationTestingTDD.Tests.Application.Controllers
         }
 
         [Test]
-        public async Task GetAllProductShouldReturnBadRequest_whenNoCategorySpecified()
+        public async Task GetAllProductShouldReturnBadRequest_whenNoSearchSpecified()
         {
             using var scope = new InMemoryTestServer();
 
