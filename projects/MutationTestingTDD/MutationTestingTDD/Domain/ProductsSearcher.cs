@@ -25,7 +25,7 @@ namespace MutationTestingTDD.Domain
         {
             if (minPrice.HasValue)
             {
-                products = products.Where(p => p.Price > minPrice).ToList();
+                products = products.Where(p => p.Price >= minPrice).ToList();
             }
 
             return products;
