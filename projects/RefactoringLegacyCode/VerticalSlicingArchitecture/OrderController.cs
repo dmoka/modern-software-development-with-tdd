@@ -9,7 +9,8 @@ namespace RefactoringLegacyCode
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
-        private readonly string _connectionString = "YourConnectionStringHere";
+        private readonly string _connectionString = "Data Source=warehousing.db;Version=3;Pooling=True;Max Pool Size=100;\n";
+
 
         [HttpPost("process/{orderId}")]
         public async Task<IActionResult> ProcessOrder(int orderId)
