@@ -1,14 +1,13 @@
 using Carter;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using VerticalSlicingArchitecture.Database;
+using RefactoringLegacyCode.Database;
+using RefactoringLegacyCode.Middlewares;
 
 //TODO:
 //-add global error handling
 //-add logging/auth - https://juliocasal.com/blog/Dont-Unit-Test-Your-AspNetCore-API
 // pipeline behaviours for cruss cutting concerns!!!
-// - Add CLI tool with TDD
-// Apply .net libraries
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,7 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<WarehousingDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 
-var assembly = typeof(Program).Assembly;
+var assembly = typeof(RefactoringLegacyCode.Program).Assembly;
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
 
 builder.Services.AddCarter();
@@ -47,4 +46,7 @@ app.UseAuthorization();
 
 app.Run();
 
-public partial class Program { } // This makes the Program class public and accessible
+namespace RefactoringLegacyCode
+{
+    public partial class Program { }
+} // This makes the Program class public and accessible

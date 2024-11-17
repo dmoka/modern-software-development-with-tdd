@@ -1,14 +1,11 @@
 using Carter;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using VerticalSlicingArchitecture.Database;
 
 //TODO:
 //-add global error handling
 //-add logging/auth - https://juliocasal.com/blog/Dont-Unit-Test-Your-AspNetCore-API
 // pipeline behaviours for cruss cutting concerns!!!
-// - Add CLI tool with TDD
-// Apply .net libraries
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,8 +15,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<WarehousingDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
+/*builder.Services.AddDbContext<WarehousingDbContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));*/
 
 var assembly = typeof(Program).Assembly;
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
@@ -36,8 +33,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseGlobalExceptionHandler();
 
 app.MapCarter();//This scans the current assembly, find impls for ICarderModule and calls AddRoutes
 
