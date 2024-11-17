@@ -1,7 +1,16 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 //1. Inject IConfiguration in the constructor and get default conncetion
 namespace RefactoringLegacyCode
@@ -27,10 +36,10 @@ namespace RefactoringLegacyCode
             {
                 // Load order details from the database
                 OrderDetails orderDetails = null;
-                using (var connection = new SqlConnection(_connectionString))
+                using (var connection = new SqliteConnection(_connectionString))
                 {
                     connection.Open();
-                    using (var command = new SqlCommand("SELECT * FROM Orders WHERE Id = @OrderId", connection))
+                    using (var command = new SqliteCommand("SELECT * FROM Orders WHERE Id = @OrderId", connection))
                     {
                         command.Parameters.AddWithValue("@OrderId", orderId);
                         using (var reader = command.ExecuteReader())
@@ -55,13 +64,13 @@ namespace RefactoringLegacyCode
                 {
                     // Check if enough stock is available
                     bool stockAvailable = false;
-                    using (var connection = new SqlConnection(_connectionString))
+                    using (var connection = new SqliteConnection(_connectionString))
                     {
                         connection.Open();
-                        using (var command = new SqlCommand("SELECT Quantity FROM Products WHERE Id = @ProductId", connection))
+                        using (var command = new SqliteCommand("SELECT Quantity FROM Products WHERE Id = @ProductId", connection))
                         {
                             command.Parameters.AddWithValue("@ProductId", orderDetails.ProductId);
-                            int productQuantity = (int)command.ExecuteScalar();
+                            var productQuantity = (int)(long)command.ExecuteScalar();
                             stockAvailable = productQuantity >= orderDetails.Quantity;
                         }
                     }
@@ -72,10 +81,10 @@ namespace RefactoringLegacyCode
                     }
 
                     // Reserve stock
-                    using (var connection = new SqlConnection(_connectionString))
+                    using (var connection = new SqliteConnection(_connectionString))
                     {
                         connection.Open();
-                        using (var command = new SqlCommand("UPDATE Products SET Quantity = Quantity - @Quantity WHERE Id = @ProductId", connection))
+                        using (var command = new SqliteCommand("UPDATE Products SET Quantity = Quantity - @Quantity WHERE Id = @ProductId", connection))
                         {
                             command.Parameters.AddWithValue("@ProductId", orderDetails.ProductId);
                             command.Parameters.AddWithValue("@Quantity", orderDetails.Quantity);
@@ -84,7 +93,6 @@ namespace RefactoringLegacyCode
                     }
 
                     // Send confirmation email to customer
-                    Console.WriteLine($"Sending email to {orderDetails.CustomerEmail} for Order {orderDetails.OrderId}...");
                     using (var httpClient = new HttpClient())
                     {
                         var emailPayload = new
@@ -97,16 +105,7 @@ namespace RefactoringLegacyCode
                         string emailJson = JsonSerializer.Serialize(emailPayload);
                         var content = new StringContent(emailJson, Encoding.UTF8, "application/json");
 
-                        HttpResponseMessage response = await httpClient.PostAsync("https://api.emailservice.com/send", content);
-
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            Console.WriteLine("Failed to send email. Status Code: " + response.StatusCode);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Email sent successfully to " + orderDetails.CustomerEmail);
-                        }
+                       HttpResponseMessage response = await httpClient.PostAsync("https://api.emailservice.com/send", content);
                     }
 
                     // Log action to JSON file
@@ -228,10 +227,10 @@ namespace RefactoringLegacyCode
                     System.IO.File.WriteAllText(fileName, jsonString);
 
                     // Mark order as processed in the database
-                    using (var connection = new SqlConnection(_connectionString))
+                    using (var connection = new SqliteConnection(_connectionString))
                     {
                         connection.Open();
-                        using (var command = new SqlCommand("UPDATE Orders SET Status = 'Processed' WHERE Id = @OrderId", connection))
+                        using (var command = new SqliteCommand("UPDATE Orders SET Status = 'Processed' WHERE Id = @OrderId", connection))
                         {
                             command.Parameters.AddWithValue("@OrderId", orderDetails.OrderId);
                             command.ExecuteNonQuery();

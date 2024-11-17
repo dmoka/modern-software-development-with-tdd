@@ -22,7 +22,8 @@ namespace RefactoringLegacyCode.Tests
 
             var response = await client.PostAsync("api/order/1/process", null);
 
-            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.InternalServerError);
+            await HttpResponseAsserter.AssertThat(response).HasTextInBody("dsa");
         }
     }
 }

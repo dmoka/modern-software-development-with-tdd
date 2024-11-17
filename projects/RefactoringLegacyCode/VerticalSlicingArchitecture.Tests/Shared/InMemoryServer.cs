@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using FluentAssertions.Common;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Data.SqlClient;
 
 namespace RefactoringLegacyCode.Tests.Shared
 {
@@ -26,7 +27,7 @@ namespace RefactoringLegacyCode.Tests.Shared
             // Create and open the SQLite in-memory database
             SQLitePCL.Batteries.Init();
 
-            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection = new SqliteConnection("DataSource=:memory:;Mode=Memory;Cache=Shared");
             _connection.Open();
             InitializeDatabase();
         }
@@ -39,7 +40,8 @@ namespace RefactoringLegacyCode.Tests.Shared
                 Id INTEGER PRIMARY KEY,
                 ProductId INTEGER,
                 Quantity INTEGER,
-                CustomerEmail TEXT
+                CustomerEmail TEXT,
+                Status TEXT DEFAULT 'New'
             );
 
             CREATE TABLE Products (
@@ -54,6 +56,8 @@ namespace RefactoringLegacyCode.Tests.Shared
             VALUES (100, 10);
         ";
             command.ExecuteNonQuery();
+
+            var orders = GetOrders();
         }
 
         public void Dispose()
@@ -94,6 +98,23 @@ namespace RefactoringLegacyCode.Tests.Shared
                 });
 
             return factory.CreateClient();
+        }
+
+        public List<string> GetOrders()
+        {
+            var orders = new List<string>();
+
+            using var command = _connection.CreateCommand();
+            command.CommandText = "SELECT Id, ProductId, Quantity, CustomerEmail FROM Orders";
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var orderDetails = $"Id: {reader.GetInt32(0)}, ProductId: {reader.GetInt32(1)}, Quantity: {reader.GetInt32(2)}, Email: {reader.GetString(3)}";
+                orders.Add(orderDetails);
+            }
+
+            return orders;
         }
     }
 
