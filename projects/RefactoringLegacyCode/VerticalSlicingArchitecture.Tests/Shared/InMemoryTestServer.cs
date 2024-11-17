@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace RefactoringLegacyCode.Tests.Shared;
 
+
 /*
 public class InMemoryTestServer : IDisposable
 {
@@ -60,7 +61,7 @@ public class InMemoryTestServer : IDisposable
 
     public HttpClient Client() => _client;
 
-    public WarehousingDbContext DbContext() => _dbContext;
+   // public WarehousingDbContext DbContext() => _dbContext;
 
 
     public void Dispose()

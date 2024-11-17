@@ -25,6 +25,9 @@ builder.Services.AddCarter();
 
 builder.Services.AddValidatorsFromAssembly(assembly);
 
+builder.Services.AddControllers(); // Add MVC services
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,6 +36,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapControllers(); // Maps traditional MVC controllers
 
 app.MapCarter();//This scans the current assembly, find impls for ICarderModule and calls AddRoutes
 

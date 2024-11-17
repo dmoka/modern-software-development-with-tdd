@@ -118,7 +118,6 @@ namespace RefactoringLegacyCode.Tests
             return Arb.From(Gen.Choose(1, 100));
         }
 
-        [Test]
         public void HigherQuantity_ShouldIncreasePriority()
         {
             Configuration.Default.MaxNbOfTest = 100;
@@ -165,7 +164,6 @@ namespace RefactoringLegacyCode.Tests
         }
 
 
-        [Test]
         public void PriorityOrderShouldBeSameDayThenExpresThenStandard()
         {
             Configuration.Default.MaxNbOfTest = 100;

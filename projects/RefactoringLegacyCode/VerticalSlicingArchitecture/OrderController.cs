@@ -3,16 +3,24 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
+//1. Inject IConfiguration in the constructor and get default conncetion
 namespace RefactoringLegacyCode
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrdersController : ControllerBase
+    public class OrderController : ControllerBase
     {
-        private readonly string _connectionString = "Data Source=warehousing.db;Version=3;Pooling=True;Max Pool Size=100;\n";
+        private readonly IConfiguration _configuration;
+
+        public OrderController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        private string _connectionString => _configuration.GetConnectionString("DefaultConnection");
 
 
-        [HttpPost("process/{orderId}")]
+        [HttpPost("{orderId}/process")]
         public async Task<IActionResult> ProcessOrder(int orderId)
         {
             try
