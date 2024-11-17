@@ -39,13 +39,15 @@ namespace RefactoringLegacyCode.Tests
 
             StringContent capturedContent = null;
 
-            // Setting up the mock to capture the StringContent passed to SendEmail
             testServer.EmailSender().Setup(sender => sender.SendEmail(It.IsAny<StringContent>()))
                 .Callback<StringContent>(content => capturedContent = content);
 
+            // Act  
             var response = await client.PostAsync("api/order/1/process", null);
 
-            // Act  
+            // Assert
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);
+
             var actualEmailPayloadJson = await capturedContent.ReadAsStringAsync();
             var actualEmailPayload = JsonSerializer.Deserialize<Dictionary<string, string>>(actualEmailPayloadJson);
 
