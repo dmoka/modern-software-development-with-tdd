@@ -63,5 +63,125 @@ namespace RefactoringLegacyCode.Tests
             capturedContent.Headers.ContentType.MediaType.Should().Be("application/json");
             capturedContent.Headers.ContentType.CharSet.Should().Be("utf-8");
         }
+
+        [TestCase(11, "Express", 10, 120)]
+        [TestCase(11, "Express", 18, 150)]
+        [TestCase(11, "Express", 19, 150)]
+        [TestCase(11, "SameDay", 10, 180)]
+        [TestCase(11, "SameDay", 14, 160)]
+        [TestCase(11, "SameDay", 12, 160)]
+        [TestCase(11, "Standard", 12, 80)]
+        [TestCase(50, "Standard", 12, 80)]
+        [TestCase(51, "Standard", 12, 100)]
+        [TestCase(1, "Express", 10, 50)]
+        [TestCase(5, "Express", 10, 50)]
+        [TestCase(6, "Express", 10, 60)]
+        [TestCase(6, "Express", 18, 70)]
+        [TestCase(1, "SameDay", 10, 90)]
+        [TestCase(1, "SameDay", 14, 110)]
+        [TestCase(1, "Standard", 10, 20)]
+        [TestCase(1, "Standard", 18, 40)]
+        [TestCase(1, "Standard", 19, 40)]
+
+        public void TestPriorityCalculation(int quantity, string deliveryType, int hour, int expectedPriority)
+        {
+            var orderDetails = new OrderDetails
+            {
+                Quantity = quantity,
+                DeliveryType = deliveryType
+            };
+
+            var mockedDateTimeProvider = new Mock<IDateTimeProvider>();
+            mockedDateTimeProvider.Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, hour, 10, 10));
+
+            var priority = OrderController.CalculatePriority(mockedDateTimeProvider.Object, orderDetails);
+
+            priority.Should().Be(expectedPriority);
+        }
+
+        public static Arbitrary<string> DeliveryTypes()
+        {
+            var deliveryTypes = new[] { "Standard", "Express", "SameDay" };
+
+            return Arb.From(Gen.Elements(deliveryTypes));
+        }
+
+        public static Arbitrary<int> QuantityBetween1And100()
+        {
+            return Arb.From(Gen.Choose(1, 100));
+        }
+
+        public static Arbitrary<int> Hours()
+        {
+            return Arb.From(Gen.Choose(1, 23));
+        }
+
+        [Test]
+        public void HigherQuantity_ShouldIncreasePriority()
+        {
+            Configuration.Default.MaxNbOfTest = 100;
+
+            Prop.ForAll(
+                DeliveryTypes(),
+                QuantityBetween1And100(),
+                Hours(),
+                (deliveryType, quantity, hour) =>
+                {
+                    var mockedDateTimeProvider = new Mock<IDateTimeProvider>();
+                    mockedDateTimeProvider.Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, hour, 10, 10));
+
+                    var lowerQuantityPriority = OrderController.CalculatePriority(mockedDateTimeProvider.Object, new OrderDetails
+                    {
+                        Quantity = quantity,
+                        DeliveryType = deliveryType
+                    });
+
+                    var higherQuantityPriority = OrderController.CalculatePriority(mockedDateTimeProvider.Object, new OrderDetails
+                    {
+                        Quantity = quantity + 1,
+                        DeliveryType = deliveryType
+                    });
+
+                    return lowerQuantityPriority <= higherQuantityPriority;
+                }
+            ).VerboseCheckThrowOnFailure();
+        }
+
+
+        [Test]
+        public void PriorityOrderShouldBeSameDayThenExpressThenStandard()
+        {
+            Configuration.Default.MaxNbOfTest = 100;
+
+            Prop.ForAll(
+                QuantityBetween1And100(),
+                Hours(),
+                (quantity, hour) =>
+                {
+                    var mockedDateTimeProvider = new Mock<IDateTimeProvider>();
+                    mockedDateTimeProvider.Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, hour, 10, 10));
+
+                    var sameDayPriority = OrderController.CalculatePriority(mockedDateTimeProvider.Object, new OrderDetails
+                    {
+                        Quantity = quantity,
+                        DeliveryType = "SameDay"
+                    });
+
+                    var expressPriority = OrderController.CalculatePriority(mockedDateTimeProvider.Object, new OrderDetails
+                    {
+                        Quantity = quantity,
+                        DeliveryType = "Express"
+                    });
+
+                    var standardPriority = OrderController.CalculatePriority(mockedDateTimeProvider.Object, new OrderDetails
+                    {
+                        Quantity = quantity,
+                        DeliveryType = "Standard"
+                    });
+
+                    return sameDayPriority > expressPriority && expressPriority > standardPriority;
+                }
+            ).VerboseCheckThrowOnFailure();
+        }
     }
 }
