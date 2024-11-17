@@ -80,6 +80,34 @@ namespace RefactoringLegacyCode.Tests.Shared
             return (string)command.ExecuteScalar();
         }
 
+        public void InsertOrder(int id, int productId, int quantity)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = $@"
+            INSERT INTO Orders (Id, ProductId, Quantity, CustomerEmail, DeliveryType)
+            VALUES ({id}, {productId}, {quantity}, 'customer@example.com', 'Express');
+        ";
+            command.ExecuteNonQuery();
+        }
+
+        public void InsertProduct(int productId, int quantity, decimal price)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = $@"
+            INSERT INTO Products (Id, Quantity, Price)
+            VALUES ({productId}, {quantity}, {price});
+        ";
+            command.ExecuteNonQuery();
+        }
+
+        public int GetStockLevel(int productId)
+        {
+            var command = new SqliteCommand("SELECT Quantity FROM Products WHERE Id = @ProductId", _connection);
+            command.Parameters.AddWithValue("@ProductId", productId);
+
+            return (int)(long)command.ExecuteScalar();
+        }
+
         public void Dispose()
         {
             _connection.Close();

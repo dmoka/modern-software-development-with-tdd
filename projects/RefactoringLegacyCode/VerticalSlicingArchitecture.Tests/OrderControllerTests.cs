@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FsCheck;
+using Microsoft.AspNetCore.TestHost;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
@@ -64,6 +65,7 @@ namespace RefactoringLegacyCode.Tests
             capturedContent.Headers.ContentType.CharSet.Should().Be("utf-8");
         }
 
+        [TestCase(10, "Express", 10, 60)]
         [TestCase(11, "Express", 10, 120)]
         [TestCase(11, "Express", 18, 150)]
         [TestCase(11, "Express", 19, 150)]
@@ -82,6 +84,7 @@ namespace RefactoringLegacyCode.Tests
         [TestCase(1, "Standard", 10, 20)]
         [TestCase(1, "Standard", 18, 40)]
         [TestCase(1, "Standard", 19, 40)]
+        [TestCase(1, "SameDay", 12, 110)]
 
         public void TestPriorityCalculation(int quantity, string deliveryType, int hour, int expectedPriority)
         {
@@ -242,6 +245,87 @@ namespace RefactoringLegacyCode.Tests
             //Assert
             await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
             await HttpResponseAsserter.AssertThat(response).HasTextInBody("Order not found.");
+        }
+
+        [Test]
+        public async Task ProcessingShouldFail_whenInsufficientStockForOrder()
+        {
+            //Arrange
+            var testServer = new InMemoryServer();
+            testServer.DateTimeProvider().Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, 10, 10, 10));
+
+            var productId = 200;
+            testServer.InsertOrder(2, productId, 11);
+            testServer.InsertProduct(productId, 10, 18.99m);
+
+            //Act
+            var response = await testServer.Client().PostAsync("api/order/2/process", null);
+
+            //Assert
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+            await HttpResponseAsserter.AssertThat(response).HasTextInBody("Insufficient stock to process the order.");
+        }
+
+        [Test]
+        public async Task ProcessingShouldDecreaseStockLevel()
+        {
+            //Arrange
+            var testServer = new InMemoryServer();
+            testServer.DateTimeProvider().Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, 10, 10, 10));
+
+            var state = testServer.GetOrderState(1);
+            state.Should().Be("New");
+
+            //Act
+            var response = await testServer.Client().PostAsync("api/order/1/process", null);
+
+            //Assert
+            var stockLevel = testServer.GetStockLevel(100);
+            stockLevel.Should().Be(5);
+        }
+
+        [Test]
+        public async Task DeliverDateShouldBeLowerWithHigQuanttiy()
+        {
+            //Arrange
+            var testServer = new InMemoryServer();
+            testServer.DateTimeProvider().Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, 10, 10, 10));
+
+            var productId = 200;
+            testServer.InsertOrder(2, productId, 11);
+            testServer.InsertProduct(productId, 100, 18.99m);
+
+            //Act
+            var response = await testServer.Client().PostAsync("api/order/2/process", null);
+
+            //Assert
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);
+            await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+            {
+                orderId = 2,
+                totalCost = 208.89,
+                estimatedDeliveryDate = new DateTime(2024, 11, 9, 10, 10, 10),
+                deliveryType = "Express"
+            });
+        }
+
+
+        [Test]
+        public async Task WhenEmailSenderHasIssues_thenReturnsInternalServerErro()
+        {
+            // Arrange
+            var testServer = new InMemoryServer();
+
+            StringContent capturedContent = null;
+
+            testServer.EmailSender().Setup(sender => sender.SendEmail(It.IsAny<StringContent>())).Throws(new ApplicationException("Something bad happened when sending email"));
+
+            // Act  
+            var response = await testServer.Client().PostAsync("api/order/1/process", null);
+
+            // Assert
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.InternalServerError);
+            await HttpResponseAsserter.AssertThat(response).HasTextInBody("Internal server error: Something bad happened when sending email");
         }
     }
 }
