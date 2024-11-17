@@ -56,14 +56,15 @@ namespace RefactoringLegacyCode.Tests.Shared
 
             CREATE TABLE Products (
                 Id INTEGER PRIMARY KEY,
-                Quantity INTEGER
+                Quantity INTEGER,
+                Price NUMERIC(10, 2)
             );
 
             INSERT INTO Orders (Id, ProductId, Quantity, CustomerEmail, DeliveryType)
             VALUES (1, 100, 5, 'customer@example.com', 'Express');
 
-            INSERT INTO Products (Id, Quantity)
-            VALUES (100, 10);
+            INSERT INTO Products (Id, Quantity, Price)
+            VALUES (100, 10, 18.99);
         ";
             command.ExecuteNonQuery();
 

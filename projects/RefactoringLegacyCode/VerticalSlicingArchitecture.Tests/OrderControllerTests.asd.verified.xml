@@ -5,7 +5,7 @@
     <ProductId>100</ProductId>
     <Quantity>5</Quantity>
     <UnitPrice>19.99</UnitPrice>
-    <TotalCost>99.95</TotalCost>
+    <TotalCost>94.95</TotalCost>
   </ProductDetails>
   <CustomerInfo>
     <Email>customer@example.com</Email>

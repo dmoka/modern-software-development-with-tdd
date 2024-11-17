@@ -127,7 +127,17 @@ namespace RefactoringLegacyCode
                     }
 
                     // Log action to XML
-                    decimal unitPrice = 19.99m; // Assume a fixed unit price
+                    //TODO: do something withfixed price
+                    decimal unitPrice= 0;
+                    using (var connection = new SqliteConnection(_connectionString))
+                    {
+                        connection.Open();
+                        using (var command = new SqliteCommand("SELECT Price FROM Products WHERE Id = @ProductId", connection))
+                        {
+                            command.Parameters.AddWithValue("@ProductId", orderDetails.ProductId);
+                            unitPrice = Convert.ToDecimal(command.ExecuteScalar());
+                        }
+                    }
                     decimal totalCost = orderDetails.Quantity * unitPrice;
                     DateTime orderDate = _dateTimeProvider.Now;
                     DateTime estimatedDeliveryDate = orderDate.AddDays(orderDetails.Quantity > 5 ? 2 : 5);
