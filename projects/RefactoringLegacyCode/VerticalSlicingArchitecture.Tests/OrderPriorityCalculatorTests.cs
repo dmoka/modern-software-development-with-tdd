@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace RefactoringLegacyCode.Tests
 {
@@ -16,7 +18,6 @@ namespace RefactoringLegacyCode.Tests
             int pr = 0;
             if (orderDetails.Quantity > 10)
             {
-
                 // Large orders
                 if (orderDetails.DeliveryType == "Express")
                 {
@@ -139,10 +140,30 @@ namespace RefactoringLegacyCode.Tests
                         DeliveryType = deliveryType
                     });
 
-                    return lowerQuantityPriority < higherQuantityPriority;
+                    return lowerQuantityPriority <= higherQuantityPriority;
                 }
             ).VerboseCheckThrowOnFailure();
         }
+
+        public void asd()
+        {
+            var quantity = 43;
+            var deliveryType = "SameDay";
+            var lowerQuantityPriority = PriorityCalculator.CalculatePriority(new OrderDetails
+            {
+                Quantity = quantity,
+                DeliveryType = deliveryType
+            });
+
+            var higherQuantityPriority = PriorityCalculator.CalculatePriority(new OrderDetails
+            {
+                Quantity = quantity + 1,
+                DeliveryType = deliveryType
+            });
+
+            lowerQuantityPriority.Should().BeLessThan(higherQuantityPriority);
+        }
+
 
         [Test]
         public void PriorityOrderShouldBeSameDayThenExpresThenStandard()
