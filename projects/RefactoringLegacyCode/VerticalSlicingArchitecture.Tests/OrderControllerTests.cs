@@ -22,7 +22,7 @@ namespace RefactoringLegacyCode.Tests
     public class OrderControllerTests
     {
         [Test]
-        public async Task asd()
+        public async Task XmlFileSnapShotTest()
         {
             //Arrange
             var testServer = new InMemoryServer();
