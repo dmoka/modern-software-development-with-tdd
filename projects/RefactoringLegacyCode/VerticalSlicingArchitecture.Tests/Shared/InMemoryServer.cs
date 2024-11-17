@@ -50,6 +50,7 @@ namespace RefactoringLegacyCode.Tests.Shared
                 ProductId INTEGER,
                 Quantity INTEGER,
                 CustomerEmail TEXT,
+                DeliveryType TEXT,
                 Status TEXT DEFAULT 'New'
             );
 
@@ -58,8 +59,8 @@ namespace RefactoringLegacyCode.Tests.Shared
                 Quantity INTEGER
             );
 
-            INSERT INTO Orders (Id, ProductId, Quantity, CustomerEmail)
-            VALUES (1, 100, 5, 'customer@example.com');
+            INSERT INTO Orders (Id, ProductId, Quantity, CustomerEmail, DeliveryType)
+            VALUES (1, 100, 5, 'customer@example.com', 'Express');
 
             INSERT INTO Products (Id, Quantity)
             VALUES (100, 10);

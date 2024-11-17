@@ -68,7 +68,8 @@ namespace RefactoringLegacyCode
                                     OrderId = orderId,
                                     ProductId = reader.GetInt32(1),
                                     Quantity = reader.GetInt32(2),
-                                    CustomerEmail = reader.GetString(3)
+                                    CustomerEmail = reader.GetString(3),
+                                    DeliveryType = reader.GetString(4)
                                 };
                             }
                         }
@@ -124,7 +125,7 @@ namespace RefactoringLegacyCode
                       //await httpClient.PostAsync("https://api.emailservice.com/send", content);
                     }
 
-                    // Log action to JSON file
+                    // Log action to XML
                     decimal unitPrice = 19.99m; // Assume a fixed unit price
                     decimal totalCost = orderDetails.Quantity * unitPrice;
                     DateTime orderDate = _dateTimeProvider.Now;
@@ -132,6 +133,8 @@ namespace RefactoringLegacyCode
                     bool isExpressDelivery = orderDetails.Quantity > 10;
 
                     //Calculate order priority
+                    //Same day should have the highest priorty, then express and then standard
+                    //The more the quantity the higher the priority for the same delivery type
                     int pr = 0;
                     if (orderDetails.Quantity > 10)
                     {
@@ -233,6 +236,7 @@ namespace RefactoringLegacyCode
                         ),
                         new XElement("OrderDate", _dateTimeProvider.Now),
                         new XElement("EstimatedDeliveryDate", estimatedDeliveryDate),
+                        new XElement("Priority", pr),
                         new XElement("IsExpressDelivery", isExpressDelivery),
                         new XElement("Status", "Processed")
                     );

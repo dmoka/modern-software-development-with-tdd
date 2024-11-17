@@ -17,6 +17,7 @@
   </CustomerInfo>
   <OrderDate>2024-11-07T10:10:10</OrderDate>
   <EstimatedDeliveryDate>2024-11-12T10:10:10</EstimatedDeliveryDate>
+  <Priority>50</Priority>
   <IsExpressDelivery>false</IsExpressDelivery>
   <Status>Processed</Status>
 </Order>

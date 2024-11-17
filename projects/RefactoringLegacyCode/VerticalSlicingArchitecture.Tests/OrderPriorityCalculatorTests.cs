@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NUnit.Framework;
 
 namespace RefactoringLegacyCode.Tests
 {
@@ -118,6 +119,7 @@ namespace RefactoringLegacyCode.Tests
             return Arb.From(Gen.Choose(1, 100));
         }
 
+        [Test]
         public void HigherQuantity_ShouldIncreasePriority()
         {
             Configuration.Default.MaxNbOfTest = 100;
@@ -144,27 +146,9 @@ namespace RefactoringLegacyCode.Tests
             ).VerboseCheckThrowOnFailure();
         }
 
-        public void asd()
-        {
-            var quantity = 43;
-            var deliveryType = "SameDay";
-            var lowerQuantityPriority = PriorityCalculator.CalculatePriority(new OrderDetails
-            {
-                Quantity = quantity,
-                DeliveryType = deliveryType
-            });
 
-            var higherQuantityPriority = PriorityCalculator.CalculatePriority(new OrderDetails
-            {
-                Quantity = quantity + 1,
-                DeliveryType = deliveryType
-            });
-
-            lowerQuantityPriority.Should().BeLessThan(higherQuantityPriority);
-        }
-
-
-        public void PriorityOrderShouldBeSameDayThenExpresThenStandard()
+        [Test]
+        public void PriorityOrderShouldBeSameDayThenExpressThenStandard()
         {
             Configuration.Default.MaxNbOfTest = 100;
 
@@ -193,6 +177,26 @@ namespace RefactoringLegacyCode.Tests
                     return sameDayPriority > expressPriority && expressPriority > standardPriority;
                 }
             ).VerboseCheckThrowOnFailure();
+        }
+
+
+        public void asd()
+        {
+            var quantity = 43;
+            var deliveryType = "SameDay";
+            var lowerQuantityPriority = PriorityCalculator.CalculatePriority(new OrderDetails
+            {
+                Quantity = quantity,
+                DeliveryType = deliveryType
+            });
+
+            var higherQuantityPriority = PriorityCalculator.CalculatePriority(new OrderDetails
+            {
+                Quantity = quantity + 1,
+                DeliveryType = deliveryType
+            });
+
+            lowerQuantityPriority.Should().BeLessThan(higherQuantityPriority);
         }
     }
 }
