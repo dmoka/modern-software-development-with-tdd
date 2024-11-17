@@ -127,7 +127,6 @@ namespace RefactoringLegacyCode
                     }
 
                     // Log action to XML
-                    //TODO: do something withfixed price
                     decimal unitPrice= 0;
                     using (var connection = new SqliteConnection(_connectionString))
                     {
@@ -141,7 +140,6 @@ namespace RefactoringLegacyCode
                     decimal totalCost = orderDetails.Quantity * unitPrice;
                     DateTime orderDate = _dateTimeProvider.Now;
                     DateTime estimatedDeliveryDate = orderDate.AddDays(orderDetails.Quantity > 5 ? 2 : 5);
-                    bool isExpressDelivery = orderDetails.Quantity > 10;
 
                     //Calculate order priority
                     //Same day orders should have the highest priority, then express and then standard, given the same quantity and time
@@ -167,7 +165,7 @@ namespace RefactoringLegacyCode
                         new XElement("OrderDate", _dateTimeProvider.Now),
                         new XElement("EstimatedDeliveryDate", estimatedDeliveryDate),
                         new XElement("Priority", pr),
-                        new XElement("IsExpressDelivery", isExpressDelivery),
+                        new XElement("IsExpressDelivery", orderDetails.DeliveryType == "Express"),
                         new XElement("Status", "Processed")
                     );
 
@@ -190,7 +188,7 @@ namespace RefactoringLegacyCode
                         OrderId = orderDetails.OrderId,
                         TotalCost = totalCost,
                         EstimatedDeliveryDate = estimatedDeliveryDate,
-                        IsExpressDelivery = isExpressDelivery
+                        DeliveryType = orderDetails.DeliveryType
                     };
 
                     return Ok(data);

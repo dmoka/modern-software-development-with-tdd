@@ -183,5 +183,65 @@ namespace RefactoringLegacyCode.Tests
                 }
             ).VerboseCheckThrowOnFailure();
         }
+
+        [Test]
+        public async Task SuccessfullProcessingShouldMarkOrderProcessed()
+        {
+            //Arrange
+            var testServer = new InMemoryServer();
+            testServer.DateTimeProvider().Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, 10, 10, 10));
+
+            var state = testServer.GetOrderState(1);
+            state.Should().Be("New");
+
+            //Act
+            var response = await testServer.Client().PostAsync("api/order/1/process", null);
+
+            //Assert
+            var newState= testServer.GetOrderState(1);
+            newState.Should().Be("Processed");
+        }
+
+        [Test]
+        public async Task ProcessingShouldReturnOrderProcessDetails()
+        {
+            //Arrange
+            var testServer = new InMemoryServer();
+            testServer.DateTimeProvider().Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, 10, 10, 10));
+
+            var state = testServer.GetOrderState(1);
+            state.Should().Be("New");
+
+            //Act
+            var response = await testServer.Client().PostAsync("api/order/1/process", null);
+
+            //Assert
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);
+            await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+            {
+                orderId = 1,
+                totalCost = 94.95,
+                estimatedDeliveryDate = new DateTime(2024, 11, 12, 10, 10, 10),
+                deliveryType = "Express"
+            });
+        }
+
+        [Test]
+        public async Task ProcessingShouldBadRequestWhenNonExistingOrderPassed()
+        {
+            //Arrange
+            var testServer = new InMemoryServer();
+            testServer.DateTimeProvider().Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, 10, 10, 10));
+
+            var state = testServer.GetOrderState(1);
+            state.Should().Be("New");
+
+            //Act
+            var response = await testServer.Client().PostAsync("api/order/99/process", null);
+
+            //Assert
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+            await HttpResponseAsserter.AssertThat(response).HasTextInBody("Order not found.");
+        }
     }
 }

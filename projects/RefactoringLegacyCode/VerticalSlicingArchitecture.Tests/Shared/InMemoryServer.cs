@@ -16,6 +16,7 @@ using Moq.Protected;
 using Moq;
 using System.Net;
 using System.Net.Http;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RefactoringLegacyCode.Tests.Shared
 {
@@ -69,6 +70,14 @@ namespace RefactoringLegacyCode.Tests.Shared
             command.ExecuteNonQuery();
 
             var orders = GetOrders();
+        }
+
+        public string GetOrderState(int id)
+        {
+            var command = new SqliteCommand("SELECT Status FROM Orders WHERE Id = @OrderId", _connection);
+            command.Parameters.AddWithValue("@OrderId", id);
+
+            return (string)command.ExecuteScalar();
         }
 
         public void Dispose()
