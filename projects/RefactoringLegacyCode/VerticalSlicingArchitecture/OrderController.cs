@@ -1,29 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 
-//1. Inject IConfiguration in the constructor and get default conncetion
+//1. Seam 1: SQLLiteConnection
+//1. Inject IConfiguration in the constructor and get default connection
+//2. Seam 2: Email sender
+//2. Seam 2: Inject EmailSender
 namespace RefactoringLegacyCode
 {
+
+    public interface ICustomerEmailSender
+    {
+        public void SendEmail(StringContent content);
+    }
+
     [ApiController]
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly ICustomerEmailSender _customerEmailSender;
 
-        public OrderController(IConfiguration configuration)
+        public OrderController(IConfiguration configuration, ICustomerEmailSender customerEmailSender)
         {
             _configuration = configuration;
+            _customerEmailSender = customerEmailSender;
         }
 
         private string _connectionString => _configuration.GetConnectionString("DefaultConnection");
@@ -105,7 +107,8 @@ namespace RefactoringLegacyCode
                         string emailJson = JsonSerializer.Serialize(emailPayload);
                         var content = new StringContent(emailJson, Encoding.UTF8, "application/json");
 
-                       HttpResponseMessage response = await httpClient.PostAsync("https://api.emailservice.com/send", content);
+                        _customerEmailSender.SendEmail(content);
+                      //await httpClient.PostAsync("https://api.emailservice.com/send", content);
                     }
 
                     // Log action to JSON file

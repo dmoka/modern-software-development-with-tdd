@@ -12,13 +12,16 @@ using Microsoft.Extensions.Logging;
 using FluentAssertions.Common;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Data.SqlClient;
+using Moq.Protected;
+using Moq;
+using System.Net;
 
 namespace RefactoringLegacyCode.Tests.Shared
 {
     public class InMemoryServer : IDisposable
     {
         private readonly SqliteConnection _connection;
-        private readonly HttpClient _client;
+        private Mock<ICustomerEmailSender> _customerEmailSender;
 
         public string ConnectionString => _connection.ConnectionString;
 
@@ -27,7 +30,9 @@ namespace RefactoringLegacyCode.Tests.Shared
             // Create and open the SQLite in-memory database
             SQLitePCL.Batteries.Init();
 
-            _connection = new SqliteConnection("DataSource=:memory:;Mode=Memory;Cache=Shared");
+            var uniqueDbId = Guid.NewGuid().ToString();
+            var dataSource = $"DataSource=file:{uniqueDbId}?mode=memory&cache=shared";
+            _connection = new SqliteConnection(dataSource);
             _connection.Open();
             InitializeDatabase();
         }
@@ -65,6 +70,8 @@ namespace RefactoringLegacyCode.Tests.Shared
             _connection.Close();
         }
 
+        public Mock<ICustomerEmailSender> EmailSender() => _customerEmailSender;
+
         public HttpClient CreateClient()
         {
             var factory = new WebApplicationFactory<Program>()
@@ -82,6 +89,7 @@ namespace RefactoringLegacyCode.Tests.Shared
 
                     builder.ConfigureServices(services =>
                     {
+
                         // Override the connection string for tests
                         services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
                             .AddInMemoryCollection(new Dictionary<string, string>
@@ -89,6 +97,9 @@ namespace RefactoringLegacyCode.Tests.Shared
                             { "ConnectionStrings:DefaultConnection", _connection.ConnectionString }
                             })
                             .Build());
+
+                        _customerEmailSender = new Mock<ICustomerEmailSender>();
+                        services.AddSingleton(_customerEmailSender.Object);
 
                         services.Configure<HttpsRedirectionOptions>(options =>
                         {
