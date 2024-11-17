@@ -15,13 +15,16 @@ using Microsoft.Data.SqlClient;
 using Moq.Protected;
 using Moq;
 using System.Net;
+using System.Net.Http;
 
 namespace RefactoringLegacyCode.Tests.Shared
 {
     public class InMemoryServer : IDisposable
     {
         private readonly SqliteConnection _connection;
+        private HttpClient _client;
         private Mock<ICustomerEmailSender> _customerEmailSender;
+        private Mock<IDateTimeProvider> _dateTimeProvider;
 
         public string ConnectionString => _connection.ConnectionString;
 
@@ -35,6 +38,7 @@ namespace RefactoringLegacyCode.Tests.Shared
             _connection = new SqliteConnection(dataSource);
             _connection.Open();
             InitializeDatabase();
+            Setup();
         }
 
         private void InitializeDatabase()
@@ -71,8 +75,10 @@ namespace RefactoringLegacyCode.Tests.Shared
         }
 
         public Mock<ICustomerEmailSender> EmailSender() => _customerEmailSender;
+        public Mock<IDateTimeProvider> DateTimeProvider() => _dateTimeProvider;
+        public HttpClient Client() => _client;
 
-        public HttpClient CreateClient()
+        public void Setup()
         {
             var factory = new WebApplicationFactory<Program>()
                 .WithWebHostBuilder(builder =>
@@ -101,6 +107,9 @@ namespace RefactoringLegacyCode.Tests.Shared
                         _customerEmailSender = new Mock<ICustomerEmailSender>();
                         services.AddSingleton(_customerEmailSender.Object);
 
+                        _dateTimeProvider = new Mock<IDateTimeProvider>();
+                        services.AddSingleton(_dateTimeProvider.Object);
+
                         services.Configure<HttpsRedirectionOptions>(options =>
                         {
                             options.HttpsPort = 443;  // Set a dummy port or disable redirection
@@ -108,7 +117,8 @@ namespace RefactoringLegacyCode.Tests.Shared
                     });
                 });
 
-            return factory.CreateClient();
+            var client =  factory.CreateClient();
+            _client = client;
         }
 
         public List<string> GetOrders()

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Security;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,8 +12,10 @@ using FluentAssertions;
 using FsCheck;
 using Moq;
 using Moq.Protected;
+using NUnit.Framework;
 using RefactoringLegacyCode.Tests.Asserters;
 using RefactoringLegacyCode.Tests.Shared;
+using VerifyNUnit;
 
 namespace RefactoringLegacyCode.Tests
 {
@@ -19,14 +24,17 @@ namespace RefactoringLegacyCode.Tests
         [Test]
         public async Task asd()
         {
+            //Arrange
             var testServer = new InMemoryServer();
-            
-            var client = testServer.CreateClient();
 
-            var response = await client.PostAsync("api/order/1/process", null);
+            testServer.DateTimeProvider().Setup(provider => provider.Now).Returns(new DateTime(2024, 11, 7, 10, 10, 10));
 
-           // await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.InternalServerError);
-           // await HttpResponseAsserter.AssertThat(response).HasTextInBody("dsa");
+            //Act
+            var response = await testServer.Client().PostAsync("api/order/1/process", null);
+
+            //Assert
+            var filePath = Path.Combine(Environment.CurrentDirectory, "Order_1.xml");
+            await Verifier.VerifyFile(filePath);
         }
 
         [Test]
@@ -35,15 +43,13 @@ namespace RefactoringLegacyCode.Tests
             // Arrange
             var testServer = new InMemoryServer();
 
-            var client = testServer.CreateClient();
-
             StringContent capturedContent = null;
 
             testServer.EmailSender().Setup(sender => sender.SendEmail(It.IsAny<StringContent>()))
                 .Callback<StringContent>(content => capturedContent = content);
 
             // Act  
-            var response = await client.PostAsync("api/order/1/process", null);
+            var response = await testServer.Client().PostAsync("api/order/1/process", null);
 
             // Assert
             await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);

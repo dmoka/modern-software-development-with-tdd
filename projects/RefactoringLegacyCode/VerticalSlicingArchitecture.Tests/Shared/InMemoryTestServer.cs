@@ -56,7 +56,7 @@ public class InMemoryTestServer : IDisposable
 
         _dbContext = _factory.Services.CreateScope()
             .ServiceProvider.GetRequiredService<WarehousingDbContext>();
-        _client = _factory.CreateClient();
+        _client = _factory.Setup();
     }
 
     public HttpClient Client() => _client;

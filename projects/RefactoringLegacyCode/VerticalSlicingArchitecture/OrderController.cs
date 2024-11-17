@@ -2,11 +2,15 @@
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Serialization;
+using System.Xml.Linq;
 
 //1. Seam 1: SQLLiteConnection
-//1. Inject IConfiguration in the constructor and get default connection
+//1. Seam 1: Inject IConfiguration in the constructor and get default connection
 //2. Seam 2: Email sender
 //2. Seam 2: Inject EmailSender
+//3. Add test for writing XML
+
 namespace RefactoringLegacyCode
 {
 
@@ -15,17 +19,26 @@ namespace RefactoringLegacyCode
         public void SendEmail(StringContent content);
     }
 
+    public interface IDateTimeProvider
+    {
+        public DateTime Now { get; }
+    }
+
+
+
     [ApiController]
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly ICustomerEmailSender _customerEmailSender;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public OrderController(IConfiguration configuration, ICustomerEmailSender customerEmailSender)
+        public OrderController(IConfiguration configuration, ICustomerEmailSender customerEmailSender, IDateTimeProvider dateTimeProvider)
         {
             _configuration = configuration;
             _customerEmailSender = customerEmailSender;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         private string _connectionString => _configuration.GetConnectionString("DefaultConnection");
@@ -114,7 +127,7 @@ namespace RefactoringLegacyCode
                     // Log action to JSON file
                     decimal unitPrice = 19.99m; // Assume a fixed unit price
                     decimal totalCost = orderDetails.Quantity * unitPrice;
-                    DateTime orderDate = DateTime.Now;
+                    DateTime orderDate = _dateTimeProvider.Now;
                     DateTime estimatedDeliveryDate = orderDate.AddDays(orderDetails.Quantity > 5 ? 2 : 5);
                     bool isExpressDelivery = orderDetails.Quantity > 10;
 
@@ -202,32 +215,30 @@ namespace RefactoringLegacyCode
                         }
                     }
 
+                    var xmlDocument = new XElement("Order",
+                        new XElement("OrderId", orderDetails.OrderId),
+                        new XElement("ProductDetails",
+                            new XElement("ProductId", orderDetails.ProductId),
+                            new XElement("Quantity", orderDetails.Quantity),
+                            new XElement("UnitPrice", 19.99m),
+                            new XElement("TotalCost", totalCost)
+                        ),
+                        new XElement("CustomerInfo",
+                            new XElement("Email", orderDetails.CustomerEmail),
+                            new XElement("Address",
+                                new XElement("Street", "Main St. 123"),
+                                new XElement("City", "SampleCity"),
+                                new XElement("PostalCode", "12345")
+                            )
+                        ),
+                        new XElement("OrderDate", _dateTimeProvider.Now),
+                        new XElement("EstimatedDeliveryDate", estimatedDeliveryDate),
+                        new XElement("IsExpressDelivery", isExpressDelivery),
+                        new XElement("Status", "Processed")
+                    );
 
-                    var orderJson = new
-                    {
-                        OrderId = orderDetails.OrderId,
-                        ProductDetails = new
-                        {
-                            ProductId = orderDetails.ProductId,
-                            Quantity = orderDetails.Quantity,
-                            UnitPrice = unitPrice,
-                            TotalCost = totalCost,
-                        },
-                        CustomerInfo = new
-                        {
-                            Email = orderDetails.CustomerEmail,
-                            Address = new { Street = "Main St. 123", City = "SampleCity", PostalCode = "12345" }
-                        },
-                        OrderDate = orderDate,
-                        EstimatedDeliveryDate = estimatedDeliveryDate,
-                        IsExpressDelivery = isExpressDelivery,
-                        Priority = pr,
-                        Status = "Processed"
-                    };
-
-                    string jsonString = JsonSerializer.Serialize(orderJson, new JsonSerializerOptions { WriteIndented = true });
-                    string fileName = $"Order_{orderDetails.OrderId}.json";
-                    System.IO.File.WriteAllText(fileName, jsonString);
+                    string xmlFileName = $"Order_{orderDetails.OrderId}.xml";
+                    xmlDocument.Save(xmlFileName);
 
                     // Mark order as processed in the database
                     using (var connection = new SqliteConnection(_connectionString))
