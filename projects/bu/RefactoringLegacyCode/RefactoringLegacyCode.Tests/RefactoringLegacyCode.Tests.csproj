@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,20 +12,13 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="FluentAssertions.Json" Version="6.1.0" />
-    <PackageReference Include="FsCheck" Version="2.16.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="9.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageReference Include="Moq" Version="4.20.72" />
-    <PackageReference Include="NUnit" Version="4.2.2" />
+    <PackageReference Include="NUnit" Version="4.0.1" />
     <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.2" />
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
-    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="2.2.2" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
-    <PackageReference Include="Verify" Version="28.3.1" />
-    <PackageReference Include="Verify.NUnit" Version="28.3.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,13 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\VerticalSlicingArchitecture.IntegrationTests\RefactoringLegacyCode.IntegrationTests.csproj" />
     <ProjectReference Include="..\VerticalSlicingArchitecture\RefactoringLegacyCode.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Features\ProcessOrderTests.XmlFileSnapShotTest.verified.xml">
-      <DependentUpon>ProcessOrderTests.cs</DependentUpon>
-    </None>
   </ItemGroup>
 
 </Project>

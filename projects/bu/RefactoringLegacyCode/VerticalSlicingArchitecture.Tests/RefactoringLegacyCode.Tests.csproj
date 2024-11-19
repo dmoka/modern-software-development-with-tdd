@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -34,12 +34,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VerticalSlicingArchitecture\RefactoringLegacyCode.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Features\ProcessOrderTests.XmlFileSnapShotTest.verified.xml">
-      <DependentUpon>ProcessOrderTests.cs</DependentUpon>
-    </None>
   </ItemGroup>
 
 </Project>

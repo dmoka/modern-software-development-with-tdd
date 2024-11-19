@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 
+//TODO:
+- add shared stuff
+- rename OrderDetails OrderId to Id
+
 //1. Seam 1: SQLLiteConnection
 //1. Seam 1: Inject IConfiguration in the constructor and get default connection
 //2. Seam 2: Email sender

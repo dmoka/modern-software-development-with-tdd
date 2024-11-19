@@ -1,6 +1,8 @@
 using Carter;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using RefactoringLegacyCode.Data;
+using RefactoringLegacyCode.Features;
 
 //TODO:
 //-add global error handling
@@ -21,6 +23,12 @@ builder.Services.AddSwaggerGen();
 var assembly = typeof(Program).Assembly;
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
 
+builder.Services.AddTransient<ICustomerEmailSender, CustomerEmailSender>();
+builder.Services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+
+builder.Services.AddDbContext<WarehousingDbContext>(options =>
+    options.UseSqlite("Data Source=WarehousingDb.db"));
+
 builder.Services.AddCarter();
 
 builder.Services.AddValidatorsFromAssembly(assembly);
@@ -35,7 +43,38 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        SQLitePCL.Batteries_V2.Init();
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<WarehousingDbContext>();
+        dbContext.Database.EnsureCreated();
+
+        if (!dbContext.Products.Any())
+        {
+            dbContext.Products.Add(new Product { Id = 100, Quantity = 10, Price = 18.99m });
+        }
+
+        if (!dbContext.Orders.Any())
+        {
+            dbContext.Orders.Add(new OrderDetails
+            {
+                Id = 1,
+                ProductId = 100,
+                Quantity = 5,
+                CustomerEmail = "customer@example.com",
+                DeliveryType = DeliveryType.Express
+            });
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
 }
+
+app.UseGlobalExceptionHandler();
 
 app.MapControllers(); // Maps traditional MVC controllers
 
@@ -43,8 +82,28 @@ app.MapCarter();//This scans the current assembly, find impls for ICarderModule 
 
 app.UseHttpsRedirection();
 
+
+app.MapGet("/test", () => Results.Ok("It works!"));
+
 app.UseAuthorization();
 
 app.Run();
 
-public partial class Program { } // This makes the Program class public and accessible
+public partial class Program { }
+
+public class CustomerEmailSender : ICustomerEmailSender
+{
+    public void SendEmail(StringContent content)
+    {
+        using var client = new HttpClient();
+
+        client.PostAsync("https://api.sendgrid.com/v3/mail/send", content);
+    }
+}
+
+public class DateTimeProvider : IDateTimeProvider
+{
+    public DateTime Now => DateTime.UtcNow;
+}
+
+// This makes the Program class public and accessible

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Order>
+  <Id>1</Id>
+  <ProductDetails>
+    <ProductId>100</ProductId>
+    <Quantity>5</Quantity>
+    <UnitPrice>18.99</UnitPrice>
+    <TotalCost>94.95</TotalCost>
+  </ProductDetails>
+  <CustomerInfo>
+    <Email>customer@example.com</Email>
+    <Address>
+      <Street>Main St. 123</Street>
+      <City>SampleCity</City>
+      <PostalCode>12345</PostalCode>
+    </Address>
+  </CustomerInfo>
+  <OrderDate>2024-11-07T10:10:10</OrderDate>
+  <EstimatedDeliveryDate>2024-11-12T10:10:10</EstimatedDeliveryDate>
+  <Priority>50</Priority>
+  <IsExpressDelivery>true</IsExpressDelivery>
+  <Status>Processed</Status>
+</Order>

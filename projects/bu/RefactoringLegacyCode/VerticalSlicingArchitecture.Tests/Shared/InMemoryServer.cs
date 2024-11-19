@@ -16,9 +16,6 @@ using Moq.Protected;
 using Moq;
 using System.Net;
 using System.Net.Http;
-using Microsoft.EntityFrameworkCore;
-using RefactoringLegacyCode.Data;
-using RefactoringLegacyCode.Features;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RefactoringLegacyCode.Tests.Shared
@@ -75,12 +72,12 @@ namespace RefactoringLegacyCode.Tests.Shared
             var orders = GetOrders();
         }
 
-        public Status GetOrderState(int id)
+        public string GetOrderState(int id)
         {
-            var command = new SqliteCommand("SELECT Status FROM Orders WHERE Id = @Id", _connection);
-            command.Parameters.AddWithValue("@Id", id);
+            var command = new SqliteCommand("SELECT Status FROM Orders WHERE Id = @OrderId", _connection);
+            command.Parameters.AddWithValue("@OrderId", id);
 
-            return (Status)Enum.Parse(typeof(Status), command.ExecuteScalar().ToString());
+            return (string)command.ExecuteScalar();
         }
 
         public void InsertOrder(int id, int productId, int quantity)
@@ -145,9 +142,6 @@ namespace RefactoringLegacyCode.Tests.Shared
                             { "ConnectionStrings:DefaultConnection", _connection.ConnectionString }
                             })
                             .Build());
-
-                        services.AddDbContext<WarehousingDbContext>(options =>
-                            options.UseSqlite(_connection));
 
                         _customerEmailSender = new Mock<ICustomerEmailSender>();
                         services.AddSingleton(_customerEmailSender.Object);

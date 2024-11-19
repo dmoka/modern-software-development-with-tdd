@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
-using RefactoringLegacyCode.Features;
 
-/*
 namespace RefactoringLegacyCode.Tests
 {
     public class PriorityCalculator
@@ -202,4 +200,3 @@ namespace RefactoringLegacyCode.Tests
         }
     }
 }
-*/
