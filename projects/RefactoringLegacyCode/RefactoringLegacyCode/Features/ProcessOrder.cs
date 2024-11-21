@@ -11,6 +11,8 @@ using System;
 using FluentValidation;
 using RefactoringLegacyCode.Data;
 
+Clean up to have base and run it to see if it works, prolly we need sqlconnection
+
 namespace RefactoringLegacyCode.Features
 {
     public static class ProcessOrder
@@ -57,7 +59,6 @@ namespace RefactoringLegacyCode.Features
             private readonly ICustomerEmailSender _customerEmailSender;
             private readonly IDateTimeProvider _dateTimeProvider;
             private readonly WarehousingDbContext _context;
-
 
             public Handler(ICustomerEmailSender customerEmailSender, IDateTimeProvider dateTimeProvider, WarehousingDbContext context)
             {

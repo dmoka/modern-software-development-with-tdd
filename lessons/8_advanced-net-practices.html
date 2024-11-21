@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./assets/style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Advanced .NET practices
+
+---
+class: center,middle 
+
+# Integration testsing
+
+---
+# Challenges
+
+Maintain test infrasturcute
+
+Ensuring databases up and running
+
+Problem with parallelism
+
+In-memory database is not enough
+
+---
+class: middle, center
+
+# <span class="orange-bg"> What is the solution?</span>
+
+---
+<div>
+  <img src="./assets/testcontainers-logo2.png" alt="Example Image" style="width:330px;">
+</div>
+
+
+OS library
+
+Programmatic and throwaway instances of
+- databases
+- message brokers
+- web-browsers
+- anything that run in a docker
+
+Testing code with real dependencies
+
+---
+# Testconainers
+
+
+<div style="text-align: center;">
+  <img src="./assets/test-containers.png" alt="Example Image" style="width:550px;">
+</div>
+
+
+---
+
+# Creating API contracts
+
+In the current design, the endpoint is directly coupled to the command
+
+any changes to the command would require updates to both he app logic and the endpoint
+
+This can lead to:
+ -fragile Integration
+ - lack of crality
+- reduced reusability
+
+Solution: API contracts:
+- specific  to API layered
+- decoupled form the internal application models
+- clean boundaries
+
+Command is for application logic, not for external systems/clients.
+
+Examples: If the Command includes a UserId field for internal use (e.g., added automatically from an authentication context), exposing this field in an API contract might confuse API consumers or leak internal details.
+
+
+Does not necesary what the API exposes
+
+If I want to s4eparate my api contract, with the command which my inner contract
+
+How to do: https://www.youtube.com/watch?v=msjnfdeDCmo
+
+For mapping using mapster
+
+add image how to test, so it is a sociable test
+
+# Admin CLI tool:
+- add a tag for creat product
+- for API, we pass a comma separated
+- for CLI we pass semicolon separated ("Electronics;Gaming;Computers"
+- also,we can add some specific annotations for the API one we might not need for CLI at all
+
+For HTTP we need one tag minimum:
+[Required(ErrorMessage = "At least one tag is required.")]
+public string Tags { get; set; } // Comma-separated tags
+
+For CLI we dont need any valuidaotpn as admins are trusted.
+
+The two modesl can evolve differentl
+
+- making the request generic in the sense that we can call from other stop-planning-refactorin
+- TDD the stuff
+
+
+---
+# Pipeline behaviours
+
+meidatr is an inproces messaing library with pub sup supports
+
+allowing the wrap the execution of the request handler
+
+- similar as middlewares but for erquestresponse
+- middlewars for http level
+- pipeline behaviourz on mediator request/repsonse level
+- for cross cutting concerns like logging, common validation,
+
+todo: add image for https://garywoodfine.com/how-to-implement-cross-cutting-concerns-with-mediatr-pipeline-behaviours/
+
+Use cases: https://www.youtube.com/watch?v=Iql4yjHYRiA
+- logging - logging before and after executing (add milans example)
+- exception handling - log unhanndled exception
+- validationjpieline behaviour
+- cahcing
+The beauty is that we can chan multiple pipeline behaviours
+
+<div style="text-align: center;">
+  <img src="./assets/no-arch.png" alt="Example Image" style="width:350px;">
+</div>
+
+---
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({  
+        highlightLanguage: 'cs',
+         highlightStyle: 'monokai', highlightLines: true});
+    </script>
+  </body>
+</html>
