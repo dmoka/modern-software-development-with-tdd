@@ -15,15 +15,15 @@ class: center, middle
 # The Pragmatic Architecture
 
 ---
-class: center, 
-
----
 # The goal of software architecture
 
-- Easy to understand
-- Easy to test
-- Easy to change
-- Easy to maintain
+Easy to understand
+
+Easy to test
+
+Easy to change
+
+Easy to maintain
 
 ---
 # What happens with no architecture?
@@ -415,9 +415,9 @@ In MediatR, this "middle friend" handles messages (or requests) between parts of
 <div style="text-align: center;">
   <pre>
 <code>
-Task Handle(Query request){...}
+TResponse Handle(Query request){...}
 
-Task Handle(Command request){...}
+void Handle(Command request){...}
 </code>
 </pre>
 
@@ -452,20 +452,20 @@ public class SearchForProductsQuery : IRequest<Result<Response>>
 # Modelling requests in .NET
 
 ```
-public class ActivateDiscountsCommand : IRequest<Result<Guid>>
+public class ActivateDiscountsCommand : IRequest<Result>
 {
 }
 ```
 
 ```
-public class CreateProductCommand : IRequest<Result<Guid>>
-  {
-      public string Name { get; set; }
+public class CreateProductCommand : IRequest<Result>
+{
+    public string Name { get; set; }
 
-      public string Description { get; set; }
+    public string Description { get; set; }
 
-      public decimal Price { get; set; }
-  }
+    public decimal Price { get; set; }
+}
 ```
 
 ---
@@ -480,8 +480,8 @@ public class CreateProductCommand : IRequest<Result<Guid>>
   - use result paradigm
 - you don't know how to handle
   - use exceptions
-  - catch and handle at the lowerst level
-#
+  - catch and handle at the lowest level
+
 ---
 # Result paradigm
 
@@ -746,23 +746,16 @@ What to test:
 TDD has a special form called Acceptance Test-Driven Development (ATDD). Acceptance Tests provide us with a user-focused take on what our system should do. They work alongside technical tests to check how the system behaves from an outside perspective, in real-life scenarious. ATDD is an approach that focuses on building software around its intended purpose and outcomes rather than specific technologies or implementation details. This “outside-in
 
 ---
-When to use Solitary tests?
 
-TODO: add when sociable tests can be usefull (but only when we are done with the code)
-
----
-TODO: summary
-Summary:
+# Summary
 
 Pragmatic mindset
 
 Use what you need, throw away what you don't.
 
 Use the abstractions you only need but not one more. 
-- You need an abstraction? Do it
 
 Optimize on the fly, instead of being upfront and descriptive what to use.
-
 ---
 
 TODO: add slides about how about DDD
