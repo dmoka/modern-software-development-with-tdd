@@ -746,7 +746,77 @@ What to test:
 TDD has a special form called Acceptance Test-Driven Development (ATDD). Acceptance Tests provide us with a user-focused take on what our system should do. They work alongside technical tests to check how the system behaves from an outside perspective, in real-life scenarious. ATDD is an approach that focuses on building software around its intended purpose and outcomes rather than specific technologies or implementation details. This “outside-in
 
 ---
+class: middle, center
 
+# How about DDD? 
+
+---
+
+class: middle, center
+
+# Tactical vs Strategic DDD
+---
+
+# Tactical DDD
+
+Focus on implementation details within bounded context:
+- aggregates
+- entities
+- value obhjects
+- repositories
+- domain service
+- factories
+
+---
+
+# Strategic DDD
+
+Strategic DDD - focus on high level design of business
+- bounded contexts
+- ubiquitious language
+- event storming
+
+---
+
+# The problem with DDD
+
+<div style="text-align: center;">
+  <img src="./assets/ddd-aggregate.png" alt="Example Image" style="width: 500px;">
+</div>
+
+---
+
+# What to do?
+
+Use the good stuff (and what you need):
+- rich domain model
+- ubiquitious language
+- even storming
+- bounded contexts
+- ...
+
+<div style="text-align: center;">
+  <img src="./assets/best-practice-worst.png" alt="Example Image" style="width:450px;">
+</div>
+
+??? 
+DDD is not about sturctural patterns, it is about collaborating closely with domain experts and have a clear understand about what we want to build, then do it in short, Iterative
+Dont ask the csutoemr what features they want.
+
+---
+
+# Migrating from clean architecture
+
+Defactor code
+
+Consensus within the team
+
+Intended completion
+- or experiment and roll it back
+
+Architecutre should have consistency
+
+---
 # Summary
 
 Pragmatic mindset
@@ -756,128 +826,6 @@ Use what you need, throw away what you don't.
 Use the abstractions you only need but not one more. 
 
 Optimize on the fly, instead of being upfront and descriptive what to use.
----
-
-TODO: add slides about how about DDD
-
-
-How about DDD? 
-
-Get what is good: uniquitios language, model distillation, bounded context
-
-add jimmys's image
-
-Throw away what you dont need: Patterns are good, but not like 
-
-Add post image: guidelines, not rigid rules
-
-DDD is not about sturctural patterns, it is about collaborating closely with domain experts and have a clear understand about what we want to build, then do it in short, Iterative
-Dont ask the csutoemr what features they want.
-
-CROSS CUTTING CONCERNS: pipeline behaviours!!!
-
-QUESTION: wher we need UoW?
-check the a architecture is slices slidesheet
-
--
-VSA:
-You only need a new project when you need a new assembly.
-
-Everything else should be folder structures and namespaces.
-
-If the deployment sturcutre requires, or multiple applications would use,  you can pull out things to separate assemblies.
-
-Use the abstractions you need but not one more. You need an abstraction? Do it
-
-Optimize on the fly, instead of being upfront and descriptive what to use.
-
-
-TODO:
-- every single slice needs an integration test?!
-- or we mock out DB, and do contract testing.
-
-Either:
-- Integraion tests
-- plus domain
-
-Or:
-- sociable test with mocked stuff
-- integration test
-
-
-
-MIGRATING FROM CLEAN/N-TIER
-- defactor if I dont understanding, indline indline
----check the nature
--entire team should agree upon, and should have ReadToEndAsync
--process with an intended completion, or experiment and roll it back
--architecutre should have consistency
--make sure the migration compltes, or roll back
-
-AVOID SHARED DOMAIN?
-- nah, it is fine
-
-How about extracting DB logic such?
-
-Dont create generic sutff like manager, repo expects
-
-Make specifif objects like XQuery, or YApprover (instead of YService.Approve())
-
-vids:
-- jim: https://www.youtube.com/watch?v=oAoaMlS1PWo
-- mil: https://www.youtube.com/watch?v=msjnfdeDCmo
-- cop: https://www.youtube.com/watch?v=L2Wnq0ChAIA
-
-
----
-
-COpin:
-
-VSA conclusion:
-
-✅ pragmatic mindset
-✅ 
-
-- 
-
-
-TODO: refine this
-
-SLices does not mean sharing isn't allowed. It's just it is not the default choice.
-
-Whereas in layered approach, sharing means default choice. 
-
-Defer sharing decision, not eliminate it.
-
-Code sharing? 
-- extension methods
-- refactoring to functions/classes as logic
-- domain model
-
-Coupling here and there is not the end of the world.
-
-Readable, testable, team-driven clean code is more important.
-
-VSA summary:
-- functional cohesion
-- organize by feature
-- decision by feature
-
-we can still have coupling with VSA, but better cohesion.
-
-TradeOffs vof VSA: (TODO: find more flaws)
-- pragmatics over consistency
-- requires constant evaluation
-
----
-
-
-
----
-
-
-
-#<span class="red-bg">Why refactoring is crucial in TDD?</span>
 
 ---
 
