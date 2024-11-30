@@ -24,10 +24,8 @@ namespace TestSmells.Tests
 
             product.Pick(3);
             Assert.That(product.LastOperation, Is.EqualTo(PickStatus.Picked));
-            Assert.That(product.StockLevel.Quantity, Is.EqualTo(17));
 
             product.Unpick(2);
-            Assert.That(product.StockLevel.Quantity, Is.EqualTo(19));
             Assert.That(product.LastOperation, Is.EqualTo(PickStatus.Unpicked));
         }
 

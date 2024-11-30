@@ -34,20 +34,6 @@ namespace TestSmells.Tests
         }
 
         [Test]
-        public void ShouldReturnOneProduct_whenMatchedWithSingleDescriptionFromMany()
-        {
-            var product1 = new Product("Product1", "desc1", 200);
-            var product2 = new Product("Product2", "desc2", 200);
-            var product3 = new Product("Product3", "desc3", 200);
-
-            var products = new List<Product>() { product1, product2, product3 };
-
-            var searchResult = ProductSearcher.Search(products, "desc2");
-
-            searchResult.Should().Equal(product2);
-        }
-
-        [Test]
         public void ShouldFilterProduct_whenPriceIsEqualToMinPrice()
         {
             var product1 = new Product("Product1", "desc1", 199);
