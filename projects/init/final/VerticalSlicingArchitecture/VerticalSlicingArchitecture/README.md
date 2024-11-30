@@ -17,13 +17,15 @@ A simple warehouse management system built using .NET 8 and vertical slice archi
   - InitialStock (number)
 - Business Rules:
   - Initial stock must not exceed maximum stock level (default: 50)
-  - Initial stock must not be negative
-  - Can't have multiple product with same name. API should return 409 Conflict
+  - Initial stock must be minimum 10
+  - Can't have multiple product with same name.
+  - Business validation errors should return 409 conflict
 - Returns: Product ID with correct location in header
 - Error Codes:
   - `CreateProduct.Validation`: For input validation failures
   - `StockLevel.ExceedsMaximum`: When initial stock exceeds maximum
-  - `StockLevel.BelowMinimum`: When initial stock is negative
+  - `StockLevel.BelowMinimum`: When initial stock is below minimum
+  - `CreateProduct.AlreadyExists`: When product already exists
 
 #### Get Product
 
