@@ -25,7 +25,7 @@ We are building the **Product** domain entity for an inventory management system
     - The quantity picked does not exceed available stock.
     - The product's quality status is `Available`.
     - The pick quantity does not exceed the maximum limit per operation.
-- **Unpick Items**: 
+- **Unpick Items** (Self-exercise): 
   - Increase the stock by a specified quantity.
   - Ensure:
     - The total stock after unpicking does not exceed the maximum stock level.

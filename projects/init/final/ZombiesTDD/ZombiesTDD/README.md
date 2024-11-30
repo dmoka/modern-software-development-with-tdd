@@ -10,19 +10,27 @@ The **Product Searcher** is a utility to filter and retrieve products based on v
 
 Create a searcher module that must filter a collection of products based on the following criteria:
 
+1. If no products match the criteria, return an empty result list with an appropriate message.
+1. The search must throw error when null provided as input.
 1. **Search Term**: Filter products whose name or description contains the search term (case-insensitive).
-2. **Price Range**:
+1. **Quality Status**: Filter products based on their stock's quality (e.g., Available, Damaged, Expired).
+1. **Sorting**:
+   - Products can be sorted by one of these:
+	- by name in asceneding order
+	- by name in descending order
+    - by price in ascending order
+	- by price in descending orde
+1. **Price Range** (Self-exercise):
    - Products must have a price greater than or equal to a specified minimum price.
    - Products must have a price less than or equal to a specified maximum price.
-3. **Quality Status**: Filter products based on their stock's quality (e.g., Available, Damaged, Expired).
-4. **Sorting**:
-   - Products can be sorted by name in ascaneding or descending order.
-   - Products can be sorted by price in ascending or descending order.
+   - If `MinPrice` or `MaxPrice` is negative, throw an exception.
+   - If `MaxPrice` is less than `MinPrice`, throw an exception.
+
 ---
 
 ### **Input**
 
-The search method must accept a `SearchCriteria` object containing:
+The search method the following properties:
 - `SearchTerm` (string)
 - `MinPrice` (decimal, optional)
 - `MaxPrice` (decimal, optional)
@@ -35,12 +43,6 @@ The search method must accept a `SearchCriteria` object containing:
 
 List of prodicts according to the search criteria.
 
-### **Constraints**
-
-1. If `MinPrice` or `MaxPrice` is negative, throw an exception.
-2. If `MaxPrice` is less than `MinPrice`, throw an exception.
-3. If no products match the criteria, return an empty result list with an appropriate message.
-4. The search must throw error when null provided as input.
 
 ---
 
