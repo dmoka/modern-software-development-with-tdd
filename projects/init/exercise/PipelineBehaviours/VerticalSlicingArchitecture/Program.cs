@@ -2,6 +2,8 @@ using Carter;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using System.Collections.Concurrent;
 using VerticalSlicingArchitecture.Database;
 using VerticalSlicingArchitecture.Middlewares;
 
@@ -34,7 +36,7 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 //builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(QueryCachingPipelineBehavior<,>));
 //builder.Services.AddMemoryCache();
 //builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
-
+//builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestLoggingPipelineBehavior<,>));
 
 var app = builder.Build();
 
