@@ -1,5 +1,2 @@
 ## Self-exercise
-Add integration tests for
-- Unpick product
-- Search product
-- Update product
+Implement Request logging pipeline behaviour. For more info, see `QueryCachingPipelineBehaviour`
