@@ -38,6 +38,23 @@ public class Product
 
         StockLevel.Quantity += i;
     }
+
+    public bool UpdateStockLevel(int quantity)
+    {
+        if (StockLevel.Quantity == quantity)
+        {
+            return false;
+        }
+        if (quantity == 0)
+        {
+            StockLevel.QualityStatus = QualityStatus.OutOfStock;
+        }
+
+        StockLevel.Quantity = quantity;
+
+        return true;
+    }
+
 }
 
 public class StockLevel
