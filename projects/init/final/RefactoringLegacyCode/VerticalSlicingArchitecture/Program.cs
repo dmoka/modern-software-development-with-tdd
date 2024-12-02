@@ -4,10 +4,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 
-//TODO:
-//-add global error handling
-//-add logging/auth - https://juliocasal.com/blog/Dont-Unit-Test-Your-AspNetCore-API
-// pipeline behaviours for cruss cutting concerns!!!
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -29,11 +25,14 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddControllers(); // Add MVC services
 
-// Initialize SQLitePCL
-Batteries_V2.Init();
-DbInitializer.InitializeDatabase();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    Batteries_V2.Init();
+    DbInitializer.InitializeDatabase();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
