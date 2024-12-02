@@ -31,6 +31,7 @@ namespace RefactoringLegacyCode.Tests.Shared
         {
             // Create and open the SQLite in-memory database
             SQLitePCL.Batteries.Init();
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
 
             var uniqueDbId = Guid.NewGuid().ToString();
             var dataSource = $"DataSource=file:{uniqueDbId}?mode=memory&cache=shared";

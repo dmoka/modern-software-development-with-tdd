@@ -22,8 +22,8 @@ namespace RefactoringLegacyCode
     {
         private string _connectionString => "Data Source=warehousing.db";
 
-        [HttpPost("{orderId}/process")]
-        public async Task<IActionResult> ProcessOrder(int orderId)
+        [HttpPost("{id}/process")]
+        public async Task<IActionResult> ProcessOrder(int id)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace RefactoringLegacyCode
                     connection.Open();
                     using (var command = new SqliteCommand("SELECT * FROM Orders WHERE Id = @OrderId", connection))
                     {
-                        command.Parameters.AddWithValue("@OrderId", orderId);
+                        command.Parameters.AddWithValue("@OrderId", id);
                         using (var reader = command.ExecuteReader())
                         {
                             if (reader.Read())
@@ -43,7 +43,7 @@ namespace RefactoringLegacyCode
 
                                 orderDetails = new OrderDetails
                                 {
-                                    OrderId = orderId,
+                                    OrderId = id,
                                     ProductId = reader.GetInt32(1),
                                     Quantity = reader.GetInt32(2),
                                     CustomerEmail = reader.GetString(3),
@@ -99,7 +99,7 @@ namespace RefactoringLegacyCode
                         string emailJson = JsonSerializer.Serialize(emailPayload);
                         var content = new StringContent(emailJson, Encoding.UTF8, "application/json");
 
-                       //await httpClient.PostAsync("https://api.emailservice.com/send", content);
+                        await httpClient.PostAsync("https://api.emailservice.com/send", content);
                     }
 
                     // Log action to XML
