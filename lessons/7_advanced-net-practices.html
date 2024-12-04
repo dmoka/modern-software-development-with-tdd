@@ -62,7 +62,31 @@ Testing code with real dependencies
 
 ---
 
-Add middlewares - cross cutting concerns
+# Pipeline behaviours
+
+MediatR = inproces messaging with pub/sub support
+
+Wrapping the execution of request handler
+
+Similar to .NET middlewares
+
+---
+#Pipeline behaviours
+
+<div style="text-align: center;">
+  <img src="./assets/pipeline-behaviours.png" alt="Example Image" style="width:850px;">
+</div>
+
+---
+#Pipeline behaviours
+
+Use cases:
+- logging 
+- exception handling
+- model validation
+- caching
+
+---
 
 # Creating API contracts
 
@@ -119,31 +143,7 @@ The two modesl can evolve differentl
 
 
 ---
-# Pipeline behaviours
 
-meidatr is an inproces messaing library with pub sup supports
-
-allowing the wrap the execution of the request handler
-
-- similar as middlewares but for erquestresponse
-- middlewars for http level
-- pipeline behaviourz on mediator request/repsonse level
-- for cross cutting concerns like logging, common validation,
-
-todo: add image for https://garywoodfine.com/how-to-implement-cross-cutting-concerns-with-mediatr-pipeline-behaviours/
-
-Use cases: https://www.youtube.com/watch?v=Iql4yjHYRiA
-- logging - logging before and after executing (add milans example)
-- exception handling - log unhanndled exception
-- validationjpieline behaviour
-- cahcing
-The beauty is that we can chan multiple pipeline behaviours
-
-<div style="text-align: center;">
-  <img src="./assets/no-arch.png" alt="Example Image" style="width:350px;">
-</div>
-
----
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
