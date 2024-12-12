@@ -7,7 +7,7 @@ We are building the **Product** domain entity for an inventory management system
 ## **Product**
 
 ### **Attributes**
-- `Id`: Unique identifier for the product. It is during construction.
+- `Id`: Unique identifier for the product. It is generated during creation.
 - `Name`: Name of the product
 - `Description`: Short description of the product.
 - `Price`: Monetary value of the product.
@@ -17,35 +17,31 @@ We are building the **Product** domain entity for an inventory management system
 ### **Behavior**
 - **Create Product**:
   - The LastOperation should be set to `None`.
-  - The StockLevel should be created with an initial quantity of 10.
+  - The StockLevel should be created with an initial quantity of 20.
 
-- **Pick Items**: 
+- **Pick Items**:
   - Reduce the stock by a specified quantity.
+  - LastOperation should be set to `Picked`
   - Ensure:
     - The quantity picked does not exceed available stock.
     - The product's quality status is `Available`.
     - The pick quantity does not exceed the maximum limit per operation.
-- **Unpick Items**: 
+
+### Self-exercise
+
+- **Unpick Items**:
   - Increase the stock by a specified quantity.
+  - LastOperation should be set to `Unpicked`
   - Ensure:
     - The total stock after unpicking does not exceed the maximum stock level.
     - The product's quality status is Available.
 
 ---
 
-## **StockLevel**
+## **StockLevel** Quality Status
+Indicates if the stock is available, expired, or damaged.
 
-### **Attributes**
-- `Id`: Unique identifier for the stock level.
-- `Quantity`: Current number of items in stock.
-- `QualityStatus`: Indicates if the stock is available, expired, or damaged.
-
-### **Behavior**
-- **Create New Stock Level**:
-  - The Id is generated during creation.
-  - Set the quality status to `Available`.
-
----
+Set to `Available` on default
 
 ## **Constraints**
 - **Maximum stock level**: 50 items.
