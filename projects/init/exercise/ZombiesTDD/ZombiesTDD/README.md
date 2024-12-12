@@ -10,8 +10,8 @@ The **Product Searcher** is a utility to filter and retrieve products based on v
 
 Create a searcher module that must filter a collection of products based on the following criteria:
 
-1. If no products match the criteria, return an empty result list with an appropriate message.
-1. The search must throw error when null provided as input.
+1. If no products match the criteria, return an empty result list.
+1. The search must throw error when null provided as products input.
 1. **Search Term**: Filter products whose name or description contains the search term (case-insensitive).
 1. **Quality Status**: Filter products based on their stock's quality (e.g., Available, Damaged, Expired).
 1. **Sorting**:
