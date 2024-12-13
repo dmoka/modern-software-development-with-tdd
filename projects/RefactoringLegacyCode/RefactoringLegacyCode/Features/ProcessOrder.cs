@@ -11,8 +11,6 @@ using System;
 using FluentValidation;
 using RefactoringLegacyCode.Data;
 
-Clean up to have base and run it to see if it works, prolly we need sqlconnection
-
 namespace RefactoringLegacyCode.Features
 {
     public static class ProcessOrder
