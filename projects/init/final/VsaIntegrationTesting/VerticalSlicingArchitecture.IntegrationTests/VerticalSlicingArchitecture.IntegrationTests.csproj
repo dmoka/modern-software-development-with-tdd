@@ -30,4 +30,8 @@
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Product\" />
+  </ItemGroup>
+
 </Project>
