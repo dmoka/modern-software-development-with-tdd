@@ -3,6 +3,11 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using VerticalSlicingArchitecture.Database;
 
+//TODO:
+//-add global error handling
+//-add logging/auth - https://juliocasal.com/blog/Dont-Unit-Test-Your-AspNetCore-API
+// pipeline behaviours for cruss cutting concerns!!!
+// - Add CLI tool with TDD
 // Apply .net libraries
 var builder = WebApplication.CreateBuilder(args);
 
