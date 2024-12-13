@@ -73,8 +73,8 @@ namespace RefactoringLegacyCode.Tests.Shared
 
         public string GetOrderState(int id)
         {
-            var command = new SqliteCommand("SELECT Status FROM Orders WHERE Id = @OrderId", _connection);
-            command.Parameters.AddWithValue("@OrderId", id);
+            var command = new SqliteCommand("SELECT Status FROM Orders WHERE Id = @Id", _connection);
+            command.Parameters.AddWithValue("@Id", id);
 
             return (string)command.ExecuteScalar();
         }

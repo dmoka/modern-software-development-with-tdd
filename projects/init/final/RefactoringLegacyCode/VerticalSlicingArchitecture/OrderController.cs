@@ -32,9 +32,9 @@ namespace RefactoringLegacyCode
                 using (var connection = new SqliteConnection(_connectionString))
                 {
                     connection.Open();
-                    using (var command = new SqliteCommand("SELECT * FROM Orders WHERE Id = @OrderId", connection))
+                    using (var command = new SqliteCommand("SELECT * FROM Orders WHERE Id = @Id", connection))
                     {
-                        command.Parameters.AddWithValue("@OrderId", id);
+                        command.Parameters.AddWithValue("@Id", id);
                         using (var reader = command.ExecuteReader())
                         {
                             if (reader.Read())
@@ -43,7 +43,7 @@ namespace RefactoringLegacyCode
 
                                 orderDetails = new OrderDetails
                                 {
-                                    OrderId = id,
+                                    Id = id,
                                     ProductId = reader.GetInt32(1),
                                     Quantity = reader.GetInt32(2),
                                     CustomerEmail = reader.GetString(3),
@@ -92,8 +92,8 @@ namespace RefactoringLegacyCode
                         var emailPayload = new
                         {
                             to = orderDetails.CustomerEmail,
-                            subject = $"Order Confirmation - Order #{orderDetails.OrderId}",
-                            body = $"Dear Customer,\n\nThank you for your order #{orderDetails.OrderId}. Your order has been processed and will be delivered soon.\n\nBest Regards,\nWarehouse Team"
+                            subject = $"Order Confirmation - Order #{orderDetails.Id}",
+                            body = $"Dear Customer,\n\nThank you for your order #{orderDetails.Id}. Your order has been processed and will be delivered soon.\n\nBest Regards,\nWarehouse Team"
                         };
 
                         string emailJson = JsonSerializer.Serialize(emailPayload);
@@ -207,7 +207,7 @@ namespace RefactoringLegacyCode
                     var pr = pr1;
 
                     var xmlDocument = new XElement("Order",
-                        new XElement("OrderId", orderDetails.OrderId),
+                        new XElement("Id", orderDetails.Id),
                         new XElement("ProductDetails",
                             new XElement("ProductId", orderDetails.ProductId),
                             new XElement("Quantity", orderDetails.Quantity),
@@ -229,23 +229,23 @@ namespace RefactoringLegacyCode
                         new XElement("Status", "Processed")
                     );
 
-                    string xmlFileName = $"Order_{orderDetails.OrderId}.xml";
+                    string xmlFileName = $"Order_{orderDetails.Id}.xml";
                     xmlDocument.Save(xmlFileName);
 
                     // Mark order as processed in the database
                     using (var connection = new SqliteConnection(_connectionString))
                     {
                         connection.Open();
-                        using (var command = new SqliteCommand("UPDATE Orders SET Status = 'Processed' WHERE Id = @OrderId", connection))
+                        using (var command = new SqliteCommand("UPDATE Orders SET Status = 'Processed' WHERE Id = @Id", connection))
                         {
-                            command.Parameters.AddWithValue("@OrderId", orderDetails.OrderId);
+                            command.Parameters.AddWithValue("@Id", orderDetails.Id);
                             command.ExecuteNonQuery();
                         }
                     }
 
                     var data = new
                     {
-                        OrderId = orderDetails.OrderId,
+                        OrderId = orderDetails.Id,
                         TotalCost = totalCost,
                         EstimatedDeliveryDate = estimatedDeliveryDate,
                         DeliveryType = orderDetails.DeliveryType
@@ -265,7 +265,7 @@ namespace RefactoringLegacyCode
 
     public class OrderDetails
     {
-        public int OrderId { get; set; }
+        public int Id { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
 
