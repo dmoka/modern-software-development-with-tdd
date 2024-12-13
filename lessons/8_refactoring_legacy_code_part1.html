@@ -12,8 +12,6 @@
 
 class: center, middle
 
-TODO: we should put this after pragmatic architecture and test via .net api tests
-
 # Refactoring legacy code
 
 ---
@@ -92,8 +90,6 @@ Seams: a place to alter program behaviour, with minimal structural change
 </div>
 ---
 # 1. Identify changes points - Seams
-
-TODO: find example with overriding, then also show when we need to do small changes? Or not needed
 
 ```
 public class OrderService
@@ -522,12 +518,50 @@ public class CsvConverter
 </div>
 
 ---
-# Property based testing based on article
-TODO: add based on tweet
+class: middle, center
+# How to write 1000s tests with little code?
 
+---
+# Property based testing
+
+Example based test - impossible to cover all input combination 
+
+Leads to a lot of test code.
+
+---
+# Property based testing
+
+It's a type of testing to check if our system holds a property when tested with a large number of inputs. 
+
+Such property can be a business rule.
+---
+# Property based testing
+
+<div style="text-align: center;">
+  <img src="./assets/prop-test.png" alt="Example Image", style="width: 550px;">
+</div>
+
+---
+# Property based testing
+
+1. Define properties that should hold
+2. Generate large number of input combinations
+3. Run the test logic for each
+4. Check if the property holds for each
 
 ---
 
+# Property based testing example
+
+Calculating the shortest path between two cities. 
+
+Prop1: 
+- Symmetry: The shortest path from A to B should be the same as from B to A.
+
+Prop2:
+- Non-Negativity: The length of the shortest path should never be negative.
+
+---
 
 # Functional testing
 
@@ -540,20 +574,7 @@ Add more tests:
 3. Execute Mutation Testing (manually is also fine) 
 
 4. Repeat till 100% code coverage and mutation score
----
 
-# Put thees in exercise:
-- calling database
-    - doing read and write
-- calling a 3rd party email sending service
-- create a CVS file
-- capture some temp output with approval testing
----- have separation date format config, hardcoded
-- some encoding or so for property based testing
-
----
-TODO: talk about property based testing if we can
----
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
