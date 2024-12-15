@@ -13,7 +13,7 @@ public class ProductSearcher
 
         var searchResults = FilterBySearchTerm(products, searchTerm);
         searchResults = FilterByQualityStatus(damaged, searchResults);
-        searchResults = FilterByPrice(ordering, searchResults);
+        searchResults = OrderResults(ordering, searchResults);
 
         return searchResults;
     }
@@ -31,7 +31,7 @@ public class ProductSearcher
         return searchResults;
     }
 
-    private static IEnumerable<Product> FilterByPrice(Ordering ordering, IEnumerable<Product> searchResults)
+    private static IEnumerable<Product> OrderResults(Ordering ordering, IEnumerable<Product> searchResults)
     {
         return ordering switch
         {
