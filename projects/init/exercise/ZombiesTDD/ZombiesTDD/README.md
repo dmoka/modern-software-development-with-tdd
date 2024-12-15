@@ -16,11 +16,12 @@ Create a searcher module that must filter a collection of products based on the 
 1. **Quality Status**: Filter products based on their stock's quality (e.g., Available, Damaged, Expired).
 1. **Sorting**:
    - Products can be sorted by one of these:
-	- by name in ascending order
-	- by name in descending order
-    - by price in ascending order
-	- by price in descending orde
+   - by name in ascending order
+   - by name in descending order
+   - by price in ascending order
+   - by price in descending orde
 1. **Price Range** (Self-exercise):
+   - Price properties are optional parameters
    - Products must have a price greater than or equal to a specified minimum price.
    - Products must have a price less than or equal to a specified maximum price.
    - If `MinPrice` or `MaxPrice` is negative, throw an exception.
@@ -31,18 +32,18 @@ Create a searcher module that must filter a collection of products based on the 
 ### **Input**
 
 The search method the following properties:
+
 - `SearchTerm` (string)
 - `MinPrice` (decimal, optional)
 - `MaxPrice` (decimal, optional)
-- `QualityStatus` (enum, optional)
-- `Sorting` (enum, optional
+- `QualityStatus` (enum)
+- `Sorting` (enum)
 
 ---
 
 ### **Output**
 
 List of prodicts according to the search criteria.
-
 
 ---
 
