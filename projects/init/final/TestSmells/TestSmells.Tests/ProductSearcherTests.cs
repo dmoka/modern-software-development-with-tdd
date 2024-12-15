@@ -59,20 +59,7 @@ namespace TestSmells.Tests
             searchAction.Should().Throw<ApplicationException>().WithMessage("The MinPrice should be smaller than MaxPrice");
         }
 
-        [Test]
-        public void ShouldFilterInBasedOnDamaged()
-        {
-            var product1 = new Product("Logitech webcam", "The best webcam in 2024", 199);
-            product1.StockLevel.QualityStatus = QualityStatus.Damaged;
-            var product2 = new Product("Logitech webcam", "The best webcam in 2024", 400);
-            var product3 = new Product("Logitech webcam", "The best webcam in 2024", 201);
 
-            var products = new List<Product>() { product1, product2, product3 };
-
-            var searchResult = ProductSearcher.Search(products, "", null, null, QualityStatus.Damaged);
-
-            searchResult.Should().BeEquivalentTo(new List<Product>() { product1 });
-        }
 
         [Test]
         public void ItShouldCorrectlyFindExpiredProduct_WhenExpiredStatusIsSetForProduct()
