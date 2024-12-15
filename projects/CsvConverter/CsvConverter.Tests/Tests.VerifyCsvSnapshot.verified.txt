@@ -1,3 +1,0 @@
-﻿Id;Name;Email
-12345;John Doe;john.doe@gmail.com
-67890;Jane Smith;jane.smith@gmail.com
