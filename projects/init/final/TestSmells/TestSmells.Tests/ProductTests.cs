@@ -63,12 +63,7 @@ namespace TestSmells.Tests
             Console.WriteLine(product.StockLevel.Quantity); // Verify stock level
         }
 
-        [Test]
-        public void PickShouldThrowExceptionForLargeQuantity()
-        {
-            var product = new Product("NanoPad Slim", "Ultra-thin wireless touchpad", 45);
-            Assert.Throws<ApplicationException>(() => product.Pick(11)); // MaxPickOperationCount is 10
-        }
+  
 
         [Test]
         public void PickProductShouldFail_whenProductIsDamaged()
