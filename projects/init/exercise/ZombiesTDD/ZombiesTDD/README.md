@@ -16,7 +16,7 @@ Create a searcher module that must filter a collection of products based on the 
 1. **Quality Status**: Filter products based on their stock's quality (e.g., Available, Damaged, Expired).
 1. **Sorting**:
    - Products can be sorted by one of these:
-	- by name in asceneding order
+	- by name in ascending order
 	- by name in descending order
     - by price in ascending order
 	- by price in descending orde
