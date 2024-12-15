@@ -30,8 +30,8 @@ The email should be sent to "admin@tdd.com"
 
 - **Scenarios:**
   - If there are any updates, notify the admin about the completion.
-  - Subject: "Inventory Sync Completed"
-  - Body: "The inventory synchronization process completed successfully."
+	  - Subject: "Inventory Sync Completed"
+	  - Body: "The inventory synchronization process completed successfully."
   - If an error occurs, notify the admin about the failure.
-  - Subject: "Alert: Unexpected Sync Error"
-  - Body: "The inventory synchronization process failed unexpectedly: <error>."
+	  - Subject: "Alert: Unexpected Sync Error"
+	  - Body: "The inventory synchronization process failed unexpectedly: <error>."

@@ -41,38 +41,32 @@ public class InventorySyncer
     {
         bool hasUpdates = false;
 
-        try
+        var products = _productRespo.GetProducts();
+        if (!products.Any())
         {
-            var products = _productRespo.GetProducts();
-            if (!products.Any())
+            return;
+        }
+
+        var stockLevels = _externalWarehouseService.GetStockLevels();
+
+        foreach (var product in products)
+        {
+            if (!stockLevels.ContainsKey(product.Id))
             {
+                _logger.LogWarning($"No stock level data for product with id {product.Id}");
                 return;
             }
 
-            var stockLevels = _externalWarehouseService.GetStockLevels();
-
-            foreach (var product in products)
+            if (product.UpdateStockLevel(stockLevels[product.Id]))
             {
-                if (!stockLevels.ContainsKey(product.Id))
-                {
-                    _logger.LogWarning($"No stock level data for product with id {product.Id}");
-                    return;
-                }
-
-                if (product.UpdateStockLevel(stockLevels[product.Id]))
-                {
-                    hasUpdates = true;
-                };
-            }
-
-            if (!hasUpdates)
-            {
-                _logger.LogInfo("No products updates");
-            }
+                hasUpdates = true;
+            };
         }
-        catch (Exception e)
+
+        if (!hasUpdates)
         {
-            throw new ApplicationException("Unexpected application error happened");
+            _logger.LogInfo("No products updates");
         }
+        
     }
 }

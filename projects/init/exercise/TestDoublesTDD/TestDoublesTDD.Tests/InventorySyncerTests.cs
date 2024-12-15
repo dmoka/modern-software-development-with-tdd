@@ -34,23 +34,6 @@ namespace TestDoublesTDD.Tests
             syncer.Sync();
         }
 
-        [Test]
-        public void SyncShouldThrowApplicationErrorWhenUnexecptedDbErroHappens()
-        {
-            //Arrange
-            var productRepoFake = new Mock<IProductRepository>();
-            productRepoFake.Setup(x => x.GetProducts()).Throws(new Exception("Database connection error"));
-            var externalServiceStub = new ExternalWarehouseServiceStub(new Dictionary<Guid, int>());
-
-            var syncer = new InventorySyncer(productRepoFake.Object, externalServiceStub, new DummyLogger());
-
-            //Act
-            var action = () => syncer.Sync();
-
-            //Assert
-            action.Should().Throw<ApplicationException>().WithMessage("Unexpected application error happened");
-        }
-
 
         [Test]
         public void SyncShouldUpdateSingleProductStockLevel()
