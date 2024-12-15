@@ -14,7 +14,8 @@ namespace ZombiesTDD.Tests
         {
             var products = new List<Product>();
 
-            var result = SearchProducts(products, "WebCam");
+            var result1 = ProductSearcher.Search(products, "WebCam", QualityStatus.Available, Ordering.ByNameAscending);
+            var result = (IEnumerable<Product>) result1;
 
             result.Should().BeEmpty();
         }
@@ -22,7 +23,11 @@ namespace ZombiesTDD.Tests
         [Test]
         public void ShouldReturnError_whenNullPassedAs()
         {
-            var searchAction = () => SearchProducts(null, "WebCam");
+            var searchAction = () =>
+            {
+                var result = ProductSearcher.Search(null, "WebCam", QualityStatus.Available, Ordering.ByNameAscending);
+                return result;
+            };
 
             searchAction.Should().Throw<ApplicationException>().WithMessage("Products cannot be null");
         }
@@ -36,7 +41,7 @@ namespace ZombiesTDD.Tests
                 product
             };
 
-            var result = SearchProducts(products, "WebCam");
+            var result = ProductSearcher.Search(products, "WebCam", QualityStatus.Available, Ordering.ByNameAscending);
 
             result.Should().Equal(product);
         }
@@ -52,7 +57,7 @@ namespace ZombiesTDD.Tests
                 product2
             };
 
-            var result = SearchProducts(products, "Mouse");
+            var result = ProductSearcher.Search(products, "Mouse", QualityStatus.Available, Ordering.ByNameAscending);
 
             result.Should().Equal(product2);
         }
@@ -67,7 +72,7 @@ namespace ZombiesTDD.Tests
                 product
             };
 
-            var result = SearchProducts(products, "generational");
+            var result = ProductSearcher.Search(products, "generational", QualityStatus.Available, Ordering.ByNameAscending);
 
             result.Should().Equal(product);
         }
@@ -81,7 +86,7 @@ namespace ZombiesTDD.Tests
                 product
             };
 
-            var result = SearchProducts(products, "WEBCAM");
+            var result = ProductSearcher.Search(products, "WEBCAM", QualityStatus.Available, Ordering.ByNameAscending);
 
             result.Should().Equal(product);
         }
@@ -95,7 +100,8 @@ namespace ZombiesTDD.Tests
                 product
             };
 
-            var result = SearchProducts(products, "GENERATIONAL");
+            var result1 = ProductSearcher.Search(products, "GENERATIONAL", QualityStatus.Available, Ordering.ByNameAscending);
+            var result = (IEnumerable<Product>) result1;
 
             result.Should().Equal(product);
         }
@@ -112,7 +118,7 @@ namespace ZombiesTDD.Tests
                 product2
             };
 
-            var result = SearchProducts(products, "Logitech");
+            var result = ProductSearcher.Search(products, "Logitech", QualityStatus.Available, Ordering.ByNameAscending);
 
             result.Should().Equal(products);
         }
@@ -150,7 +156,7 @@ namespace ZombiesTDD.Tests
                 product3
             };
 
-            var result = SearchProducts(products, "Logitech", Ordering.ByNameAscending);
+            var result = ProductSearcher.Search(products, "Logitech", QualityStatus.Available, Ordering.ByNameAscending);
 
             result.Should().Equal(new List<Product>() { product2, product3, product1});
         }
@@ -168,7 +174,7 @@ namespace ZombiesTDD.Tests
                 product3
             };
 
-            var result = SearchProducts(products, "Logitech", Ordering.ByNameDescending);
+            var result = ProductSearcher.Search(products, "Logitech", QualityStatus.Available, Ordering.ByNameDescending);
 
             result.Should().Equal(new List<Product>() { product1, product3, product2 });
         }
@@ -186,7 +192,7 @@ namespace ZombiesTDD.Tests
                 product3
             };
 
-            var result = SearchProducts(products, "Logitech", Ordering.ByPriceAscending);
+            var result = ProductSearcher.Search(products, "Logitech", QualityStatus.Available, Ordering.ByPriceAscending);
 
             result.Should().Equal(new List<Product>() { product3, product2, product1 });
         }
@@ -204,21 +210,9 @@ namespace ZombiesTDD.Tests
                 product3
             };
 
-            var result = SearchProducts(products, "Logitech", Ordering.ByPriceDescending);
+            var result = ProductSearcher.Search(products, "Logitech", QualityStatus.Available, Ordering.ByPriceDescending);
 
             result.Should().Equal(new List<Product>() { product1, product2, product3 });
-        }
-
-        private static IEnumerable<Product> SearchProducts(List<Product> products, string searchTerm, QualityStatus qualityStatus = QualityStatus.Available)
-        {
-            var result = ProductSearcher.Search(products, searchTerm, qualityStatus, Ordering.ByNameAscending);
-            return result;
-        }
-
-        private static IEnumerable<Product> SearchProducts(List<Product> products, string searchTerm, Ordering ordering)
-        {
-            var result = ProductSearcher.Search(products, searchTerm, QualityStatus.Available, ordering);
-            return result;
         }
     }
 
