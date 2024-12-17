@@ -1,11 +1,10 @@
 using Carter;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using VerticalSlicingArchitecture.Database;
-using VerticalSlicingArchitecture.Shared;
+using RefactoringLegacyCode.Database;
+using RefactoringLegacyCode.Shared;
 
-namespace VerticalSlicingArchitecture.Features.Product;
+namespace RefactoringLegacyCode.Features.Product;
 
 public class SearchProducts
 {
@@ -55,23 +54,6 @@ public class SearchProducts
         {
             var query = _dbContext.Products.AsQueryable();
 
-            query = ApplySearchFilter(request, query);
-
-            var products = await query
-                .Select(p => new Response
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price
-                })
-                .ToListAsync(cancellationToken);
-
-            return Result<List<Response>>.Success(products);
-        }
-
-        private static IQueryable<Entities.Product> ApplySearchFilter(Query request, IQueryable<Entities.Product> query)
-        {
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 var searchTerm = request.SearchTerm.ToLower();
@@ -90,7 +72,17 @@ public class SearchProducts
                 query = query.Where(p => p.Price <= request.MaxPrice.Value);
             }
 
-            return query;
+            var products = await query
+                .Select(p => new Response
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price
+                })
+                .ToListAsync(cancellationToken);
+
+            return Result<List<Response>>.Success(products);
         }
     }
 } 

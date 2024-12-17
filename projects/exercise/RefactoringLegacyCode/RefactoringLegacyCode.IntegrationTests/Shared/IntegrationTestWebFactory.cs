@@ -1,14 +1,13 @@
-﻿using DotNet.Testcontainers.Builders;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using RefactoringLegacyCode.Database;
 using Testcontainers.MsSql;
-using VerticalSlicingArchitecture.Database;
 using Xunit;
 
-namespace VerticalSlicingArchitecture.IntegrationTests.Shared;
+namespace RefactoringLegacyCode.IntegrationTests.Shared;
 
 public class IntegrationTestWebFactory
     : WebApplicationFactory<Program>, IAsyncLifetime
@@ -51,7 +50,7 @@ public class IntegrationTestWebFactory
             var serviceProvider = Services.CreateScope().ServiceProvider;
 
             // Get the db context and apply migrations
-            using var dbContext = serviceProvider.GetRequiredService<WarehousingDbContext>();
+           using var dbContext = serviceProvider.GetRequiredService<WarehousingDbContext>();
             await dbContext.Database.MigrateAsync();
 
             // Optional: Add logging to verify connection string

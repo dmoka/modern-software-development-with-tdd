@@ -3,24 +3,15 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using VerticalSlicingArchitecture.Entities;
-using VerticalSlicingArchitecture.Features.Product;
-using VerticalSlicingArchitecture.Tests.Asserters;
-using VerticalSlicingArchitecture.Tests.Shared;
+using RefactoringLegacyCode.Entities;
+using RefactoringLegacyCode.Features.Product;
+using RefactoringLegacyCode.Tests.Asserters;
+using RefactoringLegacyCode.Tests.Shared;
 
-namespace VerticalSlicingArchitecture.Tests.Features.Product;
+namespace RefactoringLegacyCode.Tests.Features.Product;
 
 public class CreateProductTests
 {
-    [Test]
-    public async Task Asd()
-    {
-        using var testServer = new InMemoryTestServer();
-
-        var response = await testServer.Client().PostAsync("/api/products", null);
-
-        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Created);
-    }
 
     [Test]
     public async Task CreateProductShouldFail_WhenNameIsEmpty()
