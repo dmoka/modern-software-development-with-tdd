@@ -33,11 +33,9 @@ public class InMemoryTestServer : IDisposable
                         options.UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}"); // Unique DB per instance
                     }, ServiceLifetime.Singleton);
 
-                    // Register validators and MediatR
+                    // Register validators
                     var assembly = typeof(Program).Assembly;
                     services.AddValidatorsFromAssembly(assembly);
-                    services.AddMediatR(config =>
-                        config.RegisterServicesFromAssembly(assembly));
 
                     services.Configure<HttpsRedirectionOptions>(options =>
                     {
@@ -51,7 +49,6 @@ public class InMemoryTestServer : IDisposable
                     logging.SetMinimumLevel(LogLevel.Warning); // This sets the minimum level to Warning, hiding Info and Debug logs
                     logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
                 });
-
             });
 
         _dbContext = _factory.Services.CreateScope()
@@ -62,7 +59,6 @@ public class InMemoryTestServer : IDisposable
     public HttpClient Client() => _client;
 
     public WarehousingDbContext DbContext() => _dbContext;
-
 
     public void Dispose()
     {
