@@ -23,7 +23,7 @@ namespace VerticalSlicingArchitecture.IntegrationTests.Features.Product
         [Fact]
         public async Task PickShouldDecreaseStocklevel()
         {
-            var command = new CreateProduct.Command
+            var command = new CreateProduct.Request
             {
                 Name = "AMD Ryzen 7 7700X",
                 Description = "CPU",
@@ -31,14 +31,14 @@ namespace VerticalSlicingArchitecture.IntegrationTests.Features.Product
                 InitialStock = 10
             };
 
-            var productResponse = await PostAsync<CreateProduct.Command, CreateProduct.Response>("/api/products", command);
+            var productId = await PostAsync<CreateProduct.Request, Guid>("/api/products", command);
 
             //Act
-            var pickProductCommand = new PickProduct.Command(productResponse.Id, 3);
-            await PostAsync($"/api/products/{productResponse.Id}/pick", pickProductCommand);
+            var pickProductCommand = new PickProduct.Request(productId, 3);
+            await PostAsync($"/api/products/{productId}/pick", pickProductCommand);
 
             //Assert
-            var stockLevel = _dbContext.StockLevels.SingleOrDefault(s => s.ProductId == productResponse.Id);
+            var stockLevel = _dbContext.StockLevels.SingleOrDefault(s => s.ProductId == productId);
             stockLevel.Quantity.Should().Be(7);
         }
     }

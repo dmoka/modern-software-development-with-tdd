@@ -24,7 +24,7 @@ namespace VerticalSlicingArchitecture.IntegrationTests.Features.Product
         public async Task CreateProductShouldStoreProductInDb()
         {
             // Arrange
-            var command = new CreateProduct.Command
+            var command = new CreateProduct.Request
             {
                 Name = "AMD Ryzen 7 7700X",
                 Description = "CPU",
@@ -32,7 +32,7 @@ namespace VerticalSlicingArchitecture.IntegrationTests.Features.Product
             };
 
             //Act
-            await PostAsync<CreateProduct.Command, CreateProduct.Response>("api/products", command);
+            await PostAsync<CreateProduct.Request, Guid>("api/products", command);
 
             var product = _dbContext.Products.FirstOrDefault();
 

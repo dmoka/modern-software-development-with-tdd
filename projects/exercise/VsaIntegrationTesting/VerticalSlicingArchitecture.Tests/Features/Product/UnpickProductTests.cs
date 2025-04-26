@@ -23,7 +23,7 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
             using var testServer = new InMemoryTestServer();
             var product = await CreateProduct(testServer, 10);
 
-            var command = new UnpickProduct.Command(product.Id, 3);
+            var command = new UnpickProduct.Request(product.Id, 3);
             var response = await testServer.Client()
                 .PostAsync($"api/products/{product.Id}/unpick", JsonPayloadBuilder.Build(command));
 
@@ -39,7 +39,7 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
             using var testServer = new InMemoryTestServer();
 
             var productId = Guid.NewGuid();
-            var command = new UnpickProduct.Command(productId, 3);
+            var command = new UnpickProduct.Request(productId, 3);
             var response = await testServer.Client()
                 .PostAsync($"api/products/{productId}/unpick", JsonPayloadBuilder.Build(command));
 
@@ -57,7 +57,7 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
             using var testServer = new InMemoryTestServer();
 
             var productId = Guid.Empty;
-            var command = new UnpickProduct.Command(productId, 3);
+            var command = new UnpickProduct.Request(productId, 3);
             var response = await testServer.Client()
                 .PostAsync($"api/products/{productId}/unpick", JsonPayloadBuilder.Build(command));
 
@@ -75,7 +75,7 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
             using var testServer = new InMemoryTestServer();
 
             var productId = Guid.NewGuid();
-            var command = new UnpickProduct.Command(productId, 0);
+            var command = new UnpickProduct.Request(productId, 0);
             var response = await testServer.Client()
                 .PostAsync($"api/products/{productId}/unpick", JsonPayloadBuilder.Build(command));
 
@@ -93,7 +93,7 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
             using var testServer = new InMemoryTestServer();
             var product = await CreateProduct(testServer, 45);
 
-            var command = new UnpickProduct.Command(product.Id, 6);
+            var command = new UnpickProduct.Request(product.Id, 6);
             var response = await testServer.Client()
                 .PostAsync($"api/products/{product.Id}/unpick", JsonPayloadBuilder.Build(command));
 

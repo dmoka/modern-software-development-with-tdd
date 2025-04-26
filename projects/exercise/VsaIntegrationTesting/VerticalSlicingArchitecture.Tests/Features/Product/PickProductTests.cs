@@ -18,7 +18,7 @@ public class PickProductTests
     {
         // Arrange
         using var testServer = new InMemoryTestServer();
-        var command = new PickProduct.Command(Guid.Empty, 3);
+        var command = new PickProduct.Request(Guid.Empty, 3);
 
         // Act
         var response = await testServer.Client()
@@ -40,7 +40,7 @@ public class PickProductTests
         using var testServer = new InMemoryTestServer();
         var product = await CreateProductWith10Units(testServer, 10);
 
-        var command = new PickProduct.Command(product.Id, 0);
+        var command = new PickProduct.Request(product.Id, 0);
 
         // Act
         var response = await testServer.Client()
@@ -63,7 +63,7 @@ public class PickProductTests
         using var testServer = new InMemoryTestServer();
         var product = await CreateProductWith10Units(testServer, 10);
 
-        var command = new PickProduct.Command(product.Id, 11);
+        var command = new PickProduct.Request(product.Id, 11);
 
         // Act
         var response = await testServer.Client()
@@ -92,7 +92,7 @@ public class PickProductTests
 
         await testServer.DbContext().SaveChangesAsync();
 
-        var command = new PickProduct.Command(product.Id, 3);
+        var command = new PickProduct.Request(product.Id, 3);
 
         // Act
         var response = await testServer.Client()
@@ -121,7 +121,7 @@ public class PickProductTests
 
         await testServer.DbContext().SaveChangesAsync();
 
-        var command = new PickProduct.Command(product.Id, 3);
+        var command = new PickProduct.Request(product.Id, 3);
 
         // Act
         var response = await testServer.Client()
@@ -143,7 +143,7 @@ public class PickProductTests
         using var testServer = new InMemoryTestServer();
         var product = await CreateProductWith10Units(testServer, 3);
 
-        var command = new PickProduct.Command(product.Id, 4);
+        var command = new PickProduct.Request(product.Id, 4);
 
         // Act
         var response = await testServer.Client()
@@ -166,7 +166,7 @@ public class PickProductTests
         using var testServer = new InMemoryTestServer();
         var product = await CreateProductWith10Units(testServer, 10);
 
-        var command = new PickProduct.Command(product.Id, 3);
+        var command = new PickProduct.Request(product.Id, 3);
 
         // Act
         var response = await testServer.Client().PostAsync($"/api/products/{product.Id}/pick", JsonPayloadBuilder.Build(command));
@@ -188,7 +188,7 @@ public class PickProductTests
         // Arrange
         using var testServer = new InMemoryTestServer();
         var productId = Guid.NewGuid();
-        var command = new PickProduct.Command(productId, 3);
+        var command = new PickProduct.Request(productId, 3);
 
         // Act
         var response = await testServer.Client().PostAsync($"/api/products/{productId}/pick", JsonPayloadBuilder.Build(command));

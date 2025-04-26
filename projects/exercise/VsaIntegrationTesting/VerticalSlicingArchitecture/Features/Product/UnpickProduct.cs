@@ -1,85 +1,55 @@
 ﻿using Carter;
 using FluentValidation;
-using MediatR;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using VerticalSlicingArchitecture.Database;
 using VerticalSlicingArchitecture.Shared;
 
-namespace VerticalSlicingArchitecture.Features.Product
+namespace VerticalSlicingArchitecture.Features.Product;
+
+public class UnpickProduct
 {
-    public class UnpickProduct
+    public class Endpoint : ICarterModule
     {
-        public class Endpoint : ICarterModule
+        public void AddRoutes(IEndpointRouteBuilder app)
         {
-            public void AddRoutes(IEndpointRouteBuilder app)
+            app.MapPost("api/products/{productId}/unpick", async (Guid productId, Request command, WarehousingDbContext context, IValidator<Request> validator) =>
             {
-                app.MapPost("api/products/{productId}/unpick", async (Guid productId, Command command, ISender sender) =>
-                {
-                    var result = await sender.Send(command);
-
-                    if (result.IsFailure)
-                    {
-                        return Results.BadRequest(result.Error);
-                    }
-
-                    return Results.Ok();
-                });
-            }
-
-        }
-
-        public record Command(Guid ProductId, int UnpickCount) : IRequest<Result>;
-
-
-        public class Validator : AbstractValidator<Command>
-        {
-            public Validator()
-            {
-                RuleFor(c => c.ProductId).NotEmpty();
-                RuleFor(c => c.UnpickCount).GreaterThan(0).WithMessage("UnpickCount must be greater than 0");
-            }
-        }
-
-        internal sealed class Handler : IRequestHandler<Command, Result>
-        {
-            private readonly WarehousingDbContext _context;
-            private readonly IValidator<Command> _validator;
-
-            public Handler(WarehousingDbContext context, IValidator<Command> validator)
-            {
-                _context = context;
-                _validator = validator;
-            }
-
-            public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
-            {
-                var validationResult = _validator.Validate(request);
+                var validationResult = validator.Validate(command);
                 if (!validationResult.IsValid)
                 {
-                    return Result.Failure(new Error("UnpickProduct.Validation", validationResult.ToString()));
+                    return Results.BadRequest(new Error("UnpickProduct.Validation", validationResult.ToString()));
                 }
 
-                var product = await _context.Products.Include(p => p.StockLevel)
-                    .SingleOrDefaultAsync(p => p.Id == request.ProductId);
+                var product = await context.Products.Include(p => p.StockLevel)
+                    .SingleOrDefaultAsync(p => p.Id == productId);
 
                 if (product is null)
                 {
-                    return Result.Failure(new Error("UnpickProduct.Validation", $"Product with id {request.ProductId} doesn't exist"));
+                    return Results.BadRequest(new Error("UnpickProduct.Validation", $"Product with id {productId} doesn't exist"));
                 }
 
-                var unpickResult = product.Unpick(request.UnpickCount);
+                var unpickResult = product.Unpick(command.UnpickCount);
 
                 if (unpickResult.IsFailure)
                 {
-                    return Result.Failure(unpickResult.Error);
+                    return Results.BadRequest(unpickResult.Error);
                 }
 
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
 
-                return Result.Success();
-            }
+                return Results.Ok();
+            });
         }
     }
 
+    public record Request(Guid ProductId, int UnpickCount);
+
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(c => c.ProductId).NotEmpty();
+            RuleFor(c => c.UnpickCount).GreaterThan(0).WithMessage("UnpickCount must be greater than 0");
+        }
+    }
 }
