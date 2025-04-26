@@ -33,11 +33,9 @@ public class InMemoryTestServer : IDisposable
                         options.UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}"); // Unique DB per instance
                     }, ServiceLifetime.Singleton);
 
-                    // Register validators and MediatR
+                    // Register validators
                     var assembly = typeof(Program).Assembly;
                     services.AddValidatorsFromAssembly(assembly);
-                    services.AddMediatR(config =>
-                        config.RegisterServicesFromAssembly(assembly));
 
                     services.Configure<HttpsRedirectionOptions>(options =>
                     {
