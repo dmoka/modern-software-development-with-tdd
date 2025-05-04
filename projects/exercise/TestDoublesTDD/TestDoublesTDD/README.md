@@ -24,14 +24,14 @@ The main `Sync` method coordinates the inventory synchronization process:
 
 ### Notify Admin feature (Self-exercise)
 
-Sends notifications email to admins about the synchronization process.
+Sends notifications email to admins about the completion of the entire synchronization process.
 
 The email should be sent to "admin@tdd.com"
 
 - **Scenarios:**
-  - If there are any updates, notify the admin about the completion.
+  - If there are any updates during the sync process, notify the admin about the completion.
 	  - Subject: "Inventory Sync Completed"
 	  - Body: "The inventory synchronization process completed successfully."
-  - If an error occurs, notify the admin about the failure.
+  - If any error occurrs globally in the sync process, notify the admin about the failure.
 	  - Subject: "Alert: Unexpected Sync Error"
 	  - Body: "The inventory synchronization process failed unexpectedly: <error>."
