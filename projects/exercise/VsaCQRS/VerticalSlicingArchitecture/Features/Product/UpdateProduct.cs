@@ -25,7 +25,7 @@ public class UpdateProduct
                 var product = await dbContext.Products.FindAsync(id);
                 if (product == null)
                 {
-                    return Results.BadRequest(new Error("UpdateProduct.NotFound", $"Product with Id {id} was not found."));
+                    return Results.Conflict(new Error("UpdateProduct.NotFound", $"Product with Id {id} was not found."));
                 }
 
                 product.Name = command.Name;
