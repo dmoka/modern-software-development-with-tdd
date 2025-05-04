@@ -25,14 +25,14 @@ public class UnpickProduct
 
                 if (product is null)
                 {
-                    return Results.BadRequest(new Error("UnpickProduct.Validation", $"Product with id {productId} doesn't exist"));
+                    return Results.Conflict(new Error("UnpickProduct.Validation", $"Product with id {productId} doesn't exist"));
                 }
 
                 var unpickResult = product.Unpick(command.UnpickCount);
 
                 if (unpickResult.IsFailure)
                 {
-                    return Results.BadRequest(unpickResult.Error);
+                    return Results.Conflict(unpickResult.Error);
                 }
 
                 await context.SaveChangesAsync();

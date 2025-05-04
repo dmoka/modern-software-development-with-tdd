@@ -26,14 +26,14 @@ public static class PickProduct
 
                 if (product == null)
                 {
-                    return Results.BadRequest(new Error("PickProduct.NoProductExist", $"The product with id {productId} doesn't exist"));
+                    return Results.Conflict(new Error("PickProduct.NoProductExist", $"The product with id {productId} doesn't exist"));
                 }
 
                 var pickResult = product.Pick(command.PickCount);
 
                 if (pickResult.IsFailure)
                 {
-                    return Results.BadRequest(pickResult.Error);
+                    return Results.Conflict(pickResult.Error);
                 }
 
                 await context.SaveChangesAsync();

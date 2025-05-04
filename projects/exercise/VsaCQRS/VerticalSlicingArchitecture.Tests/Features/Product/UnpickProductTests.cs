@@ -43,7 +43,7 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
             var response = await testServer.Client()
                 .PostAsync($"api/products/{productId}/unpick", JsonPayloadBuilder.Build(command));
 
-           await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+           await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Conflict);
            await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
            {
                code = "UnpickProduct.Validation",
@@ -97,7 +97,7 @@ namespace VerticalSlicingArchitecture.Tests.Features.Product
             var response = await testServer.Client()
                 .PostAsync($"api/products/{product.Id}/unpick", JsonPayloadBuilder.Build(command));
 
-            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Conflict);
             await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
             {
                 code = "UnpickProduct.Validation",

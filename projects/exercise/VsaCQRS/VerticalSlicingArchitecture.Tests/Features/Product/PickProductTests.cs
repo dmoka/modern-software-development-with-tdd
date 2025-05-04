@@ -70,7 +70,7 @@ public class PickProductTests
             .PostAsync($"/api/products/{product.Id}/pick", JsonPayloadBuilder.Build(command));
 
         // Assert
-        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Conflict);
         await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
         {
             code = "PickProduct.ExceedsMaxPick",
@@ -99,7 +99,7 @@ public class PickProductTests
             .PostAsync($"/api/products/{product.Id}/pick", JsonPayloadBuilder.Build(command));
 
         // Assert
-        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Conflict);
         await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
         {
             code = "PickProduct.QualityHold",
@@ -128,7 +128,7 @@ public class PickProductTests
             .PostAsync($"/api/products/{product.Id}/pick", JsonPayloadBuilder.Build(command));
 
         // Assert
-        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Conflict);
         await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
         {
             code = "PickProduct.QualityHold",
@@ -150,7 +150,7 @@ public class PickProductTests
             .PostAsync($"/api/products/{product.Id}/pick", JsonPayloadBuilder.Build(command));
 
         // Assert
-        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Conflict);
         await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
         {
             code = "PickProduct.InsufficientStock",
@@ -194,7 +194,7 @@ public class PickProductTests
         var response = await testServer.Client().PostAsync($"/api/products/{productId}/pick", JsonPayloadBuilder.Build(command));
 
         // Assert
-        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.BadRequest);
+        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.Conflict);
         await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
         {
             code = "PickProduct.NoProductExist",
