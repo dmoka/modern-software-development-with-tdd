@@ -48,7 +48,7 @@ namespace DomainTDD.Tests
             
             var pickAction = () => product.Pick(2);
 
-            pickAction.Should().Throw<ApplicationException>().WithMessage("Cannot pick more than two stock levels");
+            pickAction.Should().Throw<ApplicationException>().WithMessage("Cannot pick more than stock levels");
         }
 
        [Test]

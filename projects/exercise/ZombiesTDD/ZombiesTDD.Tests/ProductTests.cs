@@ -1,6 +1,6 @@
 using FluentAssertions;
 
-namespace ZombiesTDD.Tests
+namespace DomainTDD.Tests
 {
     public class ProductTests
     {

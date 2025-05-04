@@ -1,4 +1,4 @@
-﻿namespace ZombiesTDD;
+﻿namespace DomainTDD;
 
 public class Product
 {

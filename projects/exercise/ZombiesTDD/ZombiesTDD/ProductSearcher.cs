@@ -1,53 +1,38 @@
-﻿namespace ZombiesTDD;
+﻿using DomainTDD;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-
-public class ProductSearcher
+namespace ZombiesTDD
 {
-    public static IEnumerable<Product> Search(List<Product> products, string searchTerm, QualityStatus damaged,
-        Ordering ordering)
+    public class ProductSearcher
     {
-        if (products == null)
+        public IList<Product> Search(IList<Product> products, string term, QualityStatus status)
         {
-            throw new ApplicationException("Products cannot be null");
+            if (products == null)
+            {
+                throw new ApplicationException("Null cannot be specified as input");
+            }
+
+            var searchResult = FilterBySearchTerm(products, term);
+            searchResult = FilterByQualityStatus(searchResult, status);
+
+            return searchResult;
         }
 
-        var searchResults = FilterBySearchTerm(products, searchTerm);
-        searchResults = FilterByQualityStatus(damaged, searchResults);
-        searchResults = OrderResults(ordering, searchResults);
 
-        return searchResults;
-    }
-
-
-    private static IEnumerable<Product> FilterBySearchTerm(List<Product> products, string searchTerm)
-    {
-        var searchResults = products.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower()) || p.Description.ToLower().Contains(searchTerm.ToLower()));
-        return searchResults;
-    }
-
-    private static IEnumerable<Product> FilterByQualityStatus(QualityStatus damaged, IEnumerable<Product> searchResults)
-    {
-        searchResults = searchResults.Where(p => p.StockLevel.QualityStatus == damaged);
-        return searchResults;
-    }
-
-    private static IEnumerable<Product> OrderResults(Ordering ordering, IEnumerable<Product> searchResults)
-    {
-        return ordering switch
+        private static List<Product> FilterBySearchTerm(IList<Product> products, string term)
         {
-            Ordering.ByNameAscending => searchResults.OrderBy(p => p.Name),
-            Ordering.ByNameDescending => searchResults.OrderByDescending(p => p.Name),
-            Ordering.ByPriceAscending => searchResults.OrderBy(p => p.Price),
-            Ordering.ByPriceDescending => searchResults.OrderByDescending(p => p.Price),
-            _ => searchResults
-        };
-    }
-}
+            return products.Where(p => p.Name.ToLower().Contains(term.ToLower()) || p.Description.ToLower().Contains(term.ToLower())).ToList();
+        }
 
-public enum Ordering
-{
-    ByNameAscending,
-    ByNameDescending,
-    ByPriceAscending,
-    ByPriceDescending
+        private static List<Product> FilterByQualityStatus(List<Product> searchResult, QualityStatus status)
+        {
+            searchResult = searchResult.Where(p => p.StockLevel.QualityStatus == status).ToList();
+
+            return searchResult;
+        }
+    }
 }
