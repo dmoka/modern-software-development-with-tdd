@@ -74,16 +74,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
 
             return this;
         }
-		
-		        public async Task<HttpResponseAsserter> HasValueBody<T>(T expectedText)
-        {
-            var responseBody = await Actual.Content.ReadAsStringAsync();
-            var id = JsonSerializer.Deserialize<T>(responseBody);
-
-            id.Should().Be(expectedText);
-
-            return this;
-        }
+        
 
         public async Task<HttpResponseAsserter> HasJsonArrayInBody(string expectedJson)
         {
