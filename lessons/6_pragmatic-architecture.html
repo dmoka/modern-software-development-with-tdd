@@ -23,7 +23,7 @@ class: center, middle
 |---------------|--------------------------------------------|
 | 9:00 - 10:20  | - Pragmatic Architecture                  |
 | 10:30 - 12:00 | - Building .NET API with TDD             |
-| 13:00 - 14:20 | - Integration testing + cross-cutting               |
+| 13:00 - 14:20 | - Integration testing + CQRS              |
 | 14:30 - 15:50 | - Testing legacy code        |
 | 16:00 - 17:30 | - Refactoring legacy   code          |
 
@@ -351,200 +351,6 @@ Sharing still happens!
 
 ---
 
-# Web App characteriscs
-
-<div style="text-align: center;">
-  <img src="./assets/vsa-web-app-char.png" alt="Example Image" style="width:600px;">
-</div>
-
----
-
-# CQRS
-
-Command and Query Segregation Principle
-
-Two models: read and write
-
-Separation of Concerns
-
-
-<div style="text-align: center;">
-  <img src="./assets/vsa-cqrs.png" alt="Example Image" style="width:400px;">
-</div>
-
----
-
-# VSA + CQRS
-
-Commands and Queries are first class citizens
-
-Only way to communicate with the apps
-
-Simple Model For Requests
-
-<div style="text-align: center;">
-  <img src="./assets/vsa-request-model.png" alt="Example Image" style="width:600px;">
-</div>
-
----
-
-# VSA + CQRS
-
-<div style="text-align: center;">
-  <img src="./assets/vsa-cqrs-together.png" alt="Example Image" style="width:600px;">
-</div>
-
----
-class: middle, center
-
-# <span class="green-bg">How to do VSA in .NET?</span>
----
-# Modelling requests in .NET
-
-Mediator pattern
-
-MediatR library
-- Inproces messaging library with pub/sub support
-
-
-<div style="text-align: center;">
-  <img src="./assets/mediatr.png" alt="Example Image" style="width:300px;">
-</div>
-
-???
-
-The mediator pattern is like a "middle friend" that helps different parts talk to each other without needing to know everyone else.
-In MediatR, this "middle friend" handles messages (or requests) between parts of your app, so they can talk without directly knowing each other.
-
----
-# Modelling requests in .NET
-
-<div style="text-align: center;">
-  <img src="./assets/vsa-request-model-net1.png" alt="Example Image" style="width:600px;">
-</div>
-
----
-
-# Modelling requests in .NET
-
-<div style="text-align: center;">
-  <img src="./assets/vsa-request-model-net2.png" alt="Example Image" style="width:600px;">
-</div>
-
-<div style="text-align: center;">
-  <pre>
-<code>
-TResponse Handle(Query request){...}
-
-void Handle(Command request){...}
-</code>
-</pre>
-
-</div>
----
-# Modelling requests in .NET
-
-```
-public class GetAllProductsQuery : IRequest<Result<Response>>
-{
-}
-```
-
-```
-public class GetProductQuery : IRequest<Result<Response>>
-{
-    public Guid Id { get; set; }
-}
-```
-
-```
-public class SearchForProductsQuery : IRequest<Result<Response>>
-{
-    public String Name { get; set; }
-    public decimal Price { get; set; }
-    public bool IsOnDiscount { get; set; }
-}
-```
-
----
-
-# Modelling requests in .NET
-
-```
-public class ActivateDiscountsCommand : IRequest<Result>
-{
-}
-```
-
-```
-public class CreateProductCommand : IRequest<Result>
-{
-    public string Name { get; set; }
-
-    public string Description { get; set; }
-
-    public decimal Price { get; set; }
-}
-```
-
----
-# Modelling responses in .NET
-
-<span class="red-bg">Don't use exceptions for control flow.</span>
-
-<span class="green-bg">Exceptions are only for exceptional situations.</span>
-
-2 kinds of errors:
-- you know how to handle
-  - use result paradigm
-- you don't know how to handle
-  - use exceptions
-  - catch and handle at the lowest level
-
----
-# Result paradigm
-
-```
-public class Result<T>
-  {
-      private Result(bool isSuccess, T value, Error error)
-      {
-          ...
-      }
-  
-      public bool IsSuccess { get; }
-  
-      public bool IsFailure => !IsSuccess;
-  
-      public T Value { get; }
-  
-      public Error Error { get; }
-  
-      public static Result<T> Success(T value) 
-        => new(true, value, Error.None);
-  
-      public static Result<T> Failure(Error error) 
-        => new(false, default, error);
-  }
-```
----
-# Modelling responses in .NET
-
-```
-public class GetProductQuery : IRequest<Result<Response>>
-{
-    public Guid Id { get; set; }
-}
-
-public class Response
-{
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public decimal Price { get; set; }
-}
-```
----
 # How to organize projects?
 
 One assembly - one project
@@ -592,6 +398,47 @@ One class - One file - One folder
 <div style="text-align: center;">
   <img src="./assets/vsa-net-collapsed.png" alt="Example Image" style="width:500px;">
 </div>
+
+---
+# Actions handling
+
+<span class="red-bg">Don't use exceptions for control flow.</span>
+
+<span class="green-bg">Exceptions are only for exceptional situations.</span>
+
+2 kinds of errors:
+- you know how to handle
+  - use result paradigm
+- you don't know how to handle
+  - use exceptions
+  - catch and handle at the lowest level
+
+---
+# Result paradigm
+
+```
+public class Result<T>
+  {
+      private Result(bool isSuccess, T value, Error error)
+      {
+          ...
+      }
+  
+      public bool IsSuccess { get; }
+  
+      public bool IsFailure => !IsSuccess;
+  
+      public T Value { get; }
+  
+      public Error Error { get; }
+  
+      public static Result<T> Success(T value) 
+        => new(true, value, Error.None);
+  
+      public static Result<T> Failure(Error error) 
+        => new(false, default, error);
+  }
+```
 
 ---
 class: center, middle
@@ -775,8 +622,6 @@ Use what you need, throw away what you don't.
 Use the abstractions you only need but not one more. 
 
 Optimize on the fly, instead of being upfront and descriptive what to use.
-
----
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
