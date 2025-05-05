@@ -1,5 +1,4 @@
 using Carter;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VerticalSlicingArchitecture.Database;
@@ -13,25 +12,44 @@ public class SearchProducts
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("api/products", async (string? searchTerm, decimal? minPrice, decimal? maxPrice, ISender sender) =>
+            app.MapGet("api/products", async (string? searchTerm, decimal? minPrice, decimal? maxPrice, WarehousingDbContext dbContext) =>
             {
-                var query = new Query 
-                { 
-                    SearchTerm = searchTerm,
-                    MinPrice = minPrice,
-                    MaxPrice = maxPrice
-                };
-                var result = await sender.Send(query);
-                return Results.Ok(result.Value);
+                var query = dbContext.Products.AsQueryable();
+
+                query = ApplySearchFilter(searchTerm, minPrice, maxPrice, query);
+
+                var products = await query.ToListAsync();
+                var response = products.Select(p => new Response
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price
+                }).ToList();
+
+                return Results.Ok(response);
             });
         }
-    }
 
-    public class Query : IRequest<Result<List<Response>>>
-    {
-        public string? SearchTerm { get; set; }
-        public decimal? MinPrice { get; set; }
-        public decimal? MaxPrice { get; set; }
+        private static IQueryable<Entities.Product> ApplySearchFilter(string? searchTerm, decimal? minPrice, decimal? maxPrice, IQueryable<Entities.Product> query)
+        {
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p => p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm));
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= maxPrice.Value);
+            }
+
+            return query;
+        }
     }
 
     public class Response
@@ -40,50 +58,5 @@ public class SearchProducts
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-    }
-
-    internal sealed class Handler : IRequestHandler<Query, Result<List<Response>>>
-    {
-        private readonly WarehousingDbContext _dbContext;
-
-        public Handler(WarehousingDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public async Task<Result<List<Response>>> Handle(Query request, CancellationToken cancellationToken)
-        {
-            var query = _dbContext.Products.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                var searchTerm = request.SearchTerm.ToLower();
-                query = query.Where(p => 
-                    p.Name.ToLower().Contains(searchTerm) || 
-                    p.Description.ToLower().Contains(searchTerm));
-            }
-
-            if (request.MinPrice.HasValue)
-            {
-                query = query.Where(p => p.Price >= request.MinPrice.Value);
-            }
-
-            if (request.MaxPrice.HasValue)
-            {
-                query = query.Where(p => p.Price <= request.MaxPrice.Value);
-            }
-
-            var products = await query
-                .Select(p => new Response
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price
-                })
-                .ToListAsync(cancellationToken);
-
-            return Result<List<Response>>.Success(products);
-        }
     }
 } 

@@ -51,7 +51,7 @@ public class IntegrationTestWebFactory
             var serviceProvider = Services.CreateScope().ServiceProvider;
 
             // Get the db context and apply migrations
-            using var dbContext = serviceProvider.GetRequiredService<WarehousingDbContext>();
+           using var dbContext = serviceProvider.GetRequiredService<WarehousingDbContext>();
             await dbContext.Database.MigrateAsync();
 
             // Optional: Add logging to verify connection string

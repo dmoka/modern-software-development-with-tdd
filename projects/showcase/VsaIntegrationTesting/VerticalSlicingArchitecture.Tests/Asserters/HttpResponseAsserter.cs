@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using VerticalSlicingArchitecture.Entities;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace VerticalSlicingArchitecture.Tests.Asserters
 {
@@ -56,22 +57,22 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
             content.Should().Be(expectedText);
             
             return this;
+        }        
+        
+        public async Task<HttpResponseAsserter> HasValueBody<T>(T expectedText)
+        {
+            var responseBody = await Actual.Content.ReadAsStringAsync();
+            var id = JsonSerializer.Deserialize<T>(responseBody);
+
+            id.Should().Be(expectedText);
+
+            return this;
         }
 
         public async Task<HttpResponseAsserter> HasJsonInBody(dynamic expectedJson)
         {
             JsonAsserter.AssertThat(await Actual.Content.ReadAsStringAsync())
                 .IsEqualTo(JsonConvert.SerializeObject(expectedJson));
-
-            return this;
-        }
-		
-		        public async Task<HttpResponseAsserter> HasValueBody<T>(T expectedText)
-        {
-            var responseBody = await Actual.Content.ReadAsStringAsync();
-            var id = JsonSerializer.Deserialize<T>(responseBody);
-
-            id.Should().Be(expectedText);
 
             return this;
         }

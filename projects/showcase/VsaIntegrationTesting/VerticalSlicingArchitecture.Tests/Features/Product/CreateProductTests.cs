@@ -19,7 +19,7 @@ public class CreateProductTests
         // Arrange
         using var testServer = new InMemoryTestServer();
 
-        var command = new CreateProduct.Command
+        var command = new CreateProduct.Request
         {
             Name = "", // Invalid: empty name
             Description = "Test Description",
@@ -47,7 +47,7 @@ public class CreateProductTests
         // Arrange
         using var testServer = new InMemoryTestServer();
 
-        var command = new CreateProduct.Command
+        var command = new CreateProduct.Request
         {
             Name = "WebCam",
             Description = "Test Description",
@@ -75,7 +75,7 @@ public class CreateProductTests
         // Arrange
         using var testServer = new InMemoryTestServer();
 
-        var command = new CreateProduct.Command
+        var command = new CreateProduct.Request
         {
             Name = "WebCam",
             Description = "",
@@ -103,7 +103,7 @@ public class CreateProductTests
         // Arrange
         using var testServer = new InMemoryTestServer();
 
-        var command = new CreateProduct.Command
+        var command = new CreateProduct.Request
         {
             Name = "Test Product",
             Description = "Test Description",
@@ -130,10 +130,7 @@ public class CreateProductTests
         product.StockLevel.Quantity.Should().Be(command.InitialStock);
         product.StockLevel.QualityStatus.Should().Be(QualityStatus.Available);
 
-        await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
-        {
-            id = product.Id
-        });
+        await HttpResponseAsserter.AssertThat(response).HasValueBody(product.Id);
     }
 
     [Test]
@@ -142,7 +139,7 @@ public class CreateProductTests
         // Arrange
         using var testServer = new InMemoryTestServer();
 
-        var command = new CreateProduct.Command
+        var command = new CreateProduct.Request
         {
             Name = "WebCam", // Invalid: empty name
             Description = "The new generational web cam",
