@@ -74,6 +74,7 @@ namespace VerticalSlicingArchitecture.Tests.Asserters
 
             return this;
         }
+        
 
         public async Task<HttpResponseAsserter> HasJsonArrayInBody(string expectedJson)
         {

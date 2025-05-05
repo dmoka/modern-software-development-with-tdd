@@ -30,8 +30,4 @@
     <ProjectReference Include="..\VerticalSlicingArchitecture\VerticalSlicingArchitecture.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\" />
-  </ItemGroup>
-
 </Project>
