@@ -11,9 +11,9 @@ namespace VerticalSlicingArchitecture.Features.Product
         {
             public void AddRoutes(IEndpointRouteBuilder app)
             {
-                app.MapPost("api/products", async (Command command, WarehousingDbContext context, IValidator<Command> validator) =>
+                app.MapPost("api/products", async (Request request, WarehousingDbContext context, IValidator<Request> validator) =>
                 {
-                    var validationResult = validator.Validate(command);
+                    var validationResult = validator.Validate(request);
                     if (!validationResult.IsValid)
                     {
                         return Results.BadRequest(new Error("CreateProduct.Validation", validationResult.ToString()));
@@ -21,12 +21,12 @@ namespace VerticalSlicingArchitecture.Features.Product
 
                     var product = new Entities.Product
                     {
-                        Name = command.Name,
-                        Description = command.Description,
-                        Price = command.Price
+                        Name = request.Name,
+                        Description = request.Description,
+                        Price = request.Price
                     };
 
-                    var stockLevelResult = StockLevel.New(product.Id, command.InitialStock);
+                    var stockLevelResult = StockLevel.New(product.Id, request.InitialStock);
                     if (stockLevelResult.IsFailure)
                     {
                         return Results.Conflict(stockLevelResult.Error);
@@ -42,7 +42,7 @@ namespace VerticalSlicingArchitecture.Features.Product
             }
         }
 
-        public class Command
+        public class Request
         {
             public string Name { get; set; }
             public string Description { get; set; }
@@ -50,7 +50,7 @@ namespace VerticalSlicingArchitecture.Features.Product
             public int InitialStock { get; set; }
         }
 
-        public class Validator : AbstractValidator<Command>
+        public class Validator : AbstractValidator<Request>
         {
             public Validator()
             {
