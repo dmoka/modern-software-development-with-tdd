@@ -12,7 +12,7 @@ public class SearchProducts
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("sapi/products", async (string? searchTerm, decimal? minPrice, decimal? maxPrice, WarehousingDbContext dbContext) =>
+            app.MapGet("api/products", async (string? searchTerm, decimal? minPrice, decimal? maxPrice, WarehousingDbContext dbContext) =>
             {
                 var query = dbContext.Products.AsQueryable();
 
