@@ -111,7 +111,7 @@ namespace RefactoringLegacyCode
                         string emailJson = JsonSerializer.Serialize(emailPayload);
                         var content = new StringContent(emailJson, Encoding.UTF8, "application/json");
 
-                        await _emailSender.SendEmailAsync("https://api.emailservice.com/send", content);
+                        await _emailSender.SendEmailAsync("https://email.myservice.com/send", content);
                     }
 
                     // Log action to XML

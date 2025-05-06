@@ -7,10 +7,13 @@ using System.Xml.Linq;
 using RefactoringLegacyCode;
 
 
+//0. Write some failing test for asserting ok
 //1. Seam 1: SQLLiteConnection
 //1. Seam 1: Inject IConfiguration in the constructor and get default connection
 //2. Seam 2: Email sender
 //2. Seam 2: Inject EmailSender
+//2b. Add more tests for checking body
+//2b. Seam3: Inject IDateTeim
 //3. Add snapshot test for writing XML
 //4. Extract to file and add tests for priority calculator
 
