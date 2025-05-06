@@ -50,7 +50,7 @@ public class StockLevel
     {
         if (quantity > Quantity)
         {
-            throw new ApplicationException("Cannot pick more than two stock levels");
+            throw new ApplicationException("Cannot pick more than stock levels");
         }
     }
 
