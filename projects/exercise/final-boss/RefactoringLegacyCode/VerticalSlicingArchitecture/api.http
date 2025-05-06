@@ -1,8 +1,0 @@
-@host = https://localhost:5936
-
-### Process Order
-POST {{host}}/api/Order/1/process
-Content-Type: application/json
-{
-
-}
