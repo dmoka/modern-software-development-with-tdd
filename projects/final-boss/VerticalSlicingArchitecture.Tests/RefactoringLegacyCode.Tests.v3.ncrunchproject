@@ -1,0 +1,9 @@
+﻿<ProjectConfiguration>
+  <Settings>
+    <IgnoredTests>
+      <NamedTestSelector>
+        <TestName>RefactoringLegacyCode.Tests.OrderControllerTests.ShouldSaveOrderProcessingInXml</TestName>
+      </NamedTestSelector>
+    </IgnoredTests>
+  </Settings>
+</ProjectConfiguration>
