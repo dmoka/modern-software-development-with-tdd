@@ -25,10 +25,10 @@ namespace RefactoringLegacyCode.Tests.Shared
         private readonly SqliteConnection _connection;
         private HttpClient _client;
 
-        public string ConnectionString => _connection.ConnectionString;
-
-        public Mock<IEmailSender> EmailSenderMock = new Mock<IEmailSender>();
+        private Mock<IEmailSender> EmailSenderMock = new Mock<IEmailSender>();
         public Mock<IDateTimeProvider> DateTimeProviderMock = new Mock<IDateTimeProvider>();
+
+        public string ConnectionString => _connection.ConnectionString;
 
         public InMemoryServer()
         {
@@ -143,8 +143,8 @@ namespace RefactoringLegacyCode.Tests.Shared
                             })
                             .Build());
 
-                        services.AddSingleton(EmailSenderMock.Object);
-                        services.AddSingleton(DateTimeProviderMock.Object);
+                        services.AddSingleton<IEmailSender>(EmailSenderMock.Object);
+                        services.AddSingleton<IDateTimeProvider>(DateTimeProviderMock.Object);
 
                         services.Configure<HttpsRedirectionOptions>(options =>
                         {

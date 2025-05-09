@@ -1,112 +1,112 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using FsCheck;
 using RefactoringLegacyCode.Tests.Asserters;
 using RefactoringLegacyCode.Tests.Shared;
 
-namespace RefactoringLegacyCode.Tests;
-
-public class OrderControllerTests
+namespace RefactoringLegacyCode.Tests
 {
-    [Test]
-    public async Task ProcessOrderShouldReturnProcessedOrderDetails()
+    public class OrderControllerTests
     {
-        using var testServer = new InMemoryServer();
-
-        testServer.DateTimeProviderMock.Setup(mock => mock.Now).Returns(new DateTime(2024, 12, 17, 8, 0, 0));
-        var response = await testServer.Client().PostAsync("api/order/1/process", null);
-
-
-        await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);
-
-        await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+        [Test]
+        public async Task OrderShouldBeProcessed()
         {
-            orderId = 1,
-            totalCost = 94.95,
-            estimatedDeliveryDate = new DateTime(2024, 12, 22, 8, 0, 0),
-            deliveryType = "Express"
-        });
-    }
+            using var server = new InMemoryServer();
 
-    [Test]
-    public async Task ShouldSaveOrderProcessingInXml()
-    {
-        using var testServer = new InMemoryServer();
+            server.DateTimeProviderMock.Setup(mock => mock.Now).Returns(new DateTime(2025, 5, 9, 3, 31, 20));
 
-        testServer.DateTimeProviderMock.Setup(mock => mock.Now).Returns(new DateTime(2024, 12, 17, 8, 0, 0));
-        var response = await testServer.Client().PostAsync("api/order/1/process", null);
+            var response = await server.Client().PostAsync("api/order/1/process", null);
 
-        var xmlPath = Path.Combine(Environment.CurrentDirectory, $"Order_1.xml");
-        
-        await VerifyFile(xmlPath);
-    }
+            await HttpResponseAsserter.AssertThat(response).HasStatusCode(HttpStatusCode.OK);
+            await HttpResponseAsserter.AssertThat(response).HasJsonInBody(new
+            {
+                orderId = 1,
+                totalCost = 94.95,
+                estimatedDeliveryDate = new DateTime(2025, 5, 14, 3, 31, 20),
+                deliveryType = "Express",
+            });
+        }
 
-    [TestCase("Express", 18, 11, 150)]
-    [TestCase("Express", 17, 11, 120)]
-    [TestCase("SameDay", 11, 11, 180)]
-    [TestCase("SameDay", 13, 11, 160)]
-    [TestCase("SameDay", 13, 11, 160)]
-    [TestCase("Standard", 13, 51, 100)]
-    [TestCase("Standard", 13, 50, 80)]
-
-    //TODO: add more characterization test to figure out how it works
-    public void CharacterizePriorityCalculation(string deliverType, int hour, int quantity, int expectedPriority)
-    {
-        var dateTime = new DateTime(2024, 12, 17, hour, 0, 0);
-        var orderDetails = new OrderDetails()
+        [Test]
+        public async Task OrderProcessingShouldBeLoggedInXml()
         {
-            DeliveryType = deliverType,
-            Quantity = quantity
-        };
-        var priority = OrderController.CalculatePriority(orderDetails, dateTime);
+            using var server = new InMemoryServer();
 
-        priority.Should().Be(expectedPriority);
-    }
+            server.DateTimeProviderMock.Setup(mock => mock.Now).Returns(new DateTime(2025, 5, 9, 3, 31, 20));
 
-    public static Arbitrary<int> Hours()
-    {
-        return Arb.From(Gen.Choose(1, 23));
-    }
+            var response = await server.Client().PostAsync("api/order/1/process", null);
 
-    public static Arbitrary<int> Quantities()
-    {
-        return Arb.From(Gen.Choose(1, 100));
-    }
+            var xmlPath = Path.Combine(Environment.CurrentDirectory, $"Order_1.xml");
 
-    public static Arbitrary<string> DeliveryTypes()
-    {
-        return Arb.From(Gen.Elements("Express", "SameDay", "Standard"));
-    }
+            await VerifyFile(xmlPath);
+        }
 
-    [Test]
-    public void HigherQuantity_shouldLeadHigherPriority()
-    {
-        Prop.ForAll(DeliveryTypes(), Hours(), Quantities(), (deliveryType, hour, quantity) =>
+        [TestCase(3, 10, "Express", 60)]
+        [TestCase(18, 11, "Express", 150)]
+        [TestCase(14, 11, "Express", 120)]
+        //TODO: Add more test cases
+        public async Task CharacterizePriorityCalculation(int  hour, int quantity, string deliveryType, int expectedPriority)
         {
-            var dateTime = new DateTime(2024, 12, 17, hour, 0, 0);
             var orderDetails = new OrderDetails()
             {
-                DeliveryType = deliveryType,
-                Quantity = quantity
+                Quantity = quantity,
+                DeliveryType = deliveryType
             };
+            var dateTime = new DateTime(2025, 5, 9, hour, 31, 20);
             var priority = OrderController.CalculatePriority(orderDetails, dateTime);
 
-            orderDetails = new OrderDetails()
+            priority.Should().Be(expectedPriority);
+        }
+
+        public static Arbitrary<int> Hours()
+        {
+            return Arb.From(Gen.Choose(1, 23));
+        }
+
+        public static Arbitrary<int> Quantities()
+        {
+            return Arb.From(Gen.Choose(1, 100));
+        }
+
+        [Test]
+        public void SameDayShouldBeTheHighestPrioThenExpressThenStandard()
+        {
+            Prop.ForAll(Hours(), Quantities(), (hour, quantity) =>
             {
-                DeliveryType = deliveryType,
-                Quantity = quantity + 1
-            };
-            var higherPriority = OrderController.CalculatePriority(orderDetails, dateTime);
+                var sameDayOrder = new OrderDetails()
+                {
+                    Quantity = quantity,
+                    DeliveryType = "SameDay"
+                };
+                var sameDayPriority =
+                    OrderController.CalculatePriority(sameDayOrder, new DateTime(2025, 5, 9, hour, 31, 20));
 
-            return higherPriority >= priority;
+                var expressOrder = new OrderDetails()
+                {
+                    Quantity = quantity,
+                    DeliveryType = "Express"
+                };
+                var expressPriority =
+                    OrderController.CalculatePriority(expressOrder, new DateTime(2025, 5, 9, hour, 31, 20));
 
-        }).VerboseCheckThrowOnFailure();
-    }
+                var standardOrder = new OrderDetails()
+                {
+                    Quantity = quantity,
+                    DeliveryType = "Standard"
+                };
 
+                var standardPriority =
+                    OrderController.CalculatePriority(standardOrder, new DateTime(2025, 5, 9, hour, 31, 20));
 
-    [Test]
-    public void PriorityOrderShouldBe_SameDay_Then_Express_Then_Standard()
-    {
-        //TODO: exercise
+                return sameDayPriority >= expressPriority && expressPriority >= standardPriority;
+            }).VerboseCheckThrowOnFailure();
+        }
+
+        //TODO: The more the quantity the higher the priority for the same delivery type
     }
 }

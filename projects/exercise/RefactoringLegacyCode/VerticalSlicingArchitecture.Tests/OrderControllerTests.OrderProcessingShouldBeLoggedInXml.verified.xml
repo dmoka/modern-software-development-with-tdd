@@ -15,8 +15,8 @@
       <PostalCode>12345</PostalCode>
     </Address>
   </CustomerInfo>
-  <OrderDate>2024-12-17T08:00:00</OrderDate>
-  <EstimatedDeliveryDate>2024-12-22T08:00:00</EstimatedDeliveryDate>
+  <OrderDate>2025-05-09T03:31:20</OrderDate>
+  <EstimatedDeliveryDate>2025-05-14T03:31:20</EstimatedDeliveryDate>
   <Priority>50</Priority>
   <IsExpressDelivery>true</IsExpressDelivery>
   <Status>Processed</Status>

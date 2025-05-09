@@ -10,7 +10,7 @@ namespace RefactoringLegacyCode
 {
     public interface IEmailSender
     {
-        Task SendEmailAsync(string uri, StringContent content);
+        Task PostAsync(string url, StringContent payload);
     }
 
     public interface IDateTimeProvider
@@ -111,7 +111,7 @@ namespace RefactoringLegacyCode
                         string emailJson = JsonSerializer.Serialize(emailPayload);
                         var content = new StringContent(emailJson, Encoding.UTF8, "application/json");
 
-                        await _emailSender.SendEmailAsync("https://email.myservice.com/send", content);
+                        await _emailSender.PostAsync("https://email.myservice.com/send", content);
                     }
 
                     // Log action to XML
